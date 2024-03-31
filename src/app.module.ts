@@ -22,6 +22,7 @@ import { HoraSemanalModule } from './hora_semanal/hora_semanal.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { EquipoPpiModule } from './equipo_ppi/equipo_ppi.module';
 import { EquipoPpiPjicModule } from './equipo_ppi_pjic/equipo_ppi_pjic.module';
+import { TimezoneModule } from './timezone.module';
 
 @Module({
   imports: [
@@ -32,9 +33,10 @@ import { EquipoPpiPjicModule } from './equipo_ppi_pjic/equipo_ppi_pjic.module';
       username: 'postgres',
       password: '1234',
       database: 'tdg',
-      entities: [],
-      synchronize: false,
+      entities: ['dist/**/*.entity{.ts,.js}'],
+      synchronize: true,
     }),
+    TimezoneModule,
     BannerModule,
     EstadoSeguimientoModule,
     EstadoSeguimientoCambioModule,
