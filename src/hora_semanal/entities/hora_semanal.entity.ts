@@ -16,6 +16,9 @@ export class HoraSemanal {
   @Column({ name: 'Horas_Pendientes', type: 'smallint' })
   horasPendientes: number;
 
+  @Column({ name: 'Salon_Asignado', type: 'varchar', length: 150 })
+  salon: string;
+
   @ManyToOne(() => Usuario, (hora) => hora.hora)
   @JoinColumn({ name: 'Usuario_ID' })
   hora: Usuario;
