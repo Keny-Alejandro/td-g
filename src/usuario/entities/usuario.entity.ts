@@ -5,9 +5,14 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany
 } from 'typeorm';
 import { Rol } from 'src/rol/entities/rol.entity';
 import { Programa } from 'src/programa/entities/programa.entity';
+import { HoraSemanal } from 'src/hora_semanal/entities/hora_semanal.entity';
+import { EquipoUsuario } from 'src/equipo_usuarios/entities/equipo_usuario.entity';
+import { EquipoPpiPjic } from 'src/equipo_ppi_pjic/entities/equipo_ppi_pjic.entity';
+import { CitasAsesoriaPpi } from 'src/citas_asesoria_ppi/entities/citas_asesoria_ppi.entity';
 
 @Entity({ name: 'Usuario' })
 export class Usuario {
@@ -33,4 +38,17 @@ export class Usuario {
   @ManyToOne(() => Programa)
   @JoinColumn({ name: 'Programa_ID' })
   programa: Programa;
+
+  @OneToMany(() => HoraSemanal, (hora) => hora.hora)
+  hora: HoraSemanal[];
+
+  @OneToMany(() => EquipoUsuario, (usuario) => usuario.usuario)
+  usuario: EquipoUsuario[];
+
+  @OneToMany(() => EquipoPpiPjic, (usuariopjic) => usuariopjic.usuariopjic)
+  usuariopjic: EquipoPpiPjic[];
+
+  @OneToMany(() => CitasAsesoriaPpi, (usuariocitaequipo) => usuariocitaequipo.usuariocitaequipo)
+  usuariocitaequipo: CitasAsesoriaPpi[];
+  
 }
