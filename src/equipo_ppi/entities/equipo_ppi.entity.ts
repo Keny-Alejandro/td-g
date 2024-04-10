@@ -9,6 +9,9 @@ export class EquipoPpi {
   @PrimaryGeneratedColumn({ name: 'Equipo_PPI_ID' })
   id: number;
 
+  @Column({ name: 'Codigo_Equipo', type: 'int', unique: true })
+  codigoEquipo: number;
+
   @Column({ name: 'Nombre_Proyecto', type: 'varchar', length: 300 })
   nombre: string;
 
@@ -25,16 +28,12 @@ export class EquipoPpi {
   socializaciondos: string;
 
   @ManyToOne(() => EquipoUsuario, (equipousuario) => equipousuario.equipousuario)
-  @JoinColumn({ name: 'Equipo_Usuario_ID' })
-  equipousuario: EquipoUsuario;
-
-  @Column({ name: 'Equipo_Usuario_ID' })
-  equipousuarioId: number;
+  @JoinColumn({ name: 'Codigo_Equipo', referencedColumnName: 'codigoEquipo' })
+  equipousuario: EquipoUsuario;  
 
   @OneToMany(() => EntregaEquipoPpi, (configuracionentrega) => configuracionentrega.configuracionentrega)
   configuracionentrega: EntregaEquipoPpi[];
 
   @OneToMany(() => CitasAsesoriaPpi, (equipocita) => equipocita.equipocita)
   equipocita: CitasAsesoriaPpi[];
-
 }

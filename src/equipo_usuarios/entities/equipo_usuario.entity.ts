@@ -10,8 +10,8 @@ export class EquipoUsuario {
   @PrimaryGeneratedColumn({ name: 'Equipo_Usuario_ID' })
   id: number;
 
-  @Column({ name: 'Codigo_Equipo', type: 'int' })
-  codigo: number;
+  @Column({ name: 'Codigo_Equipo', type: 'int', unique: true })
+  codigoEquipo: number;
 
   @ManyToOne(() => Asignatura, (equipo) => equipo.equipo)
   @JoinColumn({ name: 'Asignatura_ID' })
@@ -28,7 +28,7 @@ export class EquipoUsuario {
   usuarioId: number;
 
   @OneToMany(() => EquipoPpi, (equipousuario) => equipousuario.equipousuario)
-  equipousuario: EquipoPpi[];
+  equipousuario: EquipoPpi[];  
 
   @OneToMany(() => EquipoPpiPjic, (equipousuariopjic) => equipousuariopjic.equipousuariopjic)
   equipousuariopjic: EquipoPpiPjic[];
