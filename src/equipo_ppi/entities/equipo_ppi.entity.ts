@@ -27,6 +27,9 @@ export class EquipoPpi {
   @Column({ name: 'Alcance_Socializacion_Dos', type: 'varchar', length: 500 })
   socializaciondos: string;
 
+  @Column({ type: 'json', nullable: true, name: 'Canceladas' })
+  canceladas: JSON;
+
   @ManyToOne(() => EquipoUsuario, (equipousuario) => equipousuario.equipousuario)
   @JoinColumn({ name: 'Codigo_Equipo', referencedColumnName: 'codigoEquipo' })
   equipousuario: EquipoUsuario;  
