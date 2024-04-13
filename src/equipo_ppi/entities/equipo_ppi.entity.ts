@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
-import { EquipoUsuario } from 'src/equipo_usuarios/entities/equipo_usuario.entity';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { EntregaEquipoPpi } from 'src/entrega_equipo_ppi/entities/entrega_equipo_ppi.entity';
 import { CitasAsesoriaPpi } from 'src/citas_asesoria_ppi/entities/citas_asesoria_ppi.entity';
 
@@ -9,7 +8,7 @@ export class EquipoPpi {
   @PrimaryGeneratedColumn({ name: 'Equipo_PPI_ID' })
   id: number;
 
-  @Column({ name: 'Codigo_Equipo', type: 'int', unique: true })
+  @Column({ name: 'Codigo_Equipo', type: 'int' })
   codigoEquipo: number;
 
   @Column({ name: 'Nombre_Proyecto', type: 'varchar', length: 300 })
@@ -29,10 +28,6 @@ export class EquipoPpi {
 
   @Column({ type: 'json', nullable: true, name: 'Canceladas' })
   canceladas: JSON;
-
-  @ManyToOne(() => EquipoUsuario, (equipousuario) => equipousuario.equipousuario)
-  @JoinColumn({ name: 'Codigo_Equipo', referencedColumnName: 'codigoEquipo' })
-  equipousuario: EquipoUsuario;  
 
   @OneToMany(() => EntregaEquipoPpi, (configuracionentrega) => configuracionentrega.configuracionentrega)
   configuracionentrega: EntregaEquipoPpi[];
