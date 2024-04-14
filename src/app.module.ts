@@ -28,11 +28,11 @@ import { TimezoneModule } from './timezone.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.POSTGRES_HOST,
-      port: parseInt(process.env.POSTGRES_PORT, 10),
-      username: process.env.POSTGRES_USER,
-      password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DATABASE,
+      host: 'ep-proud-recipe-a42qmy7v-pooler.us-east-1.aws.neon.tech',
+      port: 5432,
+      username: 'default',
+      password: '4LMDXreCpE8l',
+      database: 'verceldb',
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
