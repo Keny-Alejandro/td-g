@@ -35,6 +35,7 @@ import { TimezoneModule } from './timezone.module';
       database: 'verceldb',
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
+      ssl: { rejectUnauthorized: false }
     }),
     TimezoneModule,
     BannerModule,
