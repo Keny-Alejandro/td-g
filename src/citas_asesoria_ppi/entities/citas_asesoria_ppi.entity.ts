@@ -19,7 +19,7 @@ export class CitasAsesoriaPpi {
   @PrimaryGeneratedColumn({ name: 'Citas_Asesoria_PPI_ID' })
   id: number;
 
-  @Column({ name: 'Fecha_Cita', type: 'date' })
+  @Column({ name: 'Fecha_Cita', type: 'timestamp with time zone' })
   fecha: Date;
 
   @Column({ name: 'Hora_Cita', type: 'time with time zone' })
