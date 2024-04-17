@@ -1,10 +1,11 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { Usuario } from './entities/usuario.entity';
+import { EmailDTO } from './dto/email.dto';
 
 @Injectable()
 export class UsuarioService {
@@ -16,15 +17,12 @@ export class UsuarioService {
     return 'This action adds a new usuario';
   }
 
-  async findAll(): Promise<Usuario[]> {
-    return await this.usuarioRepository.query('SELECT * FROM "Usuario" u');
-  }
-
-  async findEmail(email: string): Promise<Usuario[]> {
-    const usuarios = await this.usuarioRepository.query('SELECT * FROM "Usuario" u WHERE u."Usuario_Correo" = $1', [email]);
+  async findEmail(EmailDTO: EmailDTO): Promise<Usuario[]> {
+    const query = 'SELECT * FROM "Usuario" u WHERE u."Usuario_Correo" = $1';
+    const usuarios = await this.usuarioRepository.query(query, [EmailDTO.email]);
     
     if (usuarios.length === 0) {
-      throw new Error('El correo no se encuentra registrado');
+      throw new NotFoundException(`El correo ${EmailDTO.email} no se encuentra registrado`);
     }
   
     return usuarios;

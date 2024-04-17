@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-// email.dto.ts
 import { IsNotEmpty, IsEmail, Matches } from 'class-validator';
 import { Transform } from 'class-transformer';
 

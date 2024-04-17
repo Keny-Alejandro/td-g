@@ -7,7 +7,6 @@ import {
   Patch,
   Param,
   Delete,
-  BadRequestException
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
@@ -23,19 +22,14 @@ export class UsuarioController {
     return this.usuarioService.create(createUsuarioDto);
   }
 
-  @Get('getAllUsers')
-  findAll() {
-    return this.usuarioService.findAll();
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usuarioService.findOne(+id);
   }
 
-  @Get('getEmail/:email')
-  findEmail(@Param('email') email: string){
-    return this.usuarioService.findEmail(email);
+  @Patch('Auth/:email')
+  findEmail(@Body() payload: EmailDTO){
+    return this.usuarioService.findEmail(payload);
   }  
 
   @Patch(':id')
