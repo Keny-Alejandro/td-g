@@ -27,7 +27,7 @@ export class UsuarioController {
     return this.usuarioService.findOne(+id);
   }
 
-  @Patch('Auth/:email')
+  @Patch('Auth')
   findEmail(@Body() payload: EmailDTO){
     return this.usuarioService.findEmail(payload);
   }  
