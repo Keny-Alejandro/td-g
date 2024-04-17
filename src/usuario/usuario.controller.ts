@@ -7,6 +7,9 @@ import {
   Patch,
   Param,
   Delete,
+  NotFoundException,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
@@ -28,8 +31,15 @@ export class UsuarioController {
   }
 
   @Patch('Auth')
-  findEmail(@Body() payload: EmailDTO){
-    return this.usuarioService.findEmail(payload);
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async findEmail(@Body() payload: EmailDTO) {
+    const usuarios = await this.usuarioService.findEmail(payload);
+    
+    if (usuarios.length === 0) {
+      throw new NotFoundException(`El correo ${payload.email} no se encuentra registrado`);
+    }
+  
+    return usuarios;
   }  
 
   @Patch(':id')
