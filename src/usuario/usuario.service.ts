@@ -20,6 +20,10 @@ export class UsuarioService {
     return await this.usuarioRepository.query('SELECT * FROM "Usuario" u');
   }
 
+  async findEmail(email: string): Promise<Usuario[]> {
+    return await this.usuarioRepository.query('SELECT * FROM "Usuario" u WHERE u.Usuario_Correo = $1', [email]);
+  }  
+
   findOne(id: number) {
     return `This action returns a #${id} usuario`;
   }
