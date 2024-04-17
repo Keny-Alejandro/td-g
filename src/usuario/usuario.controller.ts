@@ -34,9 +34,9 @@ export class UsuarioController {
   }
 
   @Get('getEmail/:email')
-  getEmail(@Param('email') emailDTO: EmailDTO) {
-    return { message: 'Correo electrónico válido: ' + emailDTO.email };
-  }
+  findEmail(@Param('email') email: string){
+    return this.usuarioService.findEmail(email);
+  }  
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
