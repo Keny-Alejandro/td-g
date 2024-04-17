@@ -8,8 +8,6 @@ import {
   Param,
   Delete,
   NotFoundException,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
@@ -31,7 +29,6 @@ export class UsuarioController {
   }
 
   @Patch('Auth')
-  @UsePipes(new ValidationPipe({ transform: true }))
   async findEmail(@Body() payload: EmailDTO) {
     const usuarios = await this.usuarioService.findEmail(payload);
     
