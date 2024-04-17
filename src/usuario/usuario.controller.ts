@@ -7,10 +7,12 @@ import {
   Patch,
   Param,
   Delete,
+  BadRequestException
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { EmailDTO } from './dto/email.dto';
 
 @Controller('usuario')
 export class UsuarioController {
@@ -32,9 +34,9 @@ export class UsuarioController {
   }
 
   @Get('getEmail/:email')
-  findEmail(@Param('email') email: string){
-    return this.usuarioService.findEmail(email);
-  }  
+  getEmail(@Param('email') emailDTO: EmailDTO) {
+    return { message: 'Correo electrónico válido: ' + emailDTO.email };
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {

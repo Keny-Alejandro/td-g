@@ -21,7 +21,13 @@ export class UsuarioService {
   }
 
   async findEmail(email: string): Promise<Usuario[]> {
-    return await this.usuarioRepository.query('SELECT * FROM "Usuario" u WHERE u."Usuario_Correo" = $1', [email]);
+    const usuarios = await this.usuarioRepository.query('SELECT * FROM "Usuario" u WHERE u."Usuario_Correo" = $1', [email]);
+    
+    if (usuarios.length === 0) {
+      throw new Error('El correo no se encuentra registrado');
+    }
+  
+    return usuarios;
   }  
 
   findOne(id: number) {
