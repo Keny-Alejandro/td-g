@@ -7,7 +7,6 @@ import {
     JoinColumn,
     OneToMany
   } from 'typeorm';
-import { Asignatura } from 'src/asignatura/entities/asignatura.entity';
 import { TipoEntrega } from 'src/tipo_entrega/entities/tipo_entrega.entity';
 import { EntregaEquipoPpi } from 'src/entrega_equipo_ppi/entities/entrega_equipo_ppi.entity';
   
@@ -21,10 +20,6 @@ import { EntregaEquipoPpi } from 'src/entrega_equipo_ppi/entities/entrega_equipo
   
     @Column({ name: 'Semestre_Actual', type: 'int' })
     semestre: number;
-  
-    @ManyToOne(() => Asignatura)
-    @JoinColumn({ name: 'Asignatura_ID' })
-    asignaturas: Asignatura;
   
     @ManyToOne(() => TipoEntrega)
     @JoinColumn({ name: 'Tipo_Entrega_ID' })
