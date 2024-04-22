@@ -7,14 +7,11 @@ export class HoraSemanal {
   @PrimaryGeneratedColumn({ name: 'Hora_Semanal_ID' })
   id: number;
 
-  @Column({ name: 'Asignatura_Nombre', type: 'varchar', length: 100 })
-  nombre: string;
-
   @Column({ name: 'Horas_Asignadas', type: 'smallint' })
   horasAsignadas: number;
 
-  @Column({ name: 'Horas_Pendientes', type: 'smallint' })
-  horasPendientes: number;
+  @Column({ type: 'json', nullable: true, name: 'Horas_Pendientes' })
+  horasPendientes: JSON;
 
   @Column({ name: 'Salon_Asignado', type: 'varchar', length: 150 })
   salon: string;

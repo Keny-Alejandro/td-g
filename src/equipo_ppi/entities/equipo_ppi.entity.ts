@@ -3,9 +3,9 @@ import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { EntregaEquipoPpi } from 'src/entrega_equipo_ppi/entities/entrega_equipo_ppi.entity';
 import { CitasAsesoriaPpi } from 'src/citas_asesoria_ppi/entities/citas_asesoria_ppi.entity';
 
-@Entity({ name: 'Equipo_PPI' })
-export class EquipoPpi {
-  @PrimaryGeneratedColumn({ name: 'Equipo_PPI_ID' })
+@Entity({ name: 'Bitacora_PPI' })
+export class BitacoraPpi {
+  @PrimaryGeneratedColumn({ name: 'Bitacora_PPI_ID' })
   id: number;
 
   @Column({ name: 'Codigo_Equipo', type: 'int' })

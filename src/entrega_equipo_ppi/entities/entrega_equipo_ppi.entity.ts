@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { EquipoPpi } from 'src/equipo_ppi/entities/equipo_ppi.entity';
+import { BitacoraPpi } from 'src/equipo_ppi/entities/equipo_ppi.entity';
 import { ConfiguracionEntrega } from 'src/configuracion_entrega/entities/configuracion_entrega.entity';
 
 @Entity({ name: 'Entrega_Equipo_PPI' })
@@ -17,9 +17,9 @@ export class EntregaEquipoPpi {
     @Column({ name: 'Porcentaje_Entrega', type: 'int'})
     porcentaje: number;
 
-    @ManyToOne(() => EquipoPpi)
-    @JoinColumn({ name: 'Equipo_PPI_ID' })
-    equipoentrega: EquipoPpi;
+    @ManyToOne(() => BitacoraPpi)
+    @JoinColumn({ name: 'Bitacora_PPI_ID' })
+    equipoentrega: BitacoraPpi;
   
     @ManyToOne(() => ConfiguracionEntrega)
     @JoinColumn({ name: 'Configuracion_Entrega_ID' })

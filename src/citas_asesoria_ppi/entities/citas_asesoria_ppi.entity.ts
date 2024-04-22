@@ -12,7 +12,7 @@ import { EstadoCita } from 'src/estado_cita/entities/estado_cita.entity';
 import { TipoCita } from 'src/tipo_cita/entities/tipo_cita.entity';
 import { SeguimientoPpi } from 'src/seguimiento_ppi/entities/seguimiento_ppi.entity';
 import { Usuario } from 'src/usuario/entities/usuario.entity';
-import { EquipoPpi } from 'src/equipo_ppi/entities/equipo_ppi.entity';
+import { BitacoraPpi } from 'src/equipo_ppi/entities/equipo_ppi.entity';
 
 @Entity({ name: 'Citas_Asesoria_PPI' })
 export class CitasAsesoriaPpi {
@@ -43,9 +43,9 @@ export class CitasAsesoriaPpi {
   @JoinColumn({ name: 'Observacion_Cita_ID' })
   observacionCita: ObservacionCita;
 
-  @ManyToOne(() => EquipoPpi)
-  @JoinColumn({ name: 'Equipo_PPI_ID' })
-  equipocita: EquipoPpi;
+  @ManyToOne(() => BitacoraPpi)
+  @JoinColumn({ name: 'Bitacora_PPI_ID' })
+  equipocita: BitacoraPpi;
 
   @ManyToOne(() => Usuario)
   @JoinColumn({ name: 'Usuario_ID' })
