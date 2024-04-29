@@ -11,7 +11,7 @@ export class Asignatura {
   nombre: string;
 
   @Column({ name: 'Asignatura_Codigo', type: 'varchar', length: 20 })
-  codigo: string;
+  codigoAsignatura: string;
 
   @Column({ name: 'Asignatura_Semestre', type: 'int'})
   semestre: number;
