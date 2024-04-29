@@ -1,32 +1,18 @@
 /* eslint-disable prettier/prettier */
 import {
   Controller,
-  Get,
-  Post,
   Body,
   Patch,
-  Param,
-  Delete,
   NotFoundException,
+  Post
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
-import { CreateUsuarioDto } from './dto/create-usuario.dto';
-import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { EmailDTO } from './dto/email.dto';
+import { CargaDatosDTO } from './dto/carga-datos.dto';
 
 @Controller('usuario')
 export class UsuarioController {
   constructor(private readonly usuarioService: UsuarioService) {}
-
-  @Post()
-  create(@Body() createUsuarioDto: CreateUsuarioDto) {
-    return this.usuarioService.create(createUsuarioDto);
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usuarioService.findOne(+id);
-  }
 
   @Patch('Auth')
   async findEmail(@Body() payload: EmailDTO) {
@@ -39,13 +25,14 @@ export class UsuarioController {
     return usuarios;
   }  
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
-    return this.usuarioService.update(+id, updateUsuarioDto);
-  }
+  @Post('carga-datos')
+  async cargaDatos(@Body() payload: CargaDatosDTO) {
+    try {
+      const result = await this.usuarioService.procesarCargaDatos(payload);
+      return { success: true, message: 'Datos cargados correctamente', data: result };
+    } catch (error) {
+      throw new NotFoundException('Error al procesar la carga de datos');
+    }
+  }  
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usuarioService.remove(+id);
-  }
 }
