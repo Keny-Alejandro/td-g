@@ -54,6 +54,13 @@ export class UsuarioService {
         throw new NotFoundException('ASIGNATURA NO ENCONTRADA');
       }
 
+      const asignatura = await this.asignaturaRepository.findOne({ where: { codigoAsignatura: payload.codigo } });
+
+    if (!asignatura) {
+      throw new NotFoundException('ASIGNATURA NO ENCONTRADA');
+    }
+
+      const semestreAsignatura = asignatura.semestre;
       const correosExistentes = await this.usuarioRepository.find({ where: { correo: In(payload.datos.map(d => d.correo)) } });
 
       const correosEnDB = correosExistentes.map(u => u.correo);
@@ -64,6 +71,7 @@ export class UsuarioService {
         if (dato) {
           const programa: Programa = await this.programaRepository.findOne({ where: { id: programaId } });
           usuario.programa = programa;
+          usuario.semestre = semestreAsignatura; // Establecer el semestre del usuario
           await this.usuarioRepository.save(usuario);
         }
       }));
@@ -79,6 +87,7 @@ export class UsuarioService {
         usuarioNuevo.documento = dato.documento;
         usuarioNuevo.correo = dato.correo;
         usuarioNuevo.programa = programa;
+        usuarioNuevo.semestre = semestreAsignatura;
 
         await this.usuarioRepository.insert(usuarioNuevo);
       }));

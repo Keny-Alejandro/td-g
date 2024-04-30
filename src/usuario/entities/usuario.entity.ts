@@ -28,6 +28,9 @@ export class Usuario {
   @Column({ name: 'Usuario_Correo', type: 'varchar', length: 255 })
   correo: string;
 
+  @Column({ name: 'Usuario_Semestre', type: 'int' })
+  semestre: number;
+
   @ManyToOne(() => Rol)
   @JoinColumn({ name: 'Rol_ID' })
   rol: Rol;
