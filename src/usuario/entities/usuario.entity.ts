@@ -28,8 +28,8 @@ export class Usuario {
   @Column({ name: 'Usuario_Correo', type: 'varchar', length: 255 })
   correo: string;
 
-  @Column({ name: 'Usuario_Semestre', type: 'int' })
-  semestre: number;
+  @Column({ name: 'Usuario_Semestre', type: 'int', nullable: true })
+  semestre: number | null;
 
   @ManyToOne(() => Rol)
   @JoinColumn({ name: 'Rol_ID' })
