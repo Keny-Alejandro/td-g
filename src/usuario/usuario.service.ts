@@ -95,4 +95,36 @@ export class UsuarioService {
     return asignatura ? asignatura.programaId : undefined;
   }
 
+  async procesarDatos(correos: any[]): Promise<void> {
+    const roles = {
+      Docente: 2,
+      Asesor: 3,
+      Mixto: 5
+    };
+
+    const programas = {
+      Técnica: 1,
+      Tecnología: 2,
+      Múltiple: 3
+    };
+
+    for (const correo of correos) {
+      const usuarioExistente = await this.usuarioRepository.findOne({ where: { correo: correo.correo } });
+      if (usuarioExistente) {
+        usuarioExistente.rol = roles[correo.rol];
+        usuarioExistente.programa = programas[correo.programa];
+        await this.usuarioRepository.save(usuarioExistente);
+      } else {
+        const nuevoUsuario = this.usuarioRepository.create({
+          nombre: correo.nombre,
+          correo: correo.correo,
+          documento: correo.documento,
+          rol: { id: roles[correo.rol] },
+          programa: { id: programas[correo.programa] }
+        });
+        await this.usuarioRepository.save(nuevoUsuario);
+      }
+    }
+  }
+
 }

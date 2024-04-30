@@ -11,8 +11,8 @@ export class BitacoraPpi {
   @Column({ name: 'Codigo_Equipo', type: 'int' })
   codigoEquipo: number;
 
-  @Column({ name: 'Nombre_Proyecto', type: 'varchar', length: 300 })
-  nombre: string;
+  @Column({ name: 'Alias_Proyecto', type: 'varchar', length: 300 })
+  alias: string;
 
   @Column({ name: 'Descripcion_Proyecto', type: 'varchar', length: 500 })
   descripcion: string;

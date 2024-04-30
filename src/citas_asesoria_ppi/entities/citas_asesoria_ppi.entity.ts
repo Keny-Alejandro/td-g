@@ -10,7 +10,7 @@ import {
 import { ObservacionCita } from 'src/observacion_cita/entities/observacion_cita.entity';
 import { EstadoCita } from 'src/estado_cita/entities/estado_cita.entity';
 import { TipoCita } from 'src/tipo_cita/entities/tipo_cita.entity';
-import { SeguimientoPpi } from 'src/seguimiento_ppi/entities/seguimiento_ppi.entity';
+import { AsesoriasPpi } from 'src/seguimiento_ppi/entities/seguimiento_ppi.entity';
 import { Usuario } from 'src/usuario/entities/usuario.entity';
 import { BitacoraPpi } from 'src/equipo_ppi/entities/equipo_ppi.entity';
 
@@ -52,8 +52,8 @@ export class CitasAsesoriaPpi {
   usuariocitaequipo: Usuario;
 
   @OneToMany(
-    () => SeguimientoPpi,
+    () => AsesoriasPpi,
     (citas) => citas.citas,
   )
-  citas: SeguimientoPpi[];
+  citas: AsesoriasPpi[];
 }
