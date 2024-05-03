@@ -50,66 +50,72 @@ export class UsuarioService {
     return rol;
   }
 
-  async procesarCargaDatos(payload: CargaDatosDTO): Promise<any> {
+  async procesarCargaDatos(payloads: CargaDatosDTO[]): Promise<any> {
     try {
-      const programaId = await this.obtenerProgramaId(payload.codigo);
-      if (!programaId) {
-        throw new NotFoundException('ASIGNATURA NO ENCONTRADA');
-      }
-
-      const asignatura = await this.asignaturaRepository.findOne({
-        where: { codigoAsignatura: payload.codigo },
-      });
-
-      if (!asignatura) {
-        throw new NotFoundException('ASIGNATURA NO ENCONTRADA');
-      }
-
-      const semestreAsignatura = asignatura.semestre;
-      const correosExistentes = await this.usuarioRepository.find({
-        where: { correo: In(payload.datos.map((d) => d.correo)) },
-      });
-
-      const correosEnDB = correosExistentes.map((u) => u.correo);
-      const correosNuevos = payload.datos.filter(
-        (d) => !correosEnDB.includes(d.correo),
-      );
-
-      await Promise.all(
-        correosExistentes.map(async (usuario) => {
-          const dato = payload.datos.find((d) => d.correo === usuario.correo);
-          if (dato) {
-            const programa: Programa = await this.programaRepository.findOne({
-              where: { id: programaId },
-            });
-            usuario.programa = programa;
-            usuario.semestre = semestreAsignatura; // Establecer el semestre del usuario
-            await this.usuarioRepository.save(usuario);
-          }
-        }),
-      );
-
-      await Promise.all(
-        correosNuevos.map(async (dato) => {
+      const resultados = await Promise.all(
+        payloads.map(async payload => {
           const programaId = await this.obtenerProgramaId(payload.codigo);
-          const programa = await this.programaRepository.findOne({
-            where: { id: programaId },
+          if (!programaId) {
+            throw new NotFoundException('ASIGNATURA NO ENCONTRADA');
+          }
+
+          const asignatura = await this.asignaturaRepository.findOne({
+            where: { codigoAsignatura: payload.codigo },
           });
-          const rol = await this.obtenerRolParaNuevoUsuario();
 
-          const usuarioNuevo = new Usuario();
-          usuarioNuevo.rol = rol;
-          usuarioNuevo.nombre = dato.nombre;
-          usuarioNuevo.documento = dato.documento;
-          usuarioNuevo.correo = dato.correo;
-          usuarioNuevo.programa = programa;
-          usuarioNuevo.semestre = semestreAsignatura;
+          if (!asignatura) {
+            throw new NotFoundException('ASIGNATURA NO ENCONTRADA');
+          }
 
-          await this.usuarioRepository.insert(usuarioNuevo);
-        }),
+          const semestreAsignatura = asignatura.semestre;
+          const correosExistentes = await this.usuarioRepository.find({
+            where: { correo: In(payload.datos.map((d) => d.correo)) },
+          });
+
+          const correosEnDB = correosExistentes.map((u) => u.correo);
+          const correosNuevos = payload.datos.filter(
+            (d) => !correosEnDB.includes(d.correo),
+          );
+
+          await Promise.all(
+            correosExistentes.map(async (usuario) => {
+              const dato = payload.datos.find((d) => d.correo === usuario.correo);
+              if (dato) {
+                const programa: Programa = await this.programaRepository.findOne({
+                  where: { id: programaId },
+                });
+                usuario.programa = programa;
+                usuario.semestre = semestreAsignatura; // Establecer el semestre del usuario
+                await this.usuarioRepository.save(usuario);
+              }
+            }),
+          );
+
+          await Promise.all(
+            correosNuevos.map(async (dato) => {
+              const programaId = await this.obtenerProgramaId(payload.codigo);
+              const programa = await this.programaRepository.findOne({
+                where: { id: programaId },
+              });
+              const rol = await this.obtenerRolParaNuevoUsuario();
+
+              const usuarioNuevo = new Usuario();
+              usuarioNuevo.rol = rol;
+              usuarioNuevo.nombre = dato.nombre;
+              usuarioNuevo.documento = dato.documento;
+              usuarioNuevo.correo = dato.correo;
+              usuarioNuevo.programa = programa;
+              usuarioNuevo.semestre = semestreAsignatura;
+
+              await this.usuarioRepository.insert(usuarioNuevo);
+            }),
+          );
+
+          return { success: true, message: 'Datos procesados correctamente' };
+        })
       );
 
-      return { success: true, message: 'Datos procesados correctamente' };
+      return resultados;
     } catch (error) {
       throw new Error(
         'Error al procesar la carga de datos en la base de datos',
