@@ -8,6 +8,7 @@ import { Asignatura } from 'src/asignatura/entities/asignatura.entity';
 import { EmailDTO } from './dto/email.dto';
 import { CargaDatosDTO } from './dto/carga-datos.dto';
 import { Rol } from 'src/rol/entities/rol.entity';
+import { UsuarioAsignatura } from 'src/usuario_asignatura/entities/usuario_asignatura.entity';
 
 @Injectable()
 export class UsuarioService {
@@ -20,6 +21,8 @@ export class UsuarioService {
     private readonly programaRepository: Repository<Programa>,
     @InjectRepository(Rol)
     private readonly rolRepository: Repository<Rol>,
+    @InjectRepository(UsuarioAsignatura)
+    private readonly usuarioAsignaturaRepository: Repository<UsuarioAsignatura>
   ) {}
 
   async findEmail(EmailDTO: EmailDTO): Promise<Usuario[]> {
@@ -177,7 +180,7 @@ export class UsuarioService {
           const usuarioAsignaturas = asignaturasEncontradas.map(asignatura => ({ usuarioId: usuario.id, asignaturaId: asignatura.id }));
   
           // Insertar los registros en Usuario_Asignatura
-          await this.usuarioRepository
+          await this.usuarioAsignaturaRepository
             .createQueryBuilder()
             .insert()
             .into('usuario_asignatura')
@@ -188,12 +191,13 @@ export class UsuarioService {
         }
       } else {
         // Si el código está vacío, borrar todos los registros de Usuario_Asignatura para ese Usuario_ID
-        await this.usuarioRepository
+        await this.usuarioAsignaturaRepository
           .createQueryBuilder()
-          .relation(Usuario, "asignaturas")
-          .of(usuario)
-          .remove(await this.usuarioRepository.create({ id: usuario.id }));
+          .delete()
+          .from('usuario_asignatura')
+          .where('usuarioId = :usuarioId', { usuarioId: usuario.id })
+          .execute();
       }
     }
-  }  
+  }    
 }
