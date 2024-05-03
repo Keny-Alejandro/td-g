@@ -28,7 +28,7 @@ export class UsuarioController {
   @Post('LoadStudents')
   async cargaDatos(@Body() payload: CargaDatosDTO) {
     try {
-      const result = await this.usuarioService.procesarCargaDatos(payload);
+      const result = await this.usuarioService.procesarCargaDatos([payload]);
       return { success: true, message: 'Datos cargados correctamente', data: result };
     } catch (error) {
       throw new NotFoundException('Error al procesar la carga de datos');
