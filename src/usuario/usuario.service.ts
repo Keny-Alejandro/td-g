@@ -23,7 +23,7 @@ export class UsuarioService {
     private readonly rolRepository: Repository<Rol>,
     @InjectRepository(UsuarioAsignatura)
     private readonly usuarioAsignaturaRepository: Repository<UsuarioAsignatura>
-  ) {}
+  ) { }
 
   async findEmail(EmailDTO: EmailDTO): Promise<Usuario[]> {
     const query =
@@ -130,19 +130,19 @@ export class UsuarioService {
       Asesor: 3,
       Mixto: 5,
     };
-  
+
     const programas = {
       Técnica: 1,
       Tecnología: 2,
       Múltiple: 3,
     };
-  
+
     // Crear usuarios para todos los correos
     const usuariosPromises = correos.map(async (correo) => {
       const usuarioExistente = await this.usuarioRepository.findOne({
         where: { correo: correo.correo },
       });
-  
+
       if (usuarioExistente) {
         usuarioExistente.rol = roles[correo.rol];
         usuarioExistente.programa = programas[correo.programa];
@@ -159,52 +159,54 @@ export class UsuarioService {
         return this.usuarioRepository.save(nuevoUsuario);
       }
     });
-  
+
     const usuarios = await Promise.all(usuariosPromises);
-  
+
     // Procesar asignaturas para todos los usuarios
     for (let i = 0; i < correos.length; i++) {
       const correo = correos[i];
       const usuario = usuarios[i];
-  
+
       // Realizar operaciones adicionales según el valor del código
-      if (correo.codigo) {
-        const asignaturas = correo.codigo.split(",").map(codigo => codigo.trim());
-        
-        // Obtener los semestres de las asignaturas correspondientes a los códigos
-        const semestresEncontrados = await this.asignaturaRepository.createQueryBuilder('asignatura')
-          .select('DISTINCT asignatura.semestre', 'semestre')
-          .where('asignatura.codigoAsignatura IN (:...codigos)', { codigos: asignaturas })
-          .getRawMany();
-  
-        if (semestresEncontrados.length) {
-          const semestres = semestresEncontrados.map(semestre => semestre.semestre);
-  
-          // Insertar los registros en Usuario_Asignatura si el semestre no está repetido
-          for (const semestre of semestres) {
-            const existeRegistro = await this.usuarioAsignaturaRepository.findOne({
-              where: { usuarioasignatura: usuario, semestre },
-            });
-  
-            if (!existeRegistro) {
-              await this.usuarioAsignaturaRepository.save({
-                usuarioasignatura: usuario,
-                semestre: semestre,
-              });
-            }
+      if (correo.codigos && correo.codigos.length > 0) {
+        const codigos = correo.codigos; // Obtener los códigos del correo
+
+        // Para cada código en los codigos
+        for (const codigo of codigos) {
+          // Encontrar la asignatura correspondiente al código
+          const asignatura = await this.asignaturaRepository.findOne({
+            where: { codigoAsignatura: codigo }
+          });
+
+          if (!asignatura) {
+            throw new NotFoundException(`Asignatura no encontrada para el código ${codigo}`);
           }
-        } else {
-          throw new NotFoundException('ASIGNATURAS NO ENCONTRADAS');
+
+          // Obtener el semestre de la asignatura
+          const semestre = asignatura.semestre;
+
+          // Verificar si ya existe una entrada en Usuario_Asignatura para este usuario y semestre
+          const existeRegistro = await this.usuarioAsignaturaRepository.findOne({
+            where: { usuarioasignatura: usuario, semestre }
+          });
+
+          if (!existeRegistro) {
+            // Si no existe, crear una nueva entrada en Usuario_Asignatura
+            await this.usuarioAsignaturaRepository.save({
+              usuarioasignatura: usuario,
+              semestre: semestre
+            });
+          }
         }
       } else {
-        // Si el código está vacío, borrar todos los registros de Usuario_Asignatura para ese Usuario
+        // Si no hay códigos, borrar todos los registros de Usuario_Asignatura para ese Usuario
         await this.usuarioAsignaturaRepository
           .createQueryBuilder()
           .delete()
           .from('Usuario_Asignatura')
-          .where('Usuario_ID = :usuarioId', { usuarioId: usuario.id })
+          .where('usuarioasignatura.id = :usuarioId', { usuarioId: usuario.id })
           .execute();
       }
     }
-  }    
+  }
 }
