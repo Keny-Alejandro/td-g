@@ -171,21 +171,28 @@ export class UsuarioService {
       if (correo.codigo) {
         const asignaturas = correo.codigo.split(",").map(codigo => codigo.trim());
         
-        // Obtener los IDs de las asignaturas correspondientes a los códigos
-        const asignaturasEncontradas = await this.asignaturaRepository.find({
-          where: { codigoAsignatura: In(asignaturas) },
-        });
+        // Obtener los semestres de las asignaturas correspondientes a los códigos
+        const semestresEncontrados = await this.asignaturaRepository.createQueryBuilder('asignatura')
+          .select('DISTINCT asignatura.semestre', 'semestre')
+          .where('asignatura.codigoAsignatura IN (:...codigos)', { codigos: asignaturas })
+          .getRawMany();
   
-        if (asignaturasEncontradas.length) {
-          const usuarioAsignaturas = asignaturasEncontradas.map(asignatura => ({ usuarioId: usuario.id, asignaturaId: asignatura.id }));
+        if (semestresEncontrados.length) {
+          const semestres = semestresEncontrados.map(semestre => semestre.semestre);
   
-          // Insertar los registros en Usuario_Asignatura
-          await this.usuarioAsignaturaRepository
-            .createQueryBuilder()
-            .insert()
-            .into('usuario_asignatura')
-            .values(usuarioAsignaturas)
-            .execute();
+          // Insertar los registros en Usuario_Asignatura si el semestre no está repetido
+          for (const semestre of semestres) {
+            const existeRegistro = await this.usuarioAsignaturaRepository.findOne({
+              where: { usuarioasignatura: usuario, semestre },
+            });
+  
+            if (!existeRegistro) {
+              await this.usuarioAsignaturaRepository.save({
+                usuarioasignatura: usuario,
+                semestre: semestre,
+              });
+            }
+          }
         } else {
           throw new NotFoundException('ASIGNATURAS NO ENCONTRADAS');
         }
@@ -194,8 +201,8 @@ export class UsuarioService {
         await this.usuarioAsignaturaRepository
           .createQueryBuilder()
           .delete()
-          .from('usuario_asignatura')
-          .where('usuarioId = :usuarioId', { usuarioId: usuario.id })
+          .from('Usuario_Asignatura')
+          .where('usuarioasignaturaId = :usuarioId', { usuarioId: usuario.id })
           .execute();
       }
     }
