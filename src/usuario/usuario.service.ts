@@ -197,12 +197,12 @@ export class UsuarioService {
           throw new NotFoundException('ASIGNATURAS NO ENCONTRADAS');
         }
       } else {
-        // Si el código está vacío, borrar todos los registros de Usuario_Asignatura para ese Usuario_ID
+        // Si el código está vacío, borrar todos los registros de Usuario_Asignatura para ese Usuario
         await this.usuarioAsignaturaRepository
           .createQueryBuilder()
           .delete()
           .from('Usuario_Asignatura')
-          .where('usuarioasignaturaId = :usuarioId', { usuarioId: usuario.id })
+          .where('Usuario_ID = :usuarioId', { usuarioId: usuario.id })
           .execute();
       }
     }
