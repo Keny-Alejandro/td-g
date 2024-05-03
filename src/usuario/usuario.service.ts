@@ -127,55 +127,55 @@ export class UsuarioService {
       Asesor: 3,
       Mixto: 5,
     };
-
+  
     const programas = {
       Técnica: 1,
       Tecnología: 2,
       Múltiple: 3,
     };
-
-    for (const correo of correos) {
-      let usuario: Usuario;
-
+  
+    // Crear usuarios para todos los correos
+    const usuariosPromises = correos.map(async (correo) => {
       const usuarioExistente = await this.usuarioRepository.findOne({
         where: { correo: correo.correo },
       });
-
+  
       if (usuarioExistente) {
-        usuario = usuarioExistente;
-        usuario.rol = roles[correo.rol];
-        usuario.programa = programas[correo.programa];
-        await this.usuarioRepository.save(usuario);
+        usuarioExistente.rol = roles[correo.rol];
+        usuarioExistente.programa = programas[correo.programa];
+        await this.usuarioRepository.save(usuarioExistente);
+        return usuarioExistente;
       } else {
-        usuario = this.usuarioRepository.create({
+        const nuevoUsuario = this.usuarioRepository.create({
           nombre: correo.nombre,
           correo: correo.correo,
           documento: correo.documento,
           rol: { id: roles[correo.rol] },
           programa: { id: programas[correo.programa] },
         });
-        await this.usuarioRepository.save(usuario);
+        return this.usuarioRepository.save(nuevoUsuario);
       }
-
+    });
+  
+    const usuarios = await Promise.all(usuariosPromises);
+  
+    // Procesar asignaturas para todos los usuarios
+    for (let i = 0; i < correos.length; i++) {
+      const correo = correos[i];
+      const usuario = usuarios[i];
+  
       // Realizar operaciones adicionales según el valor del código
       if (correo.codigo) {
-        const asignaturas = correo.codigo
-          .split(',')
-          .map((codigo) => codigo.trim());
-
+        const asignaturas = correo.codigo.split(",").map(codigo => codigo.trim());
+        
         // Obtener los IDs de las asignaturas correspondientes a los códigos
         const asignaturasEncontradas = await this.asignaturaRepository.find({
           where: { codigoAsignatura: In(asignaturas) },
         });
-
+  
         if (asignaturasEncontradas.length) {
-          const usuarioAsignaturas = asignaturasEncontradas.map(
-            (asignatura) => ({
-              usuarioId: usuario.id,
-              asignaturaId: asignatura.id,
-            }),
-          );
-
+          const usuarioAsignaturas = asignaturasEncontradas.map(asignatura => ({ usuarioId: usuario.id, asignaturaId: asignatura.id }));
+  
           // Insertar los registros en Usuario_Asignatura
           await this.usuarioRepository
             .createQueryBuilder()
@@ -190,10 +190,10 @@ export class UsuarioService {
         // Si el código está vacío, borrar todos los registros de Usuario_Asignatura para ese Usuario_ID
         await this.usuarioRepository
           .createQueryBuilder()
-          .relation(Usuario, 'asignaturas')
+          .relation(Usuario, "asignaturas")
           .of(usuario)
           .remove(await this.usuarioRepository.create({ id: usuario.id }));
       }
     }
-  }
+  }  
 }
