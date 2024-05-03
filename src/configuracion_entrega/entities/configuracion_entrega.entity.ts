@@ -16,10 +16,10 @@ import { EntregaEquipoPpi } from 'src/entrega_equipo_ppi/entities/entrega_equipo
     id: number;
   
     @Column({ name: 'Plazo_Entrega', type: 'timestamp with time zone' })
-    fecha: Date;
+    fechaEntrega: Date;
   
-    @Column({ name: 'Semestre_Actual', type: 'int' })
-    semestre: number;
+    @Column({ name: 'Plazo_Calificacion', type: 'timestamp with time zone' })
+    fechaCalificacion: Date;
   
     @ManyToOne(() => TipoEntrega)
     @JoinColumn({ name: 'Tipo_Entrega_ID' })

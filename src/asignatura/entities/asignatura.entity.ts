@@ -22,4 +22,5 @@ export class Asignatura {
 
   @Column({ name: 'Programa_ID' })
   programaId: number;
+
 }

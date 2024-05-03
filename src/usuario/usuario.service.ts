@@ -20,7 +20,7 @@ export class UsuarioService {
     private readonly programaRepository: Repository<Programa>,
     @InjectRepository(Rol)
     private readonly rolRepository: Repository<Rol>,
-  ) { }
+  ) {}
 
   async findEmail(EmailDTO: EmailDTO): Promise<Usuario[]> {
     const query =
@@ -54,53 +54,70 @@ export class UsuarioService {
         throw new NotFoundException('ASIGNATURA NO ENCONTRADA');
       }
 
-      const asignatura = await this.asignaturaRepository.findOne({ where: { codigoAsignatura: payload.codigo } });
+      const asignatura = await this.asignaturaRepository.findOne({
+        where: { codigoAsignatura: payload.codigo },
+      });
 
-    if (!asignatura) {
-      throw new NotFoundException('ASIGNATURA NO ENCONTRADA');
-    }
+      if (!asignatura) {
+        throw new NotFoundException('ASIGNATURA NO ENCONTRADA');
+      }
 
       const semestreAsignatura = asignatura.semestre;
-      const correosExistentes = await this.usuarioRepository.find({ where: { correo: In(payload.datos.map(d => d.correo)) } });
+      const correosExistentes = await this.usuarioRepository.find({
+        where: { correo: In(payload.datos.map((d) => d.correo)) },
+      });
 
-      const correosEnDB = correosExistentes.map(u => u.correo);
-      const correosNuevos = payload.datos.filter(d => !correosEnDB.includes(d.correo));
+      const correosEnDB = correosExistentes.map((u) => u.correo);
+      const correosNuevos = payload.datos.filter(
+        (d) => !correosEnDB.includes(d.correo),
+      );
 
-      await Promise.all(correosExistentes.map(async usuario => {
-        const dato = payload.datos.find(d => d.correo === usuario.correo);
-        if (dato) {
-          const programa: Programa = await this.programaRepository.findOne({ where: { id: programaId } });
-          usuario.programa = programa;
-          usuario.semestre = semestreAsignatura; // Establecer el semestre del usuario
-          await this.usuarioRepository.save(usuario);
-        }
-      }));
+      await Promise.all(
+        correosExistentes.map(async (usuario) => {
+          const dato = payload.datos.find((d) => d.correo === usuario.correo);
+          if (dato) {
+            const programa: Programa = await this.programaRepository.findOne({
+              where: { id: programaId },
+            });
+            usuario.programa = programa;
+            usuario.semestre = semestreAsignatura; // Establecer el semestre del usuario
+            await this.usuarioRepository.save(usuario);
+          }
+        }),
+      );
 
-      await Promise.all(correosNuevos.map(async dato => {
-        const programaId = await this.obtenerProgramaId(payload.codigo);
-        const programa = await this.programaRepository.findOne({ where: { id: programaId } });
-        const rol = await this.obtenerRolParaNuevoUsuario();
+      await Promise.all(
+        correosNuevos.map(async (dato) => {
+          const programaId = await this.obtenerProgramaId(payload.codigo);
+          const programa = await this.programaRepository.findOne({
+            where: { id: programaId },
+          });
+          const rol = await this.obtenerRolParaNuevoUsuario();
 
-        const usuarioNuevo = new Usuario();
-        usuarioNuevo.rol = rol;
-        usuarioNuevo.nombre = dato.nombre;
-        usuarioNuevo.documento = dato.documento;
-        usuarioNuevo.correo = dato.correo;
-        usuarioNuevo.programa = programa;
-        usuarioNuevo.semestre = semestreAsignatura;
+          const usuarioNuevo = new Usuario();
+          usuarioNuevo.rol = rol;
+          usuarioNuevo.nombre = dato.nombre;
+          usuarioNuevo.documento = dato.documento;
+          usuarioNuevo.correo = dato.correo;
+          usuarioNuevo.programa = programa;
+          usuarioNuevo.semestre = semestreAsignatura;
 
-        await this.usuarioRepository.insert(usuarioNuevo);
-      }));
-
+          await this.usuarioRepository.insert(usuarioNuevo);
+        }),
+      );
 
       return { success: true, message: 'Datos procesados correctamente' };
     } catch (error) {
-      throw new Error('Error al procesar la carga de datos en la base de datos');
+      throw new Error(
+        'Error al procesar la carga de datos en la base de datos',
+      );
     }
   }
 
   async obtenerProgramaId(codigo: string): Promise<number | undefined> {
-    const asignatura = await this.asignaturaRepository.findOne({ where: { codigoAsignatura: codigo } });
+    const asignatura = await this.asignaturaRepository.findOne({
+      where: { codigoAsignatura: codigo },
+    });
     return asignatura ? asignatura.programaId : undefined;
   }
 
@@ -108,32 +125,75 @@ export class UsuarioService {
     const roles = {
       Docente: 2,
       Asesor: 3,
-      Mixto: 5
+      Mixto: 5,
     };
 
     const programas = {
       Técnica: 1,
       Tecnología: 2,
-      Múltiple: 3
+      Múltiple: 3,
     };
 
     for (const correo of correos) {
-      const usuarioExistente = await this.usuarioRepository.findOne({ where: { correo: correo.correo } });
+      let usuario: Usuario;
+
+      const usuarioExistente = await this.usuarioRepository.findOne({
+        where: { correo: correo.correo },
+      });
+
       if (usuarioExistente) {
-        usuarioExistente.rol = roles[correo.rol];
-        usuarioExistente.programa = programas[correo.programa];
-        await this.usuarioRepository.save(usuarioExistente);
+        usuario = usuarioExistente;
+        usuario.rol = roles[correo.rol];
+        usuario.programa = programas[correo.programa];
+        await this.usuarioRepository.save(usuario);
       } else {
-        const nuevoUsuario = this.usuarioRepository.create({
+        usuario = this.usuarioRepository.create({
           nombre: correo.nombre,
           correo: correo.correo,
           documento: correo.documento,
           rol: { id: roles[correo.rol] },
-          programa: { id: programas[correo.programa] }
+          programa: { id: programas[correo.programa] },
         });
-        await this.usuarioRepository.save(nuevoUsuario);
+        await this.usuarioRepository.save(usuario);
+      }
+
+      // Realizar operaciones adicionales según el valor del código
+      if (correo.codigo) {
+        const asignaturas = correo.codigo
+          .split(',')
+          .map((codigo) => codigo.trim());
+
+        // Obtener los IDs de las asignaturas correspondientes a los códigos
+        const asignaturasEncontradas = await this.asignaturaRepository.find({
+          where: { codigoAsignatura: In(asignaturas) },
+        });
+
+        if (asignaturasEncontradas.length) {
+          const usuarioAsignaturas = asignaturasEncontradas.map(
+            (asignatura) => ({
+              usuarioId: usuario.id,
+              asignaturaId: asignatura.id,
+            }),
+          );
+
+          // Insertar los registros en Usuario_Asignatura
+          await this.usuarioRepository
+            .createQueryBuilder()
+            .insert()
+            .into('usuario_asignatura')
+            .values(usuarioAsignaturas)
+            .execute();
+        } else {
+          throw new NotFoundException('ASIGNATURAS NO ENCONTRADAS');
+        }
+      } else {
+        // Si el código está vacío, borrar todos los registros de Usuario_Asignatura para ese Usuario_ID
+        await this.usuarioRepository
+          .createQueryBuilder()
+          .relation(Usuario, 'asignaturas')
+          .of(usuario)
+          .remove(await this.usuarioRepository.create({ id: usuario.id }));
       }
     }
   }
-
 }

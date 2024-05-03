@@ -13,6 +13,7 @@ import { HoraSemanal } from 'src/hora_semanal/entities/hora_semanal.entity';
 import { EquipoUsuario } from 'src/equipo_usuarios/entities/equipo_usuario.entity';
 import { EquipoPpiPjic } from 'src/equipo_ppi_pjic/entities/equipo_ppi_pjic.entity';
 import { CitasAsesoriaPpi } from 'src/citas_asesoria_ppi/entities/citas_asesoria_ppi.entity';
+import { UsuarioAsignatura } from 'src/usuario_asignatura/entities/usuario_asignatura.entity';
 
 @Entity({ name: 'Usuario' })
 export class Usuario {
@@ -50,5 +51,8 @@ export class Usuario {
 
   @OneToMany(() => CitasAsesoriaPpi, (usuariocitaequipo) => usuariocitaequipo.usuariocitaequipo)
   usuariocitaequipo: CitasAsesoriaPpi[];
+
+  @OneToMany(() => UsuarioAsignatura, (usuarioasignatura) => usuarioasignatura.usuarioasignatura)
+  usuarioasignatura: UsuarioAsignatura[];
   
 }
