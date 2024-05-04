@@ -218,15 +218,15 @@ export class UsuarioService {
 
   async findAll(): Promise<Usuario[]> {
     return this.usuarioRepository
-      .createQueryBuilder('u')
+      .createQueryBuilder('Usuario')
       .select([
-        'u.Usuario_Nombre',
-        'u.Usuario_Documento',
-        'u.Usuario_Correo',
-        'u.Usuario_Semestre',
-        'p.Programa_Nombre',
+        'Usuario.Usuario_Nombre',
+        'Usuario.Usuario_Documento',
+        'Usuario.Usuario_Correo',
+        'Usuario.Usuario_Semestre',
+        'Programa.Programa_Nombre',
       ])
-      .innerJoin('Programa', 'p', 'p.Programa_ID = u.Programa_ID')
+      .innerJoin('Programa', 'Programa', 'Programa.Programa_ID = Usuario.Programa_ID')
       .where('u.Rol_ID = 1')
       .getMany();
   }
