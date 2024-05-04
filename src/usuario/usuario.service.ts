@@ -215,4 +215,19 @@ export class UsuarioService {
       }
     }
   }
+
+  async findAll(): Promise<Usuario[]> {
+    return this.usuarioRepository
+      .createQueryBuilder('u')
+      .select([
+        'u.Usuario_Nombre',
+        'u.Usuario_Documento',
+        'u.Usuario_Correo',
+        'u.Usuario_Semestre',
+        'p.Programa_Nombre',
+      ])
+      .innerJoin('Programa', 'p', 'p.Programa_ID = u.Programa_ID')
+      .where('u.Rol_ID = 1')
+      .getMany();
+  }
 }

@@ -4,6 +4,7 @@ import {
   Body,
   Patch,
   NotFoundException,
+  Get,
   Post
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
@@ -38,6 +39,11 @@ export class UsuarioController {
   @Post('LoadSOL')
   async procesarDatos(@Body() correos: any[]): Promise<void> {
     await this.usuarioService.procesarDatos(correos);
+  }
+
+  @Get('StudentSemester')
+  async findAll() {
+    return this.usuarioService.findAll();
   }
 
 }
