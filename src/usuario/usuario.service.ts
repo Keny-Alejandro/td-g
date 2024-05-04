@@ -220,15 +220,16 @@ export class UsuarioService {
     return this.usuarioRepository
       .createQueryBuilder('usuario')
       .select([
+        'usuario.Usuario_ID',
         'usuario.Usuario_Nombre',
-        'usuario.Usuario_Documento',
         'usuario.Usuario_Correo',
         'usuario.Usuario_Semestre',
         'programa.Programa_Nombre'
       ])
       .innerJoin('usuario.programa', 'programa')
       .where('usuario.Rol_ID = :rolId', { rolId: 1 })
-      .orderBy('usuario.Usuario_Nombre', 'ASC')
+      .orderBy('usuario.Usuario_Semestre', 'ASC')
+      .addOrderBy('usuario.Usuario_Nombre', 'ASC')
       .getRawMany();
   }
 }
