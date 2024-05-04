@@ -216,18 +216,19 @@ export class UsuarioService {
     }
   }
 
-  async findAll(): Promise<Usuario[]> {
+  async getStudents(): Promise<any[]> {
     return this.usuarioRepository
-      .createQueryBuilder('Usuario')
+      .createQueryBuilder('usuario')
       .select([
-        'Usuario.Usuario_Nombre',
-        'Usuario.Usuario_Documento',
-        'Usuario.Usuario_Correo',
-        'Usuario.Usuario_Semestre',
-        'Programa.Programa_Nombre',
+        'usuario.Usuario_Nombre',
+        'usuario.Usuario_Documento',
+        'usuario.Usuario_Correo',
+        'usuario.Usuario_Semestre',
+        'programa.Programa_Nombre'
       ])
-      .innerJoin('Programa', 'Programa', 'Programa.Programa_ID = Usuario.Programa_ID')
-      .where('u.Rol_ID = 1')
-      .getMany();
+      .innerJoin('usuario.programa', 'programa')
+      .where('usuario.Rol_ID = :rolId', { rolId: 1 })
+      .orderBy('usuario.Usuario_Nombre', 'ASC')
+      .getRawMany();
   }
 }

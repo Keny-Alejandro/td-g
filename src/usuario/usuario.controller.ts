@@ -5,14 +5,17 @@ import {
   Patch,
   NotFoundException,
   Get,
-  Post
+  Post,
+  Logger
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { EmailDTO } from './dto/email.dto';
 import { CargaDatosDTO } from './dto/carga-datos.dto';
+import { Usuario } from './entities/usuario.entity';
 
 @Controller('usuario')
 export class UsuarioController {
+  private readonly logger = new Logger(UsuarioController.name);
   constructor(private readonly usuarioService: UsuarioService) {}
 
   @Patch('Auth')
@@ -42,8 +45,8 @@ export class UsuarioController {
   }
 
   @Get('StudentSemester')
-  async findAll() {
-    return this.usuarioService.findAll();
+  async getStudents(): Promise<Usuario[]> {
+    return this.usuarioService.getStudents();
   }
 
 }
