@@ -1,26 +1,35 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
-import { CreateEquipoUsuarioDto } from './dto/create-equipo_usuario.dto';
-import { UpdateEquipoUsuarioDto } from './dto/update-equipo_usuario.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { EquipoUsuario } from './entities/equipo_usuario.entity';
 
 @Injectable()
 export class EquipoUsuariosService {
-  create(createEquipoUsuarioDto: CreateEquipoUsuarioDto) {
-    return 'This action adds a new equipoUsuario';
+  constructor(
+    @InjectRepository(EquipoUsuario)
+    private equipoUsuarioRepository: Repository<EquipoUsuario>,
+  ) { }
+
+  async procesarGrupos(grupos: any[]) {
+    for (const grupo of grupos) {
+      const codigoEquipo = parseInt(grupo.Codigo_Equipo);
+      const usuariosId = grupo.Usuario_ID;
+
+      for (const usuarioId of usuariosId) {
+        const usuarioExiste = await this.existeUsuario(usuarioId);
+        if (!usuarioExiste) {
+          const equipoUsuario = new EquipoUsuario();
+          equipoUsuario.codigoEquipo = codigoEquipo;
+          equipoUsuario.usuarioId = usuarioId;
+          await this.equipoUsuarioRepository.save(equipoUsuario);
+        }
+      }
+    }
   }
 
-  findAll() {
-    return `This action returns all equipoUsuarios`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} equipoUsuario`;
-  }
-
-  update(id: number, updateEquipoUsuarioDto: UpdateEquipoUsuarioDto) {
-    return `This action updates a #${id} equipoUsuario`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} equipoUsuario`;
+  async existeUsuario(usuarioId: number): Promise<boolean> {
+    const usuario = await this.equipoUsuarioRepository.findOne({ where: { usuarioId } });
+    return !!usuario;
   }
 }

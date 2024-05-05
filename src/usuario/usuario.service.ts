@@ -222,7 +222,6 @@ export class UsuarioService {
       .select([
         'usuario.Usuario_ID',
         'usuario.Usuario_Nombre',
-        'usuario.Usuario_Correo',
         'usuario.Usuario_Semestre',
         'programa.Programa_Nombre'
       ])
