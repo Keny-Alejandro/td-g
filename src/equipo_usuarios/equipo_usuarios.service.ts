@@ -53,4 +53,19 @@ export class EquipoUsuariosService {
     const result = await this.equipoUsuarioRepository.query(query, [firstDigit]);
     return result;
   }
+
+  async findAll(): Promise<EquipoUsuario[]> {
+    return this.equipoUsuarioRepository.query(`
+      SELECT
+          eu."Codigo_Equipo",
+          u."Usuario_Nombre"
+      FROM
+          "Equipo_Usuario" eu
+      JOIN
+          "Usuario" u ON
+          u."Usuario_ID" = eu."Usuario_ID"
+      ORDER BY
+          eu."Codigo_Equipo" ASC;
+    `);
+  }
 }

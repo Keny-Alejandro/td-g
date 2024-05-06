@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { EquipoUsuariosService } from './equipo_usuarios.service';
+import { EquipoUsuario } from './entities/equipo_usuario.entity';
 
 @Controller('equipo-usuarios')
 export class EquipoUsuariosController {
@@ -24,5 +25,10 @@ export class EquipoUsuariosController {
     } catch (error) {
       return { error: 'Error al obtener los grupos' };
     }
+  }
+
+  @Get('GetAllGroups')
+  findAll(): Promise<EquipoUsuario[]> {
+    return this.equipoUsuariosService.findAll();
   }
 }
