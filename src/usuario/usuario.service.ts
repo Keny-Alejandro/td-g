@@ -231,4 +231,17 @@ export class UsuarioService {
       .addOrderBy('usuario.Usuario_Nombre', 'ASC')
       .getRawMany();
   }
+
+  async getAsesores(): Promise<any[]> {
+    return this.usuarioRepository
+      .createQueryBuilder('usuario')
+      .select([
+        'usuario.Usuario_ID',
+        'usuario.Usuario_Nombre'
+      ])
+      .where('usuario.Rol_ID = :rolId1 OR usuario.Rol_ID = :rolId2', { rolId1: 3, rolId2: 5 })
+      .orderBy('usuario.Usuario_Nombre', 'ASC')
+      .getRawMany();
+  }
+  
 }

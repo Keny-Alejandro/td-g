@@ -49,4 +49,9 @@ export class UsuarioController {
     return this.usuarioService.getStudents();
   }
 
+  @Get('GetAsesor')
+  async getAsesores(): Promise<Usuario[]> {
+    return this.usuarioService.getAsesores();
+  }
+
 }
