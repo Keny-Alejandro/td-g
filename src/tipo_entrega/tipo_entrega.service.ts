@@ -1,26 +1,17 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
-import { CreateTipoEntregaDto } from './dto/create-tipo_entrega.dto';
-import { UpdateTipoEntregaDto } from './dto/update-tipo_entrega.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { TipoEntrega } from './entities/tipo_entrega.entity';
 
 @Injectable()
 export class TipoEntregaService {
-  create(createTipoEntregaDto: CreateTipoEntregaDto) {
-    return 'This action adds a new tipoEntrega';
-  }
+  constructor(
+    @InjectRepository(TipoEntrega)
+    private readonly tipoEntregaRepository: Repository<TipoEntrega>,
+  ) {}
 
-  findAll() {
-    return `This action returns all tipoEntrega`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} tipoEntrega`;
-  }
-
-  update(id: number, updateTipoEntregaDto: UpdateTipoEntregaDto) {
-    return `This action updates a #${id} tipoEntrega`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} tipoEntrega`;
+  async findAll() {
+    return this.tipoEntregaRepository.find();
   }
 }
