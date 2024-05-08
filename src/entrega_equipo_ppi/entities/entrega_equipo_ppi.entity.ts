@@ -14,9 +14,6 @@ export class EntregaEquipoPpi {
     @Column({ name: 'Calificacion_Entrega', type: 'decimal', precision: 6, scale: 4 })
     calificacion: number;    
 
-    @Column({ name: 'Porcentaje_Entrega', type: 'int'})
-    porcentaje: number;
-
     @ManyToOne(() => BitacoraPpi)
     @JoinColumn({ name: 'Bitacora_PPI_ID' })
     equipoentrega: BitacoraPpi;
