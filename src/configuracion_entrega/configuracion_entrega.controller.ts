@@ -18,7 +18,7 @@ export class ConfiguracionEntregaController {
     await this.configuracionEntregaService.createConfiguracionEntrega(entregas);
   }
 
-  @Get('AllEntregaSettings') 
+  @Get('AllEntregaSettings')
   async getConfiguracionesEntrega(): Promise<any[]> {
     try {
       const configuraciones = await this.configuracionEntregaRepository
