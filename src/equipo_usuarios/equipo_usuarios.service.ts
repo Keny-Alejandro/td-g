@@ -68,4 +68,23 @@ export class EquipoUsuariosService {
           eu."Codigo_Equipo" ASC;
     `);
   }
+
+  async obtenerGrupoIndividual(id: number): Promise<any[]> {
+    const query = `
+      SELECT
+        eu."Codigo_Equipo",
+        u."Usuario_Nombre"
+      FROM
+        "Equipo_Usuario" eu
+      JOIN
+        "Usuario" u ON
+        u."Usuario_ID" = eu."Usuario_ID"
+      WHERE
+        eu."Usuario_ID" = $1
+      ORDER BY
+        eu."Codigo_Equipo" ASC;
+    `;
+    const result = await this.equipoUsuarioRepository.query(query, [id]);
+    return result;
+  }
 }

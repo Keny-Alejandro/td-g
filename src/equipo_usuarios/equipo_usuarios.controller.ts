@@ -27,6 +27,16 @@ export class EquipoUsuariosController {
     }
   }
 
+  @Get('GetGroupById/:id')
+  async obtenerGrupoIndividual(@Param('id') id: number) {
+    try {
+      const grupoIndividual = await this.equipoUsuariosService.obtenerGrupoIndividual(id);
+      return grupoIndividual;
+    } catch (error) {
+      return { error: 'Error al obtener el grupo del estudiante' };
+    }
+  }
+
   @Get('GetAllGroups')
   findAll(): Promise<EquipoUsuario[]> {
     return this.equipoUsuariosService.findAll();
