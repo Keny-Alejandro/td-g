@@ -24,6 +24,7 @@ export class ConfiguracionEntregaController {
       const configuraciones = await this.configuracionEntregaRepository
         .createQueryBuilder('ce')
         .select([
+          'ce."Configuracion_Entrega_ID"',
           'ce."Tipo_Entrega_ID" as id',
           'te."Tipo_Entrega_Descripcion" as nombre',
           'ce."Rol_ID" as rol',

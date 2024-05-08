@@ -14,6 +14,7 @@ export class EquipoPpiService {
     async obtenerBitacoraGrupo(id: number): Promise<any[]> {
         const query = `
           SELECT
+            b."Bitacora_PPI_ID",
             b."Codigo_Equipo",
             b."Alias_Proyecto",
             b."Descripcion_Proyecto",

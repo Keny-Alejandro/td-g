@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { EntregaEquipoPpiService } from './entrega_equipo_ppi.service';
 import { EntregaEquipoPpiController } from './entrega_equipo_ppi.controller';
