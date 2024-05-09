@@ -11,8 +11,8 @@ export class EntregaEquipoPpi {
     @Column({ name: 'Ubicacion_Entrega', type: 'varchar', length: 255})
     ubicacion: string;
 
-    @Column({ name: 'Calificacion_Entrega', type: 'decimal', precision: 6, scale: 4 })
-    calificacion: number;    
+    @Column({ name: 'Calificacion_Entrega', type: 'decimal', precision: 6, scale: 4, nullable: true })
+    calificacion: number | null;    
 
     @ManyToOne(() => BitacoraPpi)
     @JoinColumn({ name: 'Bitacora_PPI_ID' })
