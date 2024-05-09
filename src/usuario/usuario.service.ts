@@ -232,11 +232,10 @@ export class UsuarioService {
       const correo = correos[i];
       const usuario = usuarios[i];
   
-      // Realizar operaciones adicionales según el valor del código
       if (correo.codigos && correo.codigos.length > 0) {
-        const codigos = correo.codigos; // Obtener los códigos del correo
+        const codigos = correo.codigos;
   
-        // Para cada código en los codigos
+        // Para cada código en los códigos
         for (const codigo of codigos) {
           // Encontrar la asignatura correspondiente al código
           const asignatura = await this.asignaturaRepository.findOne({
@@ -246,32 +245,20 @@ export class UsuarioService {
           if (!asignatura) {
             throw new NotFoundException(`Asignatura no encontrada para el código ${codigo}`);
           }
+
+          const materiacode = asignatura.id;
   
-          // Verificar si ya existe una entrada en Usuario_Asignatura para este usuario y asignatura
-          const existeRegistro = await this.usuarioAsignaturaRepository.findOne({
-            where: { usuarioasignatura: usuario }
-          });
+          // Crear una nueva entrada en Usuario_Asignatura
+          const usuarioAsignatura = new UsuarioAsignatura();
+          usuarioAsignatura.usuarioasignatura = usuario;
+          usuarioAsignatura.semestre = materiacode;
+          usuarioAsignatura.grupo = 0; // Establecer el valor del grupo
   
-          if (!existeRegistro) {
-            // Si no existe, crear una nueva entrada en Usuario_Asignatura
-            await this.usuarioAsignaturaRepository.save({
-              usuarioasignatura: usuario,
-              asignatura: asignatura,
-              grupo: 0
-            });
-          }
+          await this.usuarioAsignaturaRepository.save(usuarioAsignatura);
         }
-      } else {
-        // Si no hay códigos, borrar todos los registros de Usuario_Asignatura para ese Usuario
-        await this.usuarioAsignaturaRepository
-          .createQueryBuilder()
-          .delete()
-          .from('Usuario_Asignatura')
-          .where('usuarioasignatura.id = :usuarioId', { usuarioId: usuario.id })
-          .execute();
       }
     }
-  }  
+  }    
 
   async getStudents(): Promise<any[]> {
     return this.usuarioRepository
