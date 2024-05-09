@@ -25,7 +25,7 @@ export class EntregaEquipoPpiController {
       fs.mkdirSync(folderPath);
     }
     // Guardar el archivo en la carpeta src/files
-    const ubicacion = `/app/files/${file.originalname}`;
+    const ubicacion = `/storage/${file.originalname}`;
     await fs.promises.writeFile(ubicacion, file.buffer);
 
     // Guardar la información en la base de datos

@@ -11,6 +11,9 @@ export class UsuarioAsignatura {
   @JoinColumn({ name: 'Usuario_ID' })
   usuarioasignatura: Usuario;
 
-  @Column({ name: 'Asignatura_Semestre', type: 'int'})
+  @Column({ name: 'Asignatura_Codigo', type: 'int' })
   semestre: number;
+
+  @Column({ name: 'Grupo_Codigo', type: 'int' })
+  grupo: number;
 }

@@ -1,10 +1,13 @@
 /* eslint-disable prettier/prettier */
 // carga-datos.dto.ts
-import { IsArray, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsString } from 'class-validator';
 
 export class CargaDatosDTO {
   @IsString()
   codigo: string;
+
+  @IsNumber()
+  grupoAsignatura: number;
 
   @IsArray()
   datos: any[]; // Aquí puedes ajustar el tipo según la estructura de tus datos

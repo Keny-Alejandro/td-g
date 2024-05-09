@@ -87,6 +87,7 @@ export class UsuarioService {
                 usuario.programa = programa;
                 usuario.semestre = semestreAsignatura; // Establecer el semestre del usuario
                 await this.usuarioRepository.save(usuario);
+                await this.actualizarUsuarioAsignatura(usuario.id, payload.codigo, payload.grupoAsignatura);
               }
             }),
           );
@@ -107,7 +108,8 @@ export class UsuarioService {
               usuarioNuevo.programa = programa;
               usuarioNuevo.semestre = semestreAsignatura;
 
-              await this.usuarioRepository.insert(usuarioNuevo);
+              const usuarioGuardado = await this.usuarioRepository.save(usuarioNuevo);
+              await this.insertarUsuarioAsignatura(usuarioGuardado.id, payload.codigo, payload.grupoAsignatura);
             }),
           );
 
@@ -122,6 +124,64 @@ export class UsuarioService {
       );
     }
   }
+
+  async actualizarUsuarioAsignatura(usuarioId: number, codigoAsignatura: string, grupoCodigo: number): Promise<void> {
+    // Obtener el ID de la asignatura a partir del código
+    const asignatura = await this.asignaturaRepository.findOne({
+      where: { codigoAsignatura: codigoAsignatura },
+    });
+
+    if (!asignatura) {
+      throw new NotFoundException('Asignatura no encontrada para el código proporcionado');
+    }
+
+    const asignaturaId = asignatura.id;
+
+    // Buscar la entrada existente en Usuario_Asignatura
+    const usuarioAsignaturaExistente = await this.usuarioAsignaturaRepository.findOne({
+      where: {
+        usuarioasignatura: { id: usuarioId }
+      }
+    });
+
+    if (usuarioAsignaturaExistente) {
+      // Actualizar el valor de grupoCodigo
+      usuarioAsignaturaExistente.grupo = grupoCodigo;
+      usuarioAsignaturaExistente.semestre = asignaturaId;
+      await this.usuarioAsignaturaRepository.save(usuarioAsignaturaExistente);
+    } else {
+      throw new Error('No se encontró la entrada de Usuario_Asignatura para actualizar.');
+    }
+  }
+
+  async insertarUsuarioAsignatura(usuarioId: number, codigoAsignatura: string, grupoCodigo: number): Promise<void> {
+    // Obtener el ID de la asignatura a partir del código
+    const asignatura = await this.asignaturaRepository.findOne({
+      where: { codigoAsignatura: codigoAsignatura },
+    });
+  
+    if (!asignatura) {
+      throw new NotFoundException('Asignatura no encontrada para el código proporcionado');
+    }
+  
+    const asignaturaId = asignatura.id;
+
+    const usuario = await this.usuarioRepository.findOne({
+      where: { id: usuarioId}
+    });
+
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado para el ID proporcionado');
+    }
+  
+    // Crear una nueva entrada en Usuario_Asignatura
+    const nuevaAsignaturaUsuario = new UsuarioAsignatura();
+    nuevaAsignaturaUsuario.usuarioasignatura = usuario;
+    nuevaAsignaturaUsuario.semestre = asignaturaId;
+    nuevaAsignaturaUsuario.grupo = grupoCodigo;
+    await this.usuarioAsignaturaRepository.insert(nuevaAsignaturaUsuario);
+  }
+  
 
   async obtenerProgramaId(codigo: string): Promise<number | undefined> {
     const asignatura = await this.asignaturaRepository.findOne({
@@ -243,5 +303,5 @@ export class UsuarioService {
       .orderBy('usuario.Usuario_Nombre', 'ASC')
       .getRawMany();
   }
-  
+
 }
