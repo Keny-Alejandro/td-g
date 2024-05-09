@@ -159,21 +159,21 @@ export class UsuarioService {
     const asignatura = await this.asignaturaRepository.findOne({
       where: { codigoAsignatura: codigoAsignatura },
     });
-  
+
     if (!asignatura) {
       throw new NotFoundException('Asignatura no encontrada para el código proporcionado');
     }
-  
+
     const asignaturaId = asignatura.id;
 
     const usuario = await this.usuarioRepository.findOne({
-      where: { id: usuarioId}
+      where: { id: usuarioId }
     });
 
     if (!usuario) {
       throw new NotFoundException('Usuario no encontrado para el ID proporcionado');
     }
-  
+
     // Crear una nueva entrada en Usuario_Asignatura
     const nuevaAsignaturaUsuario = new UsuarioAsignatura();
     nuevaAsignaturaUsuario.usuarioasignatura = usuario;
@@ -195,19 +195,19 @@ export class UsuarioService {
       Asesor: 3,
       Mixto: 5,
     };
-  
+
     const programas = {
       Técnica: 1,
       Tecnología: 2,
       Múltiple: 3,
     };
-  
+
     // Crear usuarios para todos los correos
     const usuariosPromises = correos.map(async (correo) => {
       const usuarioExistente = await this.usuarioRepository.findOne({
         where: { correo: correo.correo },
       });
-  
+
       if (usuarioExistente) {
         usuarioExistente.rol = roles[correo.rol];
         usuarioExistente.programa = programas[correo.programa];
@@ -224,40 +224,50 @@ export class UsuarioService {
         return this.usuarioRepository.save(nuevoUsuario);
       }
     });
-  
+
     const usuarios = await Promise.all(usuariosPromises);
 
     // Procesar asignaturas para todos los usuarios
     for (let i = 0; i < correos.length; i++) {
       const correo = correos[i];
       const usuario = usuarios[i];
-    
+
       if (correo.codigos && correo.codigos.length > 0) {
         const codigos = correo.codigos;
-    
+
         // Para cada código en los códigos
         for (const codigo of codigos) {
           // Encontrar la asignatura correspondiente al código
           const asignatura = await this.asignaturaRepository.findOne({
             where: { codigoAsignatura: codigo }
           });
-    
+
           if (!asignatura) {
             throw new NotFoundException(`Asignatura no encontrada para el código ${codigo}`);
           }
-    
-          // Crear una nueva entrada en Usuario_Asignatura
-          const usuarioAsignatura = new UsuarioAsignatura();
-          usuarioAsignatura.usuarioasignatura = usuario; // Cambio aquí
-          usuarioAsignatura.semestre = asignatura.id; // Cambio aquí
-          usuarioAsignatura.grupo = 0; // Establecer el valor del grupo
-    
-          await this.usuarioAsignaturaRepository.save(usuarioAsignatura);
+
+          // Verificar si ya existe una entrada para este usuario y esta asignatura
+          const existeRegistro = await this.usuarioAsignaturaRepository.findOne({
+            where: {
+              usuarioasignatura: usuario,
+              semestre: asignatura.id // Asignatura_ID
+            }
+          });
+
+          // Si no existe, crear una nueva entrada en Usuario_Asignatura
+          if (!existeRegistro) {
+            const usuarioAsignatura = new UsuarioAsignatura();
+            usuarioAsignatura.usuarioasignatura = usuario;
+            usuarioAsignatura.semestre = asignatura.id; // Asignatura_ID
+            usuarioAsignatura.grupo = 0; // Establecer el valor del grupo
+
+            await this.usuarioAsignaturaRepository.save(usuarioAsignatura);
+          }
         }
       }
     }
-    
-  }    
+
+  }
 
   async getStudents(): Promise<any[]> {
     return this.usuarioRepository
