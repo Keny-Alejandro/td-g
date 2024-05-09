@@ -195,19 +195,19 @@ export class UsuarioService {
       Asesor: 3,
       Mixto: 5,
     };
-
+  
     const programas = {
       Técnica: 1,
       Tecnología: 2,
       Múltiple: 3,
     };
-
+  
     // Crear usuarios para todos los correos
     const usuariosPromises = correos.map(async (correo) => {
       const usuarioExistente = await this.usuarioRepository.findOne({
         where: { correo: correo.correo },
       });
-
+  
       if (usuarioExistente) {
         usuarioExistente.rol = roles[correo.rol];
         usuarioExistente.programa = programas[correo.programa];
@@ -224,42 +224,39 @@ export class UsuarioService {
         return this.usuarioRepository.save(nuevoUsuario);
       }
     });
-
+  
     const usuarios = await Promise.all(usuariosPromises);
-
+  
     // Procesar asignaturas para todos los usuarios
     for (let i = 0; i < correos.length; i++) {
       const correo = correos[i];
       const usuario = usuarios[i];
-
+  
       // Realizar operaciones adicionales según el valor del código
       if (correo.codigos && correo.codigos.length > 0) {
         const codigos = correo.codigos; // Obtener los códigos del correo
-
+  
         // Para cada código en los codigos
         for (const codigo of codigos) {
           // Encontrar la asignatura correspondiente al código
           const asignatura = await this.asignaturaRepository.findOne({
             where: { codigoAsignatura: codigo }
           });
-
+  
           if (!asignatura) {
             throw new NotFoundException(`Asignatura no encontrada para el código ${codigo}`);
           }
-
-          // Obtener el id de la asignatura
-          const semestre = asignatura.id;
-
-          // Verificar si ya existe una entrada en Usuario_Asignatura para este usuario y semestre
+  
+          // Verificar si ya existe una entrada en Usuario_Asignatura para este usuario y asignatura
           const existeRegistro = await this.usuarioAsignaturaRepository.findOne({
             where: { usuarioasignatura: usuario }
           });
-
+  
           if (!existeRegistro) {
             // Si no existe, crear una nueva entrada en Usuario_Asignatura
             await this.usuarioAsignaturaRepository.save({
               usuarioasignatura: usuario,
-              semestre: semestre,
+              asignatura: asignatura,
               grupo: 0
             });
           }
@@ -274,7 +271,7 @@ export class UsuarioService {
           .execute();
       }
     }
-  }
+  }  
 
   async getStudents(): Promise<any[]> {
     return this.usuarioRepository
@@ -299,7 +296,7 @@ export class UsuarioService {
         'usuario.Usuario_ID',
         'usuario.Usuario_Nombre'
       ])
-      .where('usuario.Rol_ID = :rolId1 OR usuario.Rol_ID = :rolId2', { rolId1: 2, rolId2: 5 })
+      .where('usuario.Rol_ID = :rolId1 OR usuario.Rol_ID = :rolId2', { rolId1: 3, rolId2: 5 })
       .orderBy('usuario.Usuario_Nombre', 'ASC')
       .getRawMany();
   }
