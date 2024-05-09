@@ -181,7 +181,6 @@ export class UsuarioService {
     nuevaAsignaturaUsuario.grupo = grupoCodigo;
     await this.usuarioAsignaturaRepository.insert(nuevaAsignaturaUsuario);
   }
-  
 
   async obtenerProgramaId(codigo: string): Promise<number | undefined> {
     const asignatura = await this.asignaturaRepository.findOne({
@@ -300,7 +299,7 @@ export class UsuarioService {
         'usuario.Usuario_ID',
         'usuario.Usuario_Nombre'
       ])
-      .where('usuario.Rol_ID = :rolId1 OR usuario.Rol_ID = :rolId2', { rolId1: 3, rolId2: 5 })
+      .where('usuario.Rol_ID = :rolId1 OR usuario.Rol_ID = :rolId2', { rolId1: 2, rolId2: 5 })
       .orderBy('usuario.Usuario_Nombre', 'ASC')
       .getRawMany();
   }
