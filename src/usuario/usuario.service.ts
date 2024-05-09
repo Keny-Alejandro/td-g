@@ -248,19 +248,20 @@ export class UsuarioService {
             throw new NotFoundException(`Asignatura no encontrada para el código ${codigo}`);
           }
 
-          // Obtener el semestre de la asignatura
-          const semestre = asignatura.semestre;
+          // Obtener el id de la asignatura
+          const semestre = asignatura.id;
 
           // Verificar si ya existe una entrada en Usuario_Asignatura para este usuario y semestre
           const existeRegistro = await this.usuarioAsignaturaRepository.findOne({
-            where: { usuarioasignatura: usuario, semestre }
+            where: { usuarioasignatura: usuario }
           });
 
           if (!existeRegistro) {
             // Si no existe, crear una nueva entrada en Usuario_Asignatura
             await this.usuarioAsignaturaRepository.save({
               usuarioasignatura: usuario,
-              semestre: semestre
+              semestre: semestre,
+              grupo: 0
             });
           }
         }
