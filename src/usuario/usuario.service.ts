@@ -226,38 +226,37 @@ export class UsuarioService {
     });
   
     const usuarios = await Promise.all(usuariosPromises);
-  
+
     // Procesar asignaturas para todos los usuarios
     for (let i = 0; i < correos.length; i++) {
       const correo = correos[i];
       const usuario = usuarios[i];
-  
+    
       if (correo.codigos && correo.codigos.length > 0) {
         const codigos = correo.codigos;
-  
+    
         // Para cada código en los códigos
         for (const codigo of codigos) {
           // Encontrar la asignatura correspondiente al código
           const asignatura = await this.asignaturaRepository.findOne({
             where: { codigoAsignatura: codigo }
           });
-  
+    
           if (!asignatura) {
             throw new NotFoundException(`Asignatura no encontrada para el código ${codigo}`);
           }
-
-          const materiacode = asignatura.id;
-  
+    
           // Crear una nueva entrada en Usuario_Asignatura
           const usuarioAsignatura = new UsuarioAsignatura();
-          usuarioAsignatura.usuarioasignatura = usuario;
-          usuarioAsignatura.semestre = materiacode;
+          usuarioAsignatura.usuarioasignatura = usuario; // Cambio aquí
+          usuarioAsignatura.semestre = asignatura.id; // Cambio aquí
           usuarioAsignatura.grupo = 0; // Establecer el valor del grupo
-  
+    
           await this.usuarioAsignaturaRepository.save(usuarioAsignatura);
         }
       }
     }
+    
   }    
 
   async getStudents(): Promise<any[]> {
