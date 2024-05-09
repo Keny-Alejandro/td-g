@@ -15,17 +15,17 @@ export class EntregaEquipoPpiController {
   @Post('UploadPPIEntregaFile')
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
-    
+
     @UploadedFile() file: Express.Multer.File,
     @Body() body: any,
   ) {
     const { entregaId, configuracionEntregaId, bitacoraPpiId } = body;
     const folderPath = path.join(__dirname, '..', 'files');
     if (!fs.existsSync(folderPath)) {
-        fs.mkdirSync(folderPath);
+      fs.mkdirSync(folderPath);
     }
     // Guardar el archivo en la carpeta src/files
-    const ubicacion = `src/files/${file.originalname}`;
+    const ubicacion = `/app/files/${file.originalname}`;
     await fs.promises.writeFile(ubicacion, file.buffer);
 
     // Guardar la información en la base de datos
