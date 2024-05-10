@@ -88,7 +88,7 @@ export class UsuarioService {
                 usuario.programa = programa;
                 usuario.semestre = semestreAsignatura;
                 await this.usuarioRepository.save(usuario);
-                await this.actualizarUsuarioAsignatura(usuario.id, payload.codigo, payload.grupoAsignatura);
+                await this.actualizarUsuarioAsignatura(usuario.id, payload.codigo, payload.grupoAsignatura, payload.documentoProfesor.toString());
               }
             }),
           );
@@ -125,7 +125,7 @@ export class UsuarioService {
     }
   }
 
-  async actualizarUsuarioAsignatura(usuarioId: number, codigoAsignatura: string, grupoCodigo: number): Promise<void> {
+  async actualizarUsuarioAsignatura(usuarioId: number, codigoAsignatura: string, grupoCodigo: number, documentoProfesor: string): Promise<void> {
     // Obtener el ID de la asignatura a partir del código
     const asignatura = await this.asignaturaRepository.findOne({
       where: { codigoAsignatura: codigoAsignatura },
@@ -138,10 +138,9 @@ export class UsuarioService {
     const asignaturaId = asignatura.id;
 
     // Verificar si el usuario es un profesor o un estudiante
-    const usuario = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
-    if (!usuario) {
-      console.log("No esta ese usuario" + usuarioId);
-      throw new NotFoundException('Usuario no encontrado para el ID proporcionado');
+    const profesorId = await this.obtenerProfesorId(documentoProfesor);
+    if (!profesorId) {
+      throw new NotFoundException('Profesor no encontrado');
     }
 
     const profesorExistente = await this.usuarioAsignaturaRepository.findOne({
@@ -156,7 +155,6 @@ export class UsuarioService {
       profesorExistente.grupo = grupoCodigo;
       await this.usuarioAsignaturaRepository.save(profesorExistente);
     } else {
-      console.log("NO HICE NADA");
       throw new Error('No se encontró la entrada de Usuario_Asignatura para actualizar.');
     }
 
@@ -173,6 +171,11 @@ export class UsuarioService {
     } else {
       throw new Error('No se encontró la entrada de Usuario_Asignatura para actualizar.');
     }
+  }
+
+  async obtenerProfesorId(documentoProfesor: string): Promise<number | undefined> {
+    const profesor = await this.usuarioRepository.findOne({ where: { documento: documentoProfesor } });
+    return profesor ? profesor.id : undefined;
   }
 
   async insertarUsuarioAsignatura(usuarioId: number, codigoAsignatura: string, grupoCodigo: number): Promise<void> {
