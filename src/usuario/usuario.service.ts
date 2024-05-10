@@ -62,6 +62,7 @@ export class UsuarioService {
           const asignatura = await this.asignaturaRepository.findOne({
             where: { codigoAsignatura: payload.codigo },
           });
+          const asignaturaId = asignatura.id;
 
           if (!asignatura) {
             throw new NotFoundException('ASIGNATURA NO ENCONTRADA');
@@ -112,6 +113,31 @@ export class UsuarioService {
               await this.insertarUsuarioAsignatura(usuarioGuardado.id, payload.codigo, payload.grupoAsignatura);
             }),
           );
+
+          // Paso 1: Buscar el usuario por documento de profesor
+          const profesor = await this.usuarioRepository.findOne({
+            where: { documento: payload.documentoProfesor.toString() },
+          });
+          if (!profesor) {
+            throw new NotFoundException('PROFESOR NO ENCONTRADO');
+          }
+
+          // Paso 2: Obtener el ID del usuario profesor
+          const profesorId = profesor.id;
+
+          // Paso 4: Buscar la entrada en Usuario_Asignatura
+          const usuarioAsignaturaExistente = await this.usuarioAsignaturaRepository.findOne({
+            where: {
+              usuarioasignatura: { id: profesorId }, // Especificar el ID del profesor aquí
+              semestre: asignaturaId,
+            }
+          });
+
+          // Paso 5: Si se encuentra la entrada, actualizar el Grupo_Codigo
+          if (usuarioAsignaturaExistente) {
+            usuarioAsignaturaExistente.grupo = payload.grupoAsignatura;
+            await this.usuarioAsignaturaRepository.save(usuarioAsignaturaExistente);
+          }
 
           return { success: true, message: 'Datos procesados correctamente' };
         })
