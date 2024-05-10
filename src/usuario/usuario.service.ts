@@ -301,20 +301,25 @@ export class UsuarioService {
 
   }
 
-  async getStudents(): Promise<any[]> {
-    return this.usuarioRepository
-      .createQueryBuilder('usuario')
-      .select([
-        'usuario.Usuario_ID',
-        'usuario.Usuario_Nombre',
-        'usuario.Usuario_Semestre',
-        'programa.Programa_Nombre'
-      ])
-      .innerJoin('usuario.programa', 'programa')
-      .where('usuario.Rol_ID = :rolId', { rolId: 1 })
-      .orderBy('usuario.Usuario_Semestre', 'ASC')
-      .addOrderBy('usuario.Usuario_Nombre', 'ASC')
-      .getRawMany();
+  async getStudents() {
+    const query = `
+    select
+	"Usuario"."Usuario_ID",
+	"Usuario"."Usuario_Nombre",
+	"Asignatura"."Asignatura_Nombre",
+	"Usuario_Asignatura"."Grupo_Codigo" 
+from
+	"Usuario" "Usuario"
+inner join "Usuario_Asignatura" on
+	"Usuario_Asignatura"."Usuario_ID" = "Usuario"."Usuario_ID" 
+inner join "Asignatura" on
+	"Asignatura"."Asignatura_ID" = "Usuario_Asignatura"."Asignatura_Codigo" 
+where
+	"Usuario"."Rol_ID" = 1
+order by "Usuario_Asignatura"."Grupo_Codigo" asc, "Usuario"."Usuario_Nombre" asc  
+    `;
+    const results = await this.usuarioAsignaturaRepository.query(query);
+    return results;
   }
 
   async getAsesores(): Promise<any[]> {

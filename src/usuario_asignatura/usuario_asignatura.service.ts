@@ -27,7 +27,7 @@ export class UsuarioAsignaturaService {
             p."Programa_ID" = a."Programa_ID"
         WHERE
             ua."Usuario_ID" = $1
-        ORDER BY a."Asignatura_ID" ASC
+        ORDER BY a."Asignatura_ID" ASC, ua."Grupo_Codigo" ASC
     `;
             const results = await this.usuarioAsignaturaRepository.query(query, [usuarioId]);
             return results;
