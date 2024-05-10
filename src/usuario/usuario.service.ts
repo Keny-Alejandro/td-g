@@ -69,16 +69,6 @@ export class UsuarioService {
 
           const semestreAsignatura = asignatura.semestre;
 
-          const profesorId = await this.obtenerProfesorId(payload.documentoProfesor.toString());
-          if (!profesorId) {
-            throw new NotFoundException('PROFESOR NO ENCONTRADO');
-          }
-
-          const asignaturaId = await this.obtenerAsignaturaId(payload.codigo);
-          if (!asignaturaId) {
-            throw new NotFoundException('ASIGNATURA NO ENCONTRADA');
-          }
-
           const correosExistentes = await this.usuarioRepository.find({
             where: { correo: In(payload.datos.map((d) => d.correo)) },
           });
@@ -135,16 +125,6 @@ export class UsuarioService {
     }
   }
 
-  async obtenerProfesorId(documentoProfesor: string): Promise<number | undefined> {
-    const profesor = await this.usuarioRepository.findOne({ where: { documento: documentoProfesor } });
-    return profesor ? profesor.id : undefined;
-  }
-
-  async obtenerAsignaturaId(codigoAsignatura: string): Promise<number | undefined> {
-    const asignatura = await this.asignaturaRepository.findOne({ where: { codigoAsignatura: codigoAsignatura } });
-    return asignatura ? asignatura.id : undefined;
-  }
-
   async actualizarUsuarioAsignatura(usuarioId: number, codigoAsignatura: string, grupoCodigo: number): Promise<void> {
     // Obtener el ID de la asignatura a partir del código
     const asignatura = await this.asignaturaRepository.findOne({
@@ -161,6 +141,7 @@ export class UsuarioService {
     const usuario = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
     if (!usuario) {
       throw new NotFoundException('Usuario no encontrado para el ID proporcionado');
+      console.log("No esta ese usuario" + usuarioId);
     }
 
     const profesorExistente = await this.usuarioAsignaturaRepository.findOne({
@@ -176,6 +157,7 @@ export class UsuarioService {
       await this.usuarioAsignaturaRepository.save(profesorExistente);
     } else {
       throw new Error('No se encontró la entrada de Usuario_Asignatura para actualizar.');
+      console.log("NO HICE NADA");
     }
 
     // Para estudiantes: Buscar la entrada existente en Usuario_Asignatura
@@ -192,7 +174,6 @@ export class UsuarioService {
       throw new Error('No se encontró la entrada de Usuario_Asignatura para actualizar.');
     }
   }
-
 
   async insertarUsuarioAsignatura(usuarioId: number, codigoAsignatura: string, grupoCodigo: number): Promise<void> {
     // Obtener el ID de la asignatura a partir del código
