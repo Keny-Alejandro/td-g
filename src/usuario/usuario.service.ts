@@ -140,8 +140,8 @@ export class UsuarioService {
     // Verificar si el usuario es un profesor o un estudiante
     const usuario = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
     if (!usuario) {
-      throw new NotFoundException('Usuario no encontrado para el ID proporcionado');
       console.log("No esta ese usuario" + usuarioId);
+      throw new NotFoundException('Usuario no encontrado para el ID proporcionado');
     }
 
     const profesorExistente = await this.usuarioAsignaturaRepository.findOne({
@@ -156,8 +156,8 @@ export class UsuarioService {
       profesorExistente.grupo = grupoCodigo;
       await this.usuarioAsignaturaRepository.save(profesorExistente);
     } else {
-      throw new Error('No se encontró la entrada de Usuario_Asignatura para actualizar.');
       console.log("NO HICE NADA");
+      throw new Error('No se encontró la entrada de Usuario_Asignatura para actualizar.');
     }
 
     // Para estudiantes: Buscar la entrada existente en Usuario_Asignatura
