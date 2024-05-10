@@ -2,11 +2,8 @@
 import {
   Controller,
   Get,
-  Post,
-  Body,
-  Patch,
   Param,
-  Delete,
+  NotFoundException,
 } from '@nestjs/common';
 import { UsuarioAsignaturaService } from './usuario_asignatura.service';
 
@@ -16,5 +13,13 @@ export class UsuarioAsignaturaController {
     private readonly usuarioAsignaturaService: UsuarioAsignaturaService,
   ) {}
 
-  
+  @Get('GroupsDocente/:Usuario_ID')
+  async getGroupsDocente(@Param('Usuario_ID') usuarioId: number) {
+    try {
+      const groupsDocente = await this.usuarioAsignaturaService.getGroupsDocente(usuarioId);
+      return groupsDocente;
+    } catch (error) {
+      throw new NotFoundException('No se encontraron grupos para el usuario proporcionado');
+    }
+  }
 }
