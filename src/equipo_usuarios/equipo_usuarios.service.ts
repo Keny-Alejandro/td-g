@@ -15,6 +15,7 @@ export class EquipoUsuariosService {
     for (const grupo of grupos) {
       const codigoEquipo = parseInt(grupo.Codigo_Equipo);
       const usuariosId = grupo.Usuario_ID;
+      const grupoNumero = grupo.Numero_Grupo;
 
       for (const usuarioId of usuariosId) {
         const usuarioExiste = await this.existeUsuario(usuarioId);
@@ -22,6 +23,7 @@ export class EquipoUsuariosService {
           const equipoUsuario = new EquipoUsuario();
           equipoUsuario.codigoEquipo = codigoEquipo;
           equipoUsuario.usuarioId = usuarioId;
+          equipoUsuario.numeroGrupo = grupoNumero;
           await this.equipoUsuarioRepository.save(equipoUsuario);
         }
       }
@@ -58,7 +60,8 @@ export class EquipoUsuariosService {
     return this.equipoUsuarioRepository.query(`
       SELECT
           eu."Codigo_Equipo",
-          u."Usuario_Nombre"
+          u."Usuario_Nombre",
+          eu."Numero_Grupo"
       FROM
           "Equipo_Usuario" eu
       JOIN
