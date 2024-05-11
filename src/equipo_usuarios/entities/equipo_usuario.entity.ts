@@ -17,7 +17,4 @@ export class EquipoUsuario {
   @Column({ name: 'Usuario_ID' })
   usuarioId: number;
 
-  @Column({ name: 'Numero_Grupo' })
-  numeroGrupo: number;
-
 }

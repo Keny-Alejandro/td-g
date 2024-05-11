@@ -307,7 +307,8 @@ export class UsuarioService {
 	"Usuario"."Usuario_ID",
 	"Usuario"."Usuario_Nombre",
 	"Asignatura"."Asignatura_Nombre",
-	"Usuario_Asignatura"."Grupo_Codigo" 
+	"Usuario_Asignatura"."Grupo_Codigo",
+  "Asignatura"."Asignatura_Semestre"
 from
 	"Usuario" "Usuario"
 inner join "Usuario_Asignatura" on
