@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { EntregaEquipoPpiService } from './entrega_equipo_ppi.service';
 
 @Controller('entrega-equipo-ppi')
@@ -12,5 +12,10 @@ export class EntregaEquipoPpiController {
   ) {
     // Guardar la información en la base de datos
     await this.entregaService.createEntrega(data);
+  }
+
+  @Get('GetPPIEntregaByID/:codigoEquipo')
+  async getEntregas(@Param('codigoEquipo') codigoEquipo: number) {
+    return this.entregaService.getEntregasByCodigoEquipo(codigoEquipo);
   }
 }
