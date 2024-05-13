@@ -47,6 +47,8 @@ export class EntregaEquipoPpiService {
             'te.Tipo_Entrega_Descripcion',
             'bp.Codigo_Equipo',
             'eep.Ubicacion_Entrega',
+            'eep.Calificacion_Entrega',
+            'ce.Porcentaje_Entrega'
           ])
           .innerJoin('Bitacora_PPI', 'bp', 'bp.Bitacora_PPI_ID = eep.Bitacora_PPI_ID')
           .innerJoin('Configuracion_Entrega', 'ce', 'ce.Configuracion_Entrega_ID = eep.Configuracion_Entrega_ID')
