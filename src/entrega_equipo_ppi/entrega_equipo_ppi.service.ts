@@ -56,4 +56,5 @@ export class EntregaEquipoPpiService {
           .where('bp.Codigo_Equipo = :codigoEquipo', { codigoEquipo })
           .getRawMany();
       }
+      
 }

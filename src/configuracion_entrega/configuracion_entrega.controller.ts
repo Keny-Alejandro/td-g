@@ -42,4 +42,9 @@ export class ConfiguracionEntregaController {
     }
   }
 
+  @Get('GetPPIEntregaSOL')
+  async getEntregasSOL(){
+    return this.configuracionEntregaService.getEntregasSOL();
+  }
+
 }

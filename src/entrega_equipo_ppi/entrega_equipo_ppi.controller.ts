@@ -18,4 +18,5 @@ export class EntregaEquipoPpiController {
   async getEntregas(@Param('codigoEquipo') codigoEquipo: number) {
     return this.entregaService.getEntregasByCodigoEquipo(codigoEquipo);
   }
+
 }
