@@ -1,38 +1,16 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Post, UploadedFile, UseInterceptors, Body } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { Controller, Post, Body } from '@nestjs/common';
 import { EntregaEquipoPpiService } from './entrega_equipo_ppi.service';
-import { Multer } from 'multer';
-import * as fs from 'fs';
-import * as path from 'path';
 
 @Controller('entrega-equipo-ppi')
 export class EntregaEquipoPpiController {
-  constructor(
-    private readonly entregaEquipoPpiService: EntregaEquipoPpiService,
-  ) { }
+  constructor(private readonly entregaService: EntregaEquipoPpiService) { }
 
   @Post('UploadPPIEntregaFile')
-  @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
-
-    @UploadedFile() file: Express.Multer.File,
-    @Body() body: any,
+    @Body() data: { ubicacion: string; bitacoraPpiId: number; configuracionEntregaId: number },
   ) {
-    const { entregaId, configuracionEntregaId, bitacoraPpiId } = body;
-    const folderPath = path.join(__dirname, '..', 'files');
-    if (!fs.existsSync(folderPath)) {
-      fs.mkdirSync(folderPath);
-    }
-    // Guardar el archivo en la carpeta src/files
-    const ubicacion = `/storage/${file.originalname}`;
-    await fs.promises.writeFile(ubicacion, file.buffer);
-
     // Guardar la información en la base de datos
-    await this.entregaEquipoPpiService.createEntrega({
-      ubicacion,
-      bitacoraPpiId,
-      configuracionEntregaId,
-    });
+    await this.entregaService.createEntrega(data);
   }
 }
