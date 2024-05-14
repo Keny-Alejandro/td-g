@@ -8,8 +8,8 @@ export class EntregaEquipoPpi {
     @PrimaryGeneratedColumn({ name: 'Entrega_Equipo_PPI_ID' })
     id: number;
 
-    @Column({ name: 'Ubicacion_Entrega', type: 'varchar', length: 255})
-    ubicacion: string;
+    @Column({ name: 'Ubicacion_Entrega', type: 'varchar', length: 255, nullable: true})
+    ubicacion: string | null;
 
     @Column({ name: 'Calificacion_Entrega', type: 'decimal', precision: 6, scale: 1, nullable: true })
     calificacion: number | null;    

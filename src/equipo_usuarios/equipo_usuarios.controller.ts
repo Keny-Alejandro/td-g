@@ -13,7 +13,7 @@ export class EquipoUsuariosController {
       await this.equipoUsuariosService.procesarGrupos(grupos);
       return { message: 'Grupos procesados exitosamente' };
     } catch (error) {
-      return { error: 'Error al procesar los grupos' };
+      return { error: error };
     }
   }
 
