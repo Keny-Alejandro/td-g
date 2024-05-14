@@ -57,5 +57,15 @@ export class EntregaEquipoPpiService {
           .where('bp.Codigo_Equipo = :codigoEquipo', { codigoEquipo })
           .getRawMany();
       }
+
+      async postNotas(data: { Entrega_Equipo_PPI_ID: number, Calificacion: number }[]) {
+        for (const { Entrega_Equipo_PPI_ID, Calificacion } of data) {
+          await this.entregaRepository.update(
+            { id: Entrega_Equipo_PPI_ID },
+            { calificacion: Calificacion }
+          );
+        }
+        return 'Calificaciones actualizadas correctamente';
+      } 
       
 }
