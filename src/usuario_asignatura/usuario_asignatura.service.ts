@@ -18,7 +18,8 @@ export class UsuarioAsignaturaService {
             ua."Grupo_Codigo",
             a."Asignatura_Semestre",
             a."Asignatura_Nombre",
-            p."Programa_Nombre"
+            p."Programa_Nombre",
+            a."Asignatura_ID"
         FROM
             "Usuario_Asignatura" ua
         INNER JOIN "Asignatura" a ON
