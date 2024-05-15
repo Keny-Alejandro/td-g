@@ -49,7 +49,7 @@ export class ConfiguracionEntregaController {
 
   @Get('GetPPIEntregaCoordinador')
   async getEntregasCoordinador(){
-    return this.configuracionEntregaService.getEntregasSOL();
+    return this.configuracionEntregaService.getEntregasCoordinador();
   }
 
 }
