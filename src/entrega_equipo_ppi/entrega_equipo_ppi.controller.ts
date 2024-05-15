@@ -19,6 +19,11 @@ export class EntregaEquipoPpiController {
     return this.entregaService.getEntregasByCodigoEquipo(codigoEquipo);
   }
 
+  @Get('GetPPIEntregaByID')
+  async getAllEntregas() {
+    return this.entregaService.getAllEntregas();
+  }
+
   @Post('updateScores')
   async postNotas(@Body() data: { Entrega_Equipo_PPI_ID: number, Calificacion: number }[]) {
     return this.entregaService.postNotas(data);
