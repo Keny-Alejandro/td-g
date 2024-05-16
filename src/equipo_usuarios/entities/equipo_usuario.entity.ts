@@ -16,5 +16,7 @@ export class EquipoUsuario {
 
   @Column({ name: 'Usuario_ID' })
   usuarioId: number;
-
+  
+  @Column({ name: 'Nota_Asesoria_Definitiva_Individual', type: 'decimal', precision: 6, scale: 1, nullable: true })
+  notadefinitivaind:  number | null;
 }

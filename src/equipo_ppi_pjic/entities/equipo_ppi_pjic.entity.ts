@@ -13,4 +13,5 @@ export class EquipoPpiPjic {
     @ManyToOne(() => Usuario)
     @JoinColumn({ name: 'Usuario_ID' })
     usuariopjic: Usuario;
+
 }

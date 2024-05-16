@@ -80,7 +80,8 @@ export class EquipoUsuariosService {
     const query = `
       SELECT
         eu."Codigo_Equipo",
-        u."Usuario_Nombre"
+        u."Usuario_Nombre",
+        eu."Nota_Asesoria_Definitiva_Individual"
       FROM
         "Equipo_Usuario" eu
       JOIN
