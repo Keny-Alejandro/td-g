@@ -102,18 +102,18 @@ export class EquipoUsuariosService {
     try {
       await Promise.all(
         notas.map(async nota => {
-          const { codigoEquipo, usuarioId, notadefinitivaind } = nota;
+          const { Codigo_Equipo, Nota_Asesoria_Definitiva_Individual, Usuario_ID } = nota;
           await this.equipoUsuarioRepository.update(
-            { codigoEquipo, usuarioId },
-            { notadefinitivaind },
+            { usuarioId: Usuario_ID, codigoEquipo: Codigo_Equipo }, // Filtro basado en usuarioId y codigoEquipo
+            { notadefinitivaind: Nota_Asesoria_Definitiva_Individual } // Valores a actualizar
           );
-        }),
+        })
       );
       return { success: true, message: 'Notas actualizadas correctamente' };
     } catch (error) {
       console.error('Error al actualizar las notas:', error);
       return { success: false, message: 'Error al actualizar las notas' };
     }
-  }  
+  }
 
 }
