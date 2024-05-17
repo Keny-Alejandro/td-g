@@ -25,9 +25,13 @@ import { EquipoPpiPjicModule } from './equipo_ppi_pjic/equipo_ppi_pjic.module';
 import { TimezoneModule } from './timezone.module';
 import { UsuarioAsignaturaModule } from './usuario_asignatura/usuario_asignatura.module';
 import { BackupModule } from './backup/backup.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'ep-proud-recipe-a42qmy7v-pooler.us-east-1.aws.neon.tech',
@@ -65,4 +69,5 @@ import { BackupModule } from './backup/backup.module';
   controllers: [AppController],
   providers: [AppService],
 })
+
 export class AppModule {}
