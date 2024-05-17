@@ -117,12 +117,12 @@ export class BackupController {
           .promise();
       }
 
+      archive.finalize();
+
       await Promise.all([
         this.removeSystem(),
         this.deleteFromUsuarioTable(),
       ]);
-
-      archive.finalize();
     } catch (error) {
       console.error('Error:', error);
       res.status(500).send('Internal Server Error');
@@ -143,7 +143,7 @@ export class BackupController {
     const estadoSeg = this.repositoryEstadoSeguimientoCambio.clear(); // OK
     const seguim = this.repositorySeguimientoPpi.clear();
     const semana = this.repositorySemana.clear(); // OK
-    if (userasign && horasem && equipoppipjic && equipus && entregaequ && notif && estadoSeg && seguim && citas && equipo && semana)
+    if (userasign && horasem && equipoppipjic && equipus && citas && equipo && entregaequ && notif && estadoSeg && seguim && semana)
       return true
     else
       return false
