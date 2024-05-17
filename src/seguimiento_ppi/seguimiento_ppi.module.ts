@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { SeguimientoPpiService } from './seguimiento_ppi.service';
 import { SeguimientoPpiController } from './seguimiento_ppi.controller';
