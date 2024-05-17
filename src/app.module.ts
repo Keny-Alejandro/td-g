@@ -25,6 +25,7 @@ import { EquipoPpiPjicModule } from './equipo_ppi_pjic/equipo_ppi_pjic.module';
 import { TimezoneModule } from './timezone.module';
 import { UsuarioAsignaturaModule } from './usuario_asignatura/usuario_asignatura.module';
 import { ConfigModule } from '@nestjs/config';
+import { BackupModule } from './backup/backup.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { ConfigModule } from '@nestjs/config';
     EquipoPpiModule,
     EquipoPpiPjicModule,
     UsuarioAsignaturaModule,
+    BackupModule,
   ],
   controllers: [AppController],
   providers: [AppService],
