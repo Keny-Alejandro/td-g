@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { EquipoPpiPjicService } from './equipo_ppi_pjic.service';
 
 @Controller('equipo-ppi-pjic')
@@ -24,5 +24,10 @@ export class EquipoPpiPjicController {
     } catch (error) {
       return { message: 'Error al guardar los asesores' };
     }
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.equipoPpiPjicService.findOne(+id);
   }
 }

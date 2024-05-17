@@ -335,4 +335,40 @@ order by "Usuario_Asignatura"."Grupo_Codigo" asc, "Usuario"."Usuario_Nombre" asc
       .getRawMany();
   }
 
+  async findAsesor() {
+    return this.usuarioRepository.createQueryBuilder('usuario')
+      .leftJoinAndSelect('usuario.rol', 'rol')
+      .leftJoinAndSelect('usuario.hora', 'HoraSemanal')
+      .where('rol.id = 3')
+      .getMany();
+  }
+ 
+  async findAll() {
+    return this.usuarioRepository.find();
+  }
+
+  async Login(Correo: string) {
+    return this.usuarioRepository.createQueryBuilder('usuario')
+      .leftJoinAndSelect('usuario.hora', 'HoraSemanal')
+      .leftJoinAndSelect('usuario.rol', 'rol')
+      .where('usuario.correo = :correo', { correo: Correo }) 
+      .getOne()
+  }
+  async findOne(id: number) {
+    return this.usuarioRepository.createQueryBuilder('usuario')
+      .leftJoinAndSelect('usuario.hora', 'HoraSemanal')
+      .where('usuario.id = :id', { id: id })
+      .getOne();
+  }
+
+  async findCorreo(correo: string) {
+    return this.usuarioRepository.createQueryBuilder('usuario')
+      .leftJoinAndSelect('usuario.rol', 'Rol')
+      .leftJoinAndSelect('usuario.hora', 'HoraSemanal')
+      .leftJoinAndSelect('usuario.usuario', 'EquipoUsuario')  
+      .where('usuario.correo = :correo', { correo: correo })
+      .getOne();
+  }
+
+
 }

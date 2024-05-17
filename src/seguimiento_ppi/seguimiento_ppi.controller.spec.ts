@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Test, TestingModule } from '@nestjs/testing';
 import { SeguimientoPpiController } from './seguimiento_ppi.controller';
 import { SeguimientoPpiService } from './seguimiento_ppi.service';

@@ -6,6 +6,7 @@ import {
   NotFoundException,
   Get,
   Post,
+  Param,
   Logger
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
@@ -52,6 +53,26 @@ export class UsuarioController {
   @Get('GetAsesor')
   async getAsesores(): Promise<Usuario[]> {
     return this.usuarioService.getAsesores();
+  }
+
+  @Get()
+  findAll() {
+    return this.usuarioService.findAll();
+  }
+   
+  @Get('/asesor/')
+  findAsesor() {
+    return this.usuarioService.findAsesor();
+  }
+
+  @Get('/correos/:correo') 
+  findCorreo(@Param('correo') correo: string) {
+    return this.usuarioService.findCorreo(correo);
+  }
+ 
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.usuarioService.findOne(+id);
   }
 
 }

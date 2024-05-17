@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EntregaEquipoPpi } from './entities/entrega_equipo_ppi.entity';
-import { BitacoraPpi } from 'src/equipo_ppi/entities/equipo_ppi.entity';
+import { EquipoPpi } from 'src/equipo_ppi/entities/equipo_ppi.entity';
 import { ConfiguracionEntrega } from '../configuracion_entrega/entities/configuracion_entrega.entity';
 
 @Injectable()
@@ -11,8 +11,8 @@ export class EntregaEquipoPpiService {
   constructor(
     @InjectRepository(EntregaEquipoPpi)
     private readonly entregaRepository: Repository<EntregaEquipoPpi>,
-    @InjectRepository(BitacoraPpi)
-    private readonly bitacoraPpiRepository: Repository<BitacoraPpi>,
+    @InjectRepository(EquipoPpi)
+    private readonly bitacoraPpiRepository: Repository<EquipoPpi>,
     @InjectRepository(ConfiguracionEntrega)
     private readonly configuracionEntregaRepository: Repository<ConfiguracionEntrega>,
   ) { }

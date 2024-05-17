@@ -11,38 +11,45 @@ import { Readable } from 'stream';
 import { Repository } from 'typeorm';
 import { Usuario } from 'src/usuario/entities/usuario.entity';
 import { UsuarioAsignatura } from 'src/usuario_asignatura/entities/usuario_asignatura.entity';
-import { AsesoriasPpi } from 'src/seguimiento_ppi/entities/seguimiento_ppi.entity';
-import { BitacoraPpi } from 'src/equipo_ppi/entities/equipo_ppi.entity';
-import { CitasAsesoriaPpi } from 'src/citas_asesoria_ppi/entities/citas_asesoria_ppi.entity';
 import { EntregaEquipoPpi } from 'src/entrega_equipo_ppi/entities/entrega_equipo_ppi.entity';
 import { EquipoPpiPjic } from '../equipo_ppi_pjic/entities/equipo_ppi_pjic.entity';
 import { EquipoUsuario } from 'src/equipo_usuarios/entities/equipo_usuario.entity';
-import { EstadoSeguimientoCambio } from 'src/estado_seguimiento_cambio/entities/estado_seguimiento_cambio.entity';
 import { HoraSemanal } from 'src/hora_semanal/entities/hora_semanal.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Notificacione } from 'src/notificaciones/entities/notificacione.entity';
+import { EstadoSeguimientoCambio } from 'src/estado_seguimiento_cambio/entities/estado_seguimiento_cambio.entity';
+import { SeguimientoPpi } from 'src/seguimiento_ppi/entities/seguimiento_ppi.entity';
+import { CitasAsesoriaPpi } from 'src/citas_asesoria_ppi/entities/citas_asesoria_ppi.entity';
+import { EquipoPpi } from 'src/equipo_ppi/entities/equipo_ppi.entity';
+import { Semana } from 'src/semanas/entities/semana.entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Controller('backup')
 export class BackupController {
 
   private s3: AWS.S3;
+  @InjectRepository(Notificacione) 
+  private readonly repositoryNotificacion: Repository<Notificacione>
+  @InjectRepository(EstadoSeguimientoCambio) 
+  private readonly repositoryEstadoSeguimientoCambio: Repository<EstadoSeguimientoCambio>
+  @InjectRepository(SeguimientoPpi) 
+  private readonly repositorySeguimientoPpi: Repository<SeguimientoPpi>
+  @InjectRepository(CitasAsesoriaPpi) 
+  private readonly repositoryCitasAsesoriaPpi: Repository<CitasAsesoriaPpi>
+  @InjectRepository(EquipoPpi) 
+  private readonly repositoryEquipoPpi: Repository<EquipoPpi>
+  @InjectRepository(Semana) 
+  private readonly repositorySemana: Repository<Semana>
   @InjectRepository(Usuario)
   private readonly UsuarioRepository: Repository<Usuario>
   @InjectRepository(UsuarioAsignatura)
   private readonly UsuarioAsignaturaRepository: Repository<UsuarioAsignatura>
-  @InjectRepository(AsesoriasPpi)
-  private readonly AsesoriasPpiRepository: Repository<AsesoriasPpi>
-  @InjectRepository(BitacoraPpi)
-  private readonly BitacoraPpiRepository: Repository<BitacoraPpi>
-  @InjectRepository(CitasAsesoriaPpi)
-  private readonly CitasAsesoriaPpiRepository: Repository<CitasAsesoriaPpi>
   @InjectRepository(EntregaEquipoPpi)
   private readonly EntregaEquipoPpiRepository: Repository<EntregaEquipoPpi>
   @InjectRepository(EquipoPpiPjic)
   private readonly EquipoPpiPjicRepository: Repository<EquipoPpiPjic>
   @InjectRepository(EquipoUsuario)
   private readonly EquipoUsuarioRepository: Repository<EquipoUsuario>
-  @InjectRepository(EstadoSeguimientoCambio)
-  private readonly EstadoSeguimientoCambioRepository: Repository<EstadoSeguimientoCambio>
   @InjectRepository(HoraSemanal)
   private readonly HoraSemanalRepository: Repository<HoraSemanal>
 
@@ -112,15 +119,7 @@ export class BackupController {
       }
 
       await Promise.all([
-        this.deleteFromTable(this.EstadoSeguimientoCambioRepository),
-        this.deleteFromTable(this.AsesoriasPpiRepository),
-        this.deleteFromTable(this.UsuarioAsignaturaRepository),
-        this.deleteFromTable(this.HoraSemanalRepository),
-        this.deleteFromTable(this.EquipoPpiPjicRepository),
-        this.deleteFromTable(this.EquipoUsuarioRepository),
-        this.deleteFromTable(this.BitacoraPpiRepository),
-        this.deleteFromTable(this.EntregaEquipoPpiRepository),
-        this.deleteFromTable(this.CitasAsesoriaPpiRepository),
+        this.removeSystem(),
         this.deleteFromUsuarioTable(),
       ]);
 
@@ -133,13 +132,22 @@ export class BackupController {
     }
   }
 
-  async deleteFromTable(repository: Repository<any>): Promise<void> {
-    try {
-      await repository.clear(); // Esto eliminará todos los registros de la tabla
-    } catch (error) {
-      console.error(`Error al eliminar registros de la tabla ${repository.metadata.tableName}:`, error);
-      throw error;
-    }
+  async removeSystem() {
+    const userasign = this.UsuarioAsignaturaRepository.clear();
+    const horasem = this.HoraSemanalRepository.clear();
+    const equipoppipjic = this.EquipoPpiPjicRepository.clear();
+    const equipus = this.EquipoUsuarioRepository.clear();
+    const entregaequ = this.EntregaEquipoPpiRepository.clear();
+    const notif = this.repositoryNotificacion.clear();
+    const estadoSeg = this.repositoryEstadoSeguimientoCambio.clear();
+    const seguim = this.repositorySeguimientoPpi.clear();
+    const citas = this.repositoryCitasAsesoriaPpi.clear();
+    const equipo = this.repositoryEquipoPpi.clear();
+    const semana = this.repositorySemana.clear();
+    if (userasign && horasem && equipoppipjic && equipus && entregaequ && notif && estadoSeg && seguim && citas && equipo && semana)
+      return true
+    else
+      return false
   }
 
   async deleteFromUsuarioTable(): Promise<void> {

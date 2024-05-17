@@ -1,1 +1,5 @@
-export class CreateEstadoSeguimientoCambioDto {}
+ 
+export class CreateEstadoSeguimientoCambioDto {
+    id: number; 
+    fecha: Date;  
+}

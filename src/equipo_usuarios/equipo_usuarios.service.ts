@@ -3,12 +3,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EquipoUsuario } from './entities/equipo_usuario.entity';
+import { EquipoPpiPjic } from 'src/equipo_ppi_pjic/entities/equipo_ppi_pjic.entity';
+import { EquipoPpi } from 'src/equipo_ppi/entities/equipo_ppi.entity';
 
 @Injectable()
 export class EquipoUsuariosService {
   constructor(
     @InjectRepository(EquipoUsuario)
     private equipoUsuarioRepository: Repository<EquipoUsuario>,
+    @InjectRepository(EquipoPpi) 
+    private readonly repositoryBitacora: Repository<EquipoPpi>,
+    @InjectRepository(EquipoPpiPjic) 
+    private readonly repositoryEquipoPJIC: Repository<EquipoPpiPjic>
   ) { }
 
   async procesarGrupos(grupos: any[]) {
@@ -114,6 +120,82 @@ export class EquipoUsuariosService {
       console.error('Error al actualizar las notas:', error);
       return { success: false, message: 'Error al actualizar las notas' };
     }
+  }
+
+  async findBitacoraByEstudiante(Correo: string) {
+    const EquipoUsuario = await this.equipoUsuarioRepository
+      .createQueryBuilder("equipoUsuario")
+      .leftJoinAndSelect("equipoUsuario.usuario", "usuario")
+      .where('usuario.correo = :correo', { correo: Correo }) 
+      .getOne();
+
+    if (EquipoUsuario) {
+      const Bitacora = await this.repositoryBitacora
+        .createQueryBuilder("equipoPpi")
+        .where('equipoPpi.codigoEquipo = :cod', { cod: EquipoUsuario.codigoEquipo })
+        .getOne();
+      return Bitacora;
+    }
+    return null;
+  }
+
+  async findEstudiante() {
+    const resultados = await this.equipoUsuarioRepository
+      .createQueryBuilder('equipoUsuario')
+      .leftJoinAndSelect('equipoUsuario.usuario', 'usuario')
+      .getMany();
+    const resultadosAgrupados = {};
+    resultados.forEach((resultado) => {
+      const key = resultado.codigoEquipo;
+      if (!resultadosAgrupados[key]) {
+        resultadosAgrupados[key] = [];
+      }
+      resultadosAgrupados[key].push(resultado.usuario);
+    });
+
+    return resultadosAgrupados;
+  }
+
+
+  async findEstudianteBitacora() {
+    const resultados = await this.equipoUsuarioRepository
+      .createQueryBuilder('equipoUsuario')
+      .leftJoinAndSelect('equipoUsuario.usuario', 'usuario')
+      .getMany();
+    const resultadosAgrupados: Record<string, { usuarios: any[], bitacora: any[], moduloSol: any[] }> = {}; // Anotación de tipo explícita
+    for (const resultado of resultados) {
+      const key = resultado.codigoEquipo;
+      if (!resultadosAgrupados[key]) {
+        resultadosAgrupados[key] = { usuarios: [], bitacora: [], moduloSol: [] };
+      }
+      resultadosAgrupados[key].usuarios.push(resultado.usuario);
+    }
+    for (const [key, value] of Object.entries(resultadosAgrupados)) {
+      const bitacora = await this.repositoryBitacora
+        .createQueryBuilder('equipoPpi')
+        .where('equipoPpi.codigoEquipo = :id', { id: key })
+        .getOne();
+      const modSol = await this.repositoryEquipoPJIC
+        .createQueryBuilder('EquipoPpiPjic')
+        .leftJoinAndSelect('EquipoPpiPjic.usuariopjic', 'usuario')
+        .leftJoinAndSelect('EquipoPpiPjic.equipousuariopjic', 'EquipoUsuario')
+        .where('EquipoUsuario.codigoEquipo = :id', { id: key })
+        .getOne();
+      value.moduloSol.push(modSol.usuariopjic);
+      if (bitacora != null) {
+        value.bitacora.push(bitacora);
+      }
+    }
+    return resultadosAgrupados;
+  }
+
+  async findEstudianteBitacoraModSol(id: string) {
+    const resultados = await this.repositoryEquipoPJIC
+      .createQueryBuilder('EquipoPpiPjic') 
+      .leftJoinAndSelect('EquipoPpiPjic.equipousuariopjic', 'EquipoUsuario')
+      .where('EquipoPpiPjic.usuariopjic = :id', { id: id })
+      .getMany();
+    return resultados;
   }
 
 }

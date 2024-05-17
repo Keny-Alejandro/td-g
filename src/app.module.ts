@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 import { BannerModule } from './banner/banner.module';
 import { EstadoSeguimientoModule } from './estado_seguimiento/estado_seguimiento.module';
 import { EstadoSeguimientoCambioModule } from './estado_seguimiento_cambio/estado_seguimiento_cambio.module';
@@ -24,8 +25,12 @@ import { EquipoPpiModule } from './equipo_ppi/equipo_ppi.module';
 import { EquipoPpiPjicModule } from './equipo_ppi_pjic/equipo_ppi_pjic.module';
 import { TimezoneModule } from './timezone.module';
 import { UsuarioAsignaturaModule } from './usuario_asignatura/usuario_asignatura.module';
-import { ConfigModule } from '@nestjs/config';
 import { BackupModule } from './backup/backup.module';
+import { GoogleModule } from './api/api.module';
+import { join } from 'path';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { SemanasModule } from './semanas/semanas.module';
+import { NotificacionesModule } from './notificaciones/notificaciones.module';
 
 @Module({
   imports: [
@@ -44,6 +49,11 @@ import { BackupModule } from './backup/backup.module';
       synchronize: true,
       ssl: { rejectUnauthorized: false }
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'), // Ruta al directorio público
+      serveRoot: '/public', // Ruta base para servir los archivos
+    }),
+    GoogleModule,
     TimezoneModule,
     BannerModule,
     EstadoSeguimientoModule,
@@ -66,6 +76,8 @@ import { BackupModule } from './backup/backup.module';
     EquipoPpiPjicModule,
     UsuarioAsignaturaModule,
     BackupModule,
+    SemanasModule,
+    NotificacionesModule
   ],
   controllers: [AppController],
   providers: [AppService],

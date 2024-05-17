@@ -37,5 +37,14 @@ export class EquipoPpiPjicService {
       await this.equipoPpiPjicRepository.save(equipo);
     }
   }
+
+  async findOne(id: number) {
+    return this.equipoPpiPjicRepository
+      .createQueryBuilder('equipoPpiPjic')
+      .leftJoinAndSelect('equipoPpiPjic.equipousuariopjic', 'equipoUsuario')
+      .leftJoinAndSelect('equipoPpiPjic.usuariopjic', 'usuario')
+      .where('equipoUsuario.codigoEquipo = :id', { id: id })
+      .getOne();
+  }
   
 }

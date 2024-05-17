@@ -22,6 +22,16 @@ export class EstadoSeguimientoCambioController {
     return this.estadoSeguimientoCambioService.findOne(+id);
   }
 
+  @Get('/id/:id')
+  findById(@Param('id') id: string) {
+    return this.estadoSeguimientoCambioService.findById(+id);
+  }
+
+  @Get('/Seguimiento/:id')
+  findBySeguimiento(@Param('id') id: string) {
+    return this.estadoSeguimientoCambioService.findBySeguimiento(+id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateEstadoSeguimientoCambioDto: UpdateEstadoSeguimientoCambioDto) {
     return this.estadoSeguimientoCambioService.update(+id, updateEstadoSeguimientoCambioDto);
@@ -30,5 +40,9 @@ export class EstadoSeguimientoCambioController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.estadoSeguimientoCambioService.remove(+id);
+  }
+  @Delete('/Cita/:id')
+  removeByCita(@Param('id') id: string) {
+    return this.estadoSeguimientoCambioService.removeByCita(+id);
   }
 }

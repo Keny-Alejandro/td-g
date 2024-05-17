@@ -6,15 +6,24 @@ export class Banner {
   @PrimaryGeneratedColumn({ name: 'Banner_ID' })
   id: number;
 
-  @Column({ name: 'Banner_Name', type: 'varchar', length: 50 })
+  @Column({ name: 'Banner_Name', type: 'varchar',nullable:true })
   nombre: string;
 
   @Column({ name: 'Banner_Estado', type: 'smallint', default: 0 })
   estado: number; // 0: Inactivo, 1: Activo
 
   @Column({ name: 'Banner_FechaInicio', type: 'date' })
-  fechainicio: Date;
+  fechaInicio: Date;
 
   @Column({ name: 'Banner_FechaFin', type: 'date' })
-  fechafin: Date;
+  fechaFin: Date;
+
+  @Column({ name: 'Tipo_Banner', type: 'int' })
+  tipoBanner: number; // 1: principal, 2: secundario
+
+  @Column({ name: 'Contenido_Banner', type: 'varchar' })
+  contenidoBanner: string;
+
+  @Column({ name: 'Url_Imagen', type: 'varchar' })
+  urlImagen: string;
 }

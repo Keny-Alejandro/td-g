@@ -7,7 +7,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { EstadoSeguimiento } from 'src/estado_seguimiento/entities/estado_seguimiento.entity';
-import { AsesoriasPpi } from 'src/seguimiento_ppi/entities/seguimiento_ppi.entity';
+import { SeguimientoPpi } from 'src/seguimiento_ppi/entities/seguimiento_ppi.entity';
 
 @Entity({ name: 'Estado_Seguimiento_Cambio' })
 export class EstadoSeguimientoCambio {
@@ -21,7 +21,7 @@ export class EstadoSeguimientoCambio {
     @JoinColumn({ name: 'Estado_Seguimiento_ID' })
     estadoSeguimiento: EstadoSeguimiento;
 
-    @ManyToOne(() => AsesoriasPpi)
+    @ManyToOne(() => SeguimientoPpi)
     @JoinColumn({ name: 'Seguimiento_PPI_ID' })
-    seguimiento: AsesoriasPpi;
+    seguimiento: SeguimientoPpi;
 }

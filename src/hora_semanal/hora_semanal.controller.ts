@@ -5,11 +5,16 @@ import { UpdateHoraSemanalDto } from './dto/update-hora_semanal.dto';
 
 @Controller('hora-semanal')
 export class HoraSemanalController {
-  constructor(private readonly horaSemanalService: HoraSemanalService) {}
+  constructor(private readonly horaSemanalService: HoraSemanalService) { }
 
   @Post()
   create(@Body() createHoraSemanalDto: CreateHoraSemanalDto) {
     return this.horaSemanalService.create(createHoraSemanalDto);
+  }
+  
+  @Get('/exportar')
+  exportarCitasProfesor() {
+    return this.horaSemanalService.exportarCitasProfesor();
   }
 
   @Get()
@@ -21,6 +26,13 @@ export class HoraSemanalController {
   findOne(@Param('id') id: string) {
     return this.horaSemanalService.findOne(+id);
   }
+
+  @Get('/profesor/:id')
+  findProfesor(@Param('id') id: string) {
+    return this.horaSemanalService.findProfesor(+id);
+  }
+
+
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateHoraSemanalDto: UpdateHoraSemanalDto) {

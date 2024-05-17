@@ -46,4 +46,24 @@ export class EquipoUsuariosController {
   async guardarNotas(@Body() notas: any[]) {
     return await this.equipoUsuariosService.actualizarNotas(notas);
   }
+
+  @Get('/Estudiantes/')
+  findEstudiante() {
+    return this.equipoUsuariosService.findEstudiante();
+  }
+  
+  @Get('/EstudiantesBitacora/:Correo')
+  findBitacoraByEstudiante(@Param('Correo') Correo: string) {
+    return this.equipoUsuariosService.findBitacoraByEstudiante(Correo);
+  }
+  
+  @Get('/Bitacora/')
+  findEstudianteBitacora() {
+    return this.equipoUsuariosService.findEstudianteBitacora();
+  }
+
+  @Get('/BitacoraModSol/:id')
+  findEstudianteBitacoraModSol(@Param('id') id: string) {
+    return this.equipoUsuariosService.findEstudianteBitacoraModSol(id);
+  }
 }
