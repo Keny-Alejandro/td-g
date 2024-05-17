@@ -8,12 +8,33 @@ import * as archiver from 'archiver';
 import * as AWS from 'aws-sdk';
 import { Response } from 'express';
 import { Readable } from 'stream';
+import { Repository } from 'typeorm';
+import { Usuario } from 'src/usuario/entities/usuario.entity';
+import { UsuarioAsignatura } from 'src/usuario_asignatura/entities/usuario_asignatura.entity';
+import { AsesoriasPpi } from 'src/seguimiento_ppi/entities/seguimiento_ppi.entity';
+import { BitacoraPpi } from 'src/equipo_ppi/entities/equipo_ppi.entity';
+import { CitasAsesoriaPpi } from 'src/citas_asesoria_ppi/entities/citas_asesoria_ppi.entity';
+import { EntregaEquipoPpi } from 'src/entrega_equipo_ppi/entities/entrega_equipo_ppi.entity';
+import { EquipoPpiPjic } from '../equipo_ppi_pjic/entities/equipo_ppi_pjic.entity';
+import { EquipoUsuario } from 'src/equipo_usuarios/entities/equipo_usuario.entity';
+import { EstadoSeguimientoCambio } from 'src/estado_seguimiento_cambio/entities/estado_seguimiento_cambio.entity';
+import { HoraSemanal } from 'src/hora_semanal/entities/hora_semanal.entity';
 
 @Controller('backup')
 export class BackupController {
 
   private s3: AWS.S3;
-  
+  private readonly UsuarioRepository: Repository<Usuario>
+  private readonly UsuarioAsignaturaRepository: Repository<UsuarioAsignatura>
+  private readonly AsesoriasPpiRepository: Repository<AsesoriasPpi>
+  private readonly BitacoraPpiRepository: Repository<BitacoraPpi>
+  private readonly CitasAsesoriaPpiRepository: Repository<CitasAsesoriaPpi>
+  private readonly EntregaEquipoPpiRepository: Repository<EntregaEquipoPpi>
+  private readonly EquipoPpiPjicRepository: Repository<EquipoPpiPjic>
+  private readonly EquipoUsuarioRepository: Repository<EquipoUsuario>
+  private readonly EstadoSeguimientoCambioRepository: Repository<EstadoSeguimientoCambio>
+  private readonly HoraSemanalRepository: Repository<HoraSemanal>
+
   constructor() {
     this.s3 = new AWS.S3({
       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -79,6 +100,19 @@ export class BackupController {
           .promise();
       }
 
+      await Promise.all([
+        this.deleteFromTable(this.EstadoSeguimientoCambioRepository),
+        this.deleteFromTable(this.AsesoriasPpiRepository),
+        this.deleteFromTable(this.UsuarioAsignaturaRepository),
+        this.deleteFromTable(this.HoraSemanalRepository),
+        this.deleteFromTable(this.EquipoPpiPjicRepository),
+        this.deleteFromTable(this.EquipoUsuarioRepository),
+        this.deleteFromTable(this.BitacoraPpiRepository),
+        this.deleteFromTable(this.EntregaEquipoPpiRepository),
+        this.deleteFromTable(this.CitasAsesoriaPpiRepository),
+        this.deleteFromTable(this.UsuarioRepository),
+      ]);
+
       archive.finalize();
     } catch (error) {
       console.error('Error:', error);
@@ -88,4 +122,12 @@ export class BackupController {
     }
   }
 
+  async deleteFromTable(repository: Repository<any>): Promise<void> {
+    try {
+      await repository.clear(); // Esto eliminará todos los registros de la tabla
+    } catch (error) {
+      console.error(`Error al eliminar registros de la tabla ${repository.metadata.tableName}:`, error);
+      throw error;
+    }
+  }
 }
