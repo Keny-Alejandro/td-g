@@ -22,23 +22,22 @@ import { SeguimientoPpi } from 'src/seguimiento_ppi/entities/seguimiento_ppi.ent
 import { CitasAsesoriaPpi } from 'src/citas_asesoria_ppi/entities/citas_asesoria_ppi.entity';
 import { EquipoPpi } from 'src/equipo_ppi/entities/equipo_ppi.entity';
 import { Semana } from 'src/semanas/entities/semana.entity';
-import { ConfigModule } from '@nestjs/config';
 
 @Controller('backup')
 export class BackupController {
 
   private s3: AWS.S3;
-  @InjectRepository(Notificacione) 
+  @InjectRepository(Notificacione)
   private readonly repositoryNotificacion: Repository<Notificacione>
-  @InjectRepository(EstadoSeguimientoCambio) 
+  @InjectRepository(EstadoSeguimientoCambio)
   private readonly repositoryEstadoSeguimientoCambio: Repository<EstadoSeguimientoCambio>
-  @InjectRepository(SeguimientoPpi) 
+  @InjectRepository(SeguimientoPpi)
   private readonly repositorySeguimientoPpi: Repository<SeguimientoPpi>
-  @InjectRepository(CitasAsesoriaPpi) 
+  @InjectRepository(CitasAsesoriaPpi)
   private readonly repositoryCitasAsesoriaPpi: Repository<CitasAsesoriaPpi>
-  @InjectRepository(EquipoPpi) 
+  @InjectRepository(EquipoPpi)
   private readonly repositoryEquipoPpi: Repository<EquipoPpi>
-  @InjectRepository(Semana) 
+  @InjectRepository(Semana)
   private readonly repositorySemana: Repository<Semana>
   @InjectRepository(Usuario)
   private readonly UsuarioRepository: Repository<Usuario>
@@ -133,17 +132,17 @@ export class BackupController {
   }
 
   async removeSystem() {
-    const userasign = this.UsuarioAsignaturaRepository.clear();
-    const horasem = this.HoraSemanalRepository.clear();
-    const equipoppipjic = this.EquipoPpiPjicRepository.clear();
-    const equipus = this.EquipoUsuarioRepository.clear();
-    const entregaequ = this.EntregaEquipoPpiRepository.clear();
-    const notif = this.repositoryNotificacion.clear();
-    const estadoSeg = this.repositoryEstadoSeguimientoCambio.clear();
+    const userasign = this.UsuarioAsignaturaRepository.clear(); // OK
+    const horasem = this.HoraSemanalRepository.clear(); // OK
+    const equipoppipjic = this.EquipoPpiPjicRepository.clear(); // OK
+    const equipus = this.EquipoUsuarioRepository.clear(); // OK
+    const equipo = this.repositoryEquipoPpi.clear();
+    const entregaequ = this.EntregaEquipoPpiRepository.clear(); // OK
+    const notif = this.repositoryNotificacion.clear(); // OK
+    const estadoSeg = this.repositoryEstadoSeguimientoCambio.clear(); // OK
     const seguim = this.repositorySeguimientoPpi.clear();
     const citas = this.repositoryCitasAsesoriaPpi.clear();
-    const equipo = this.repositoryEquipoPpi.clear();
-    const semana = this.repositorySemana.clear();
+    const semana = this.repositorySemana.clear(); // OK
     if (userasign && horasem && equipoppipjic && equipus && entregaequ && notif && estadoSeg && seguim && citas && equipo && semana)
       return true
     else
