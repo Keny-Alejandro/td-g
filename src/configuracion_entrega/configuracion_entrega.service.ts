@@ -83,4 +83,21 @@ export class ConfiguracionEntregaService {
             .orderBy('ce.Tipo_Entrega_ID')
             .getRawMany();
     }
+
+    async getEntregasAsesor() {
+        return this.configuracionEntregaRepository
+            .createQueryBuilder('ce')
+            .select([
+                'ce.Configuracion_Entrega_ID',
+                'ce.Tipo_Entrega_ID',
+                'ce.Plazo_Calificacion',
+                'ce.Plazo_Entrega',
+                'ce.Porcentaje_Entrega',
+                'te.Tipo_Entrega_Descripcion',
+            ])
+            .innerJoin('Tipo_Entrega', 'te', 'te.Tipo_Entrega_ID = ce.Tipo_Entrega_ID')
+            .where('ce.Rol_ID = 2 OR u.Rol_ID = 5')
+            .orderBy('ce.Tipo_Entrega_ID')
+            .getRawMany();
+    }
 }

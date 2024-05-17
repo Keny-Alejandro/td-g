@@ -52,4 +52,9 @@ export class ConfiguracionEntregaController {
     return this.configuracionEntregaService.getEntregasCoordinador();
   }
 
+  @Get('GetPPIEntregaAsesor')
+  async getEntregasAsesor(){
+    return this.configuracionEntregaService.getEntregasAsesor();
+  }
+
 }
