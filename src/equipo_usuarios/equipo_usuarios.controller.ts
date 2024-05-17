@@ -41,4 +41,9 @@ export class EquipoUsuariosController {
   findAll(): Promise<EquipoUsuario[]> {
     return this.equipoUsuariosService.findAll();
   }
+
+  @Post('guardar-notas')
+  async guardarNotas(@Body() notas: any[]) {
+    return await this.equipoUsuariosService.actualizarNotas(notas);
+  }
 }

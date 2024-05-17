@@ -97,4 +97,23 @@ export class EquipoUsuariosService {
     const result = await this.equipoUsuarioRepository.query(query, [id]);
     return result;
   }
+
+  async actualizarNotas(notas: any[]): Promise<any> {
+    try {
+      await Promise.all(
+        notas.map(async nota => {
+          const { codigoEquipo, usuarioId, notadefinitivaind } = nota;
+          await this.equipoUsuarioRepository.update(
+            { codigoEquipo, usuarioId },
+            { notadefinitivaind },
+          );
+        }),
+      );
+      return { success: true, message: 'Notas actualizadas correctamente' };
+    } catch (error) {
+      console.error('Error al actualizar las notas:', error);
+      return { success: false, message: 'Error al actualizar las notas' };
+    }
+  }  
+
 }
