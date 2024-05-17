@@ -24,6 +24,7 @@ import { EquipoPpiModule } from './equipo_ppi/equipo_ppi.module';
 import { EquipoPpiPjicModule } from './equipo_ppi_pjic/equipo_ppi_pjic.module';
 import { TimezoneModule } from './timezone.module';
 import { UsuarioAsignaturaModule } from './usuario_asignatura/usuario_asignatura.module';
+import { BackupModule } from './backup/backup.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { UsuarioAsignaturaModule } from './usuario_asignatura/usuario_asignatura
     EquipoPpiModule,
     EquipoPpiPjicModule,
     UsuarioAsignaturaModule,
+    BackupModule,
   ],
   controllers: [AppController],
   providers: [AppService],
