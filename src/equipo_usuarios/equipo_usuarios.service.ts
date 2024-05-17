@@ -62,7 +62,8 @@ export class EquipoUsuariosService {
           ua."Grupo_Codigo",
           a."Asignatura_Nombre",
           a."Asignatura_Semestre",
-          eu."Nota_Asesoria_Definitiva_Individual"
+          eu."Nota_Asesoria_Definitiva_Individual",
+          u."Usuario_ID"
       FROM
           "Equipo_Usuario" eu
       JOIN
