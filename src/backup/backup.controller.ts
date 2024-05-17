@@ -110,7 +110,7 @@ export class BackupController {
         this.deleteFromTable(this.BitacoraPpiRepository),
         this.deleteFromTable(this.EntregaEquipoPpiRepository),
         this.deleteFromTable(this.CitasAsesoriaPpiRepository),
-        this.deleteFromTable(this.UsuarioRepository),
+        this.deleteFromUsuarioTable(),
       ]);
 
       archive.finalize();
@@ -127,6 +127,20 @@ export class BackupController {
       await repository.clear(); // Esto eliminará todos los registros de la tabla
     } catch (error) {
       console.error(`Error al eliminar registros de la tabla ${repository.metadata.tableName}:`, error);
+      throw error;
+    }
+  }
+
+  async deleteFromUsuarioTable(): Promise<void> {
+    try {
+      await this.UsuarioRepository
+        .createQueryBuilder()
+        .delete()
+        .from(Usuario)
+        .where("Rol_ID != :roleId", { roleId: 4 })
+        .execute();
+    } catch (error) {
+      console.error(`Error al eliminar registros de la tabla ${this.UsuarioRepository.metadata.tableName}:`, error);
       throw error;
     }
   }
