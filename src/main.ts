@@ -9,6 +9,7 @@ async function bootstrap() {
   dotenv.config();
   const app = await NestFactory.create(AppModule);
 
+  console.log(process.env.POSTGRES_USER);
   const config = new DocumentBuilder()
     .setTitle('API para la Gestión Documental y Seguimiento Académico de Proyectos Pedagógicos Integradores (PPI)')
     .setDescription('La API de Gestión Documental y Seguimiento Académico de Proyectos Pedagógicos Integradores (PPI) del Politécnico Colombiano JIC proporciona un conjunto de endpoints diseñados para facilitar la administración y seguimiento de los PPIs en el contexto de la Técnica y Tecnología en Sistematización de Datos. Esta API permite a los usuarios acceder, crear, actualizar y eliminar información relacionada con los documentos, estudiantes, docentes y actividades académicas asociadas a los PPIs.')

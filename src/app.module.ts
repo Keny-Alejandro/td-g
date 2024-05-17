@@ -24,22 +24,21 @@ import { EquipoPpiModule } from './equipo_ppi/equipo_ppi.module';
 import { EquipoPpiPjicModule } from './equipo_ppi_pjic/equipo_ppi_pjic.module';
 import { TimezoneModule } from './timezone.module';
 import { UsuarioAsignaturaModule } from './usuario_asignatura/usuario_asignatura.module';
-import { BackupModule } from './backup/backup.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `.${process.env.NODE_ENV.trim()}.env`,
+      envFilePath: '.env',
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'ep-proud-recipe-a42qmy7v-pooler.us-east-1.aws.neon.tech',
+      host: process.env.POSTGRES_HOST,
       port: 5432,
-      username: 'default',
-      password: '4LMDXreCpE8l',
-      database: 'verceldb',
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DATABASE,
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
       ssl: { rejectUnauthorized: false }
@@ -65,7 +64,6 @@ import { ConfigModule } from '@nestjs/config';
     EquipoPpiModule,
     EquipoPpiPjicModule,
     UsuarioAsignaturaModule,
-    BackupModule,
   ],
   controllers: [AppController],
   providers: [AppService],
