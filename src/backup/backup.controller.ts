@@ -19,20 +19,31 @@ import { EquipoPpiPjic } from '../equipo_ppi_pjic/entities/equipo_ppi_pjic.entit
 import { EquipoUsuario } from 'src/equipo_usuarios/entities/equipo_usuario.entity';
 import { EstadoSeguimientoCambio } from 'src/estado_seguimiento_cambio/entities/estado_seguimiento_cambio.entity';
 import { HoraSemanal } from 'src/hora_semanal/entities/hora_semanal.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Controller('backup')
 export class BackupController {
 
   private s3: AWS.S3;
+  @InjectRepository(Usuario)
   private readonly UsuarioRepository: Repository<Usuario>
+  @InjectRepository(UsuarioAsignatura)
   private readonly UsuarioAsignaturaRepository: Repository<UsuarioAsignatura>
+  @InjectRepository(AsesoriasPpi)
   private readonly AsesoriasPpiRepository: Repository<AsesoriasPpi>
+  @InjectRepository(BitacoraPpi)
   private readonly BitacoraPpiRepository: Repository<BitacoraPpi>
+  @InjectRepository(CitasAsesoriaPpi)
   private readonly CitasAsesoriaPpiRepository: Repository<CitasAsesoriaPpi>
+  @InjectRepository(EntregaEquipoPpi)
   private readonly EntregaEquipoPpiRepository: Repository<EntregaEquipoPpi>
+  @InjectRepository(EquipoPpiPjic)
   private readonly EquipoPpiPjicRepository: Repository<EquipoPpiPjic>
+  @InjectRepository(EquipoUsuario)
   private readonly EquipoUsuarioRepository: Repository<EquipoUsuario>
+  @InjectRepository(EstadoSeguimientoCambio)
   private readonly EstadoSeguimientoCambioRepository: Repository<EstadoSeguimientoCambio>
+  @InjectRepository(HoraSemanal)
   private readonly HoraSemanalRepository: Repository<HoraSemanal>
 
   constructor() {
