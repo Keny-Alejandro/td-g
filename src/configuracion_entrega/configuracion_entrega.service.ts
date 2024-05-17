@@ -96,7 +96,7 @@ export class ConfiguracionEntregaService {
                 'te.Tipo_Entrega_Descripcion',
             ])
             .innerJoin('Tipo_Entrega', 'te', 'te.Tipo_Entrega_ID = ce.Tipo_Entrega_ID')
-            .where('ce.Rol_ID = 2 OR u.Rol_ID = 5')
+            .where('ce.Rol_ID = 3 OR ce.Rol_ID = 5')
             .orderBy('ce.Tipo_Entrega_ID')
             .getRawMany();
     }
