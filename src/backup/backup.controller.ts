@@ -11,7 +11,9 @@ import { Readable } from 'stream';
 
 @Controller('backup')
 export class BackupController {
+
   private s3: AWS.S3;
+  
   constructor() {
     this.s3 = new AWS.S3({
       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
