@@ -29,9 +29,9 @@ export class EntregaEquipoPpiController {
     return this.entregaService.postNotas(data);
   }
 
-  @Delete('deleteEntrega/:entregaId')
-  async deleteEntrega(@Param('entregaId') entregaId: number) {
-    return this.entregaService.deleteEntrega(entregaId);
+  @Delete('deleteEntrega/:entregaEquipoPpiId')
+  async deleteEntrega(@Param('entregaEquipoPpiId') id: number) {
+    return this.entregaService.deleteEntrega(id);
   }
 
 }

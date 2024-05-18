@@ -88,9 +88,9 @@ export class EntregaEquipoPpiService {
       .getRawMany();
   }
 
-  async deleteEntrega(entregaId: number) {
+  async deleteEntrega(id: number) {
     const entrega = await this.entregaRepository.findOneOrFail({
-      where: { id: entregaId },
+      where: { id: id },
     });
 
     // Elimina la entrega de la base de datos
