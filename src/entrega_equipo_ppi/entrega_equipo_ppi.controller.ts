@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Delete } from '@nestjs/common';
 import { EntregaEquipoPpiService } from './entrega_equipo_ppi.service';
 
 @Controller('entrega-equipo-ppi')
@@ -27,6 +27,11 @@ export class EntregaEquipoPpiController {
   @Post('updateScores')
   async postNotas(@Body() data: { Entrega_Equipo_PPI_ID: number, Calificacion: number }[]) {
     return this.entregaService.postNotas(data);
+  }
+
+  @Delete('deleteEntrega/:entregaId')
+  async deleteEntrega(@Param('entregaId') entregaId: number) {
+    return this.entregaService.deleteEntrega(entregaId);
   }
 
 }
