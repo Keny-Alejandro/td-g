@@ -43,6 +43,8 @@ export class UsuarioAsignaturaService {
         try {
             const query = `
         SELECT
+            u."Usuario_Nombre",
+            u."Usuario_Documento",
             ua."Grupo_Codigo",
             a."Asignatura_Semestre",
             a."Asignatura_Nombre",
@@ -55,8 +57,10 @@ export class UsuarioAsignaturaService {
             a."Asignatura_ID" = ua."Asignatura_Codigo"
         INNER JOIN "Programa" p ON
             p."Programa_ID" = a."Programa_ID"
+        INNER JOIN "Usuario" u ON
+            u."Usuario_ID" = ua."Usuario_ID"
         WHERE
-            ua."Rol_ID" = 1
+            u."Rol_ID" = 1
         ORDER BY a."Asignatura_ID" ASC, ua."Grupo_Codigo" ASC
     `;
             const results = await this.usuarioAsignaturaRepository.query(query);
