@@ -268,9 +268,9 @@ order by "Usuario_Asignatura"."Grupo_Codigo" asc, "Usuario"."Usuario_Nombre" asc
       .getMany();
   }
 
-  async findAll() {
-    return this.usuarioRepository.find();
-  }
+  async findAll(): Promise<Usuario[]> {
+    return this.usuarioRepository.find({ relations: ['rol', 'programa'] });
+  }  
 
   async Login(Correo: string) {
     return this.usuarioRepository.createQueryBuilder('usuario')

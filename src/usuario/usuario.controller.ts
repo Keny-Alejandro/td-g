@@ -21,18 +21,18 @@ import { ApiTags } from '@nestjs/swagger';
 @Controller('usuario')
 export class UsuarioController {
   private readonly logger = new Logger(UsuarioController.name);
-  constructor(private readonly usuarioService: UsuarioService) {}
+  constructor(private readonly usuarioService: UsuarioService) { }
 
   @Patch('Auth')
   async findEmail(@Body() payload: EmailDTO) {
     const usuarios = await this.usuarioService.findEmail(payload);
-    
+
     if (usuarios.length === 0) {
       throw new NotFoundException(`El correo ${payload.email} no se encuentra registrado`);
     }
-  
+
     return usuarios;
-  }  
+  }
 
   @Post('LoadStudents')
   async cargaDatos(@Body() payload: CargaDatosDTO) {
@@ -55,20 +55,29 @@ export class UsuarioController {
   }
 
   @Get()
-  findAll() {
-    return this.usuarioService.findAll();
+  async findAll(): Promise<any[]> {
+    const usuarios = await this.usuarioService.findAll();
+    return usuarios.map(usuario => ({
+      id: usuario.id,
+      nombre: usuario.nombre,
+      documento: usuario.documento,
+      correo: usuario.correo,
+      semestre: usuario.semestre,
+      rol: usuario.rol ? usuario.rol.id : null,
+      programa: usuario.programa ? usuario.programa.id : null,
+    }));
   }
-   
+
   @Get('/asesor/')
   findAsesor() {
     return this.usuarioService.findAsesor();
   }
 
-  @Get('/correos/:correo') 
+  @Get('/correos/:correo')
   findCorreo(@Param('correo') correo: string) {
     return this.usuarioService.findCorreo(correo);
   }
- 
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usuarioService.findOne(+id);
