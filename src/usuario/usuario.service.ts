@@ -55,6 +55,47 @@ export class UsuarioService {
     try {
       const resultados = await Promise.all(
         payloads.map(async payload => {
+
+          const profesorExistente = await this.usuarioRepository.findOne({
+            where: { correo: payload.correoProfesor },
+          });
+
+          let profesorId;
+          if (!profesorExistente) {
+            const asignatura = await this.asignaturaRepository.findOne({
+              where: { codigoAsignatura: payload.codigo },
+              relations: ['programa'], // Incluir la relación con programa
+            });
+
+            if (!asignatura) {
+              throw new NotFoundException('ASIGNATURA NO ENCONTRADA');
+            }
+
+            const programa = asignatura.programa;
+            if (!programa) {
+              throw new NotFoundException('PROGRAMA NO ENCONTRADO');
+            }
+
+            const rolProfesor = await this.rolRepository.findOne({
+              where: { id: 2 },  // Suponiendo que el ID del rol de profesor es 2
+            });
+            if (!rolProfesor) {
+              throw new NotFoundException('ROL DE PROFESOR NO ENCONTRADO');
+            }
+
+            const nuevoProfesor = new Usuario();
+            nuevoProfesor.rol = rolProfesor;
+            nuevoProfesor.nombre = payload.nombreProfesor;
+            nuevoProfesor.documento = payload.documentoProfesor;
+            nuevoProfesor.correo = payload.correoProfesor;
+            nuevoProfesor.programa = programa;
+
+            const profesorGuardado = await this.usuarioRepository.save(nuevoProfesor);
+            profesorId = profesorGuardado.id;
+          } else {
+            profesorId = profesorExistente.id;
+          }
+
           const programaId = await this.obtenerProgramaId(payload.codigo);
           if (!programaId) {
             throw new NotFoundException('ASIGNATURA NO ENCONTRADA');
@@ -155,7 +196,7 @@ export class UsuarioService {
     }
   }
 
-  async actualizarProfesor(codigoAsignatura: string, grupoCodigo: number, documentoProfesor: number): Promise<void> {
+  async actualizarProfesor(codigoAsignatura: string, grupoCodigo: number, documentoProfesor: string): Promise<void> {
     const asignatura = await this.asignaturaRepository.findOne({
       where: { codigoAsignatura: codigoAsignatura },
     });
@@ -270,7 +311,7 @@ order by "Usuario_Asignatura"."Grupo_Codigo" asc, "Usuario"."Usuario_Nombre" asc
 
   async findAll(): Promise<Usuario[]> {
     return this.usuarioRepository.find({ relations: ['rol', 'programa'] });
-  }  
+  }
 
   async Login(Correo: string) {
     return this.usuarioRepository.createQueryBuilder('usuario')
@@ -308,13 +349,13 @@ order by "Usuario_Asignatura"."Grupo_Codigo" asc, "Usuario"."Usuario_Nombre" asc
         if (!programa) {
           throw new NotFoundException(`Programa con ID ${payload.Programa_ID} no encontrado`);
         }
-        
+
         usuario.id = payload.Usuario_ID;
         usuario.rol = rol;
         usuario.nombre = payload.Usuario_Nombre;
         usuario.documento = payload.Usuario_Documento;
         usuario.correo = payload.Usuario_Correo;
-        usuario.programa = programa; 
+        usuario.programa = programa;
         usuario.semestre = payload.Usuario_Semestre;
 
         await this.usuarioRepository.save(usuario);

@@ -9,9 +9,15 @@ export class CargaDatosDTO {
   @IsNumber()
   grupoAsignatura: number;
 
-  @IsNumber()
-  documentoProfesor: number;
+  @IsString()
+  documentoProfesor: string;
 
   @IsArray()
   datos: any[]; // Aquí puedes ajustar el tipo según la estructura de tus datos
+
+  @IsString()
+  correoProfesor: string;
+
+  @IsString()
+  nombreProfesor: string;
 }
