@@ -250,7 +250,10 @@ order by "Usuario_Asignatura"."Grupo_Codigo" asc, "Usuario"."Usuario_Nombre" asc
       .createQueryBuilder('usuario')
       .select([
         'usuario.Usuario_ID',
-        'usuario.Usuario_Nombre'
+        'usuario.Usuario_Nombre',
+        'usuario.Rol_ID',
+        'usuario.Usuario_Documento',
+        'usuario.Usuario_Correo'
       ])
       .where('usuario.Rol_ID = :rolId1 OR usuario.Rol_ID = :rolId2', { rolId1: 3, rolId2: 5 })
       .orderBy('usuario.Usuario_Nombre', 'ASC')
@@ -261,7 +264,7 @@ order by "Usuario_Asignatura"."Grupo_Codigo" asc, "Usuario"."Usuario_Nombre" asc
     return this.usuarioRepository.createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.rol', 'rol')
       .leftJoinAndSelect('usuario.hora', 'HoraSemanal')
-      .where('rol.id = 3')
+      .where('rol.id = 3' || 'rol.id = 5')
       .getMany();
   }
 
@@ -290,13 +293,6 @@ order by "Usuario_Asignatura"."Grupo_Codigo" asc, "Usuario"."Usuario_Nombre" asc
       .leftJoinAndSelect('usuario.usuario', 'EquipoUsuario')
       .where('usuario.correo = :correo', { correo: correo })
       .getOne();
-  }
-
-  async getUsuariosRol(): Promise<any[]> {
-    return this.usuarioRepository
-      .createQueryBuilder('usuario')
-      .select(['usuario.Usuario_ID', 'usuario.Rol_ID', 'usuario.Usuario_Documento'])
-      .getRawMany();
   }
 
   async updateUsers(payloads: UpdateUsuarioDTO[]): Promise<void> {

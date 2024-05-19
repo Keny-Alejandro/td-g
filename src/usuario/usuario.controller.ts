@@ -74,11 +74,6 @@ export class UsuarioController {
     return this.usuarioService.findOne(+id);
   }
 
-  @Get('getUsuariosRol')
-  async getUsuariosRol() {
-    return this.usuarioService.getUsuariosRol();
-  }
-
   @Put('updateUsers')
   async updateUsers(@Body() payload: UpdateUsuarioDTO[]) {
     await this.usuarioService.updateUsers(payload);
