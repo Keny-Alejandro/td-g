@@ -1,1 +1,2 @@
-export class CreateRolDto {}
+/* eslint-disable prettier/prettier */
+export class CreateRolDto { }

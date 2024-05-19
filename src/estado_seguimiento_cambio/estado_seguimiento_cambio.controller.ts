@@ -1,15 +1,32 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { EstadoSeguimientoCambioService } from './estado_seguimiento_cambio.service';
 import { CreateEstadoSeguimientoCambioDto } from './dto/create-estado_seguimiento_cambio.dto';
 import { UpdateEstadoSeguimientoCambioDto } from './dto/update-estado_seguimiento_cambio.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('estado-seguimiento-cambio')
 @Controller('estado-seguimiento-cambio')
 export class EstadoSeguimientoCambioController {
-  constructor(private readonly estadoSeguimientoCambioService: EstadoSeguimientoCambioService) {}
+  constructor(
+    private readonly estadoSeguimientoCambioService: EstadoSeguimientoCambioService,
+  ) {}
 
   @Post()
-  create(@Body() createEstadoSeguimientoCambioDto: CreateEstadoSeguimientoCambioDto) {
-    return this.estadoSeguimientoCambioService.create(createEstadoSeguimientoCambioDto);
+  create(
+    @Body() createEstadoSeguimientoCambioDto: CreateEstadoSeguimientoCambioDto,
+  ) {
+    return this.estadoSeguimientoCambioService.create(
+      createEstadoSeguimientoCambioDto,
+    );
   }
 
   @Get()
@@ -33,8 +50,14 @@ export class EstadoSeguimientoCambioController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEstadoSeguimientoCambioDto: UpdateEstadoSeguimientoCambioDto) {
-    return this.estadoSeguimientoCambioService.update(+id, updateEstadoSeguimientoCambioDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateEstadoSeguimientoCambioDto: UpdateEstadoSeguimientoCambioDto,
+  ) {
+    return this.estadoSeguimientoCambioService.update(
+      +id,
+      updateEstadoSeguimientoCambioDto,
+    );
   }
 
   @Delete(':id')

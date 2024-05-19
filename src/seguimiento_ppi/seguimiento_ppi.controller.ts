@@ -1,11 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { SeguimientoPpiService } from './seguimiento_ppi.service';
 import { CreateSeguimientoPpiDto } from './dto/create-seguimiento_ppi.dto';
 import { UpdateSeguimientoPpiDto } from './dto/update-seguimiento_ppi.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('seguimiento-ppi')
 @Controller('seguimiento-ppi')
 export class SeguimientoPpiController {
-  constructor(private readonly seguimientoPpiService: SeguimientoPpiService) {}
+  constructor(private readonly seguimientoPpiService: SeguimientoPpiService) { }
 
   @Post()
   create(@Body() createSeguimientoPpiDto: CreateSeguimientoPpiDto) {
@@ -16,7 +27,6 @@ export class SeguimientoPpiController {
   findAll() {
     return this.seguimientoPpiService.findAll();
   }
-
 
   @Get(':id')
   findByEquipo(@Param('id') id: string) {
@@ -39,18 +49,33 @@ export class SeguimientoPpiController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSeguimientoPpiDto: UpdateSeguimientoPpiDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateSeguimientoPpiDto: UpdateSeguimientoPpiDto,
+  ) {
     return this.seguimientoPpiService.update(+id, updateSeguimientoPpiDto);
   }
 
- @Patch('/CancelacionCita/:id')
- updateCancelacionCita(@Param('id') id: string, @Body() updateSeguimientoPpiDto: UpdateSeguimientoPpiDto) {
-    return this.seguimientoPpiService.updateCancelacionCita(+id, updateSeguimientoPpiDto);
+  @Patch('/CancelacionCita/:id')
+  updateCancelacionCita(
+    @Param('id') id: string,
+    @Body() updateSeguimientoPpiDto: UpdateSeguimientoPpiDto,
+  ) {
+    return this.seguimientoPpiService.updateCancelacionCita(
+      +id,
+      updateSeguimientoPpiDto,
+    );
   }
-  
+
   @Patch('/Asistencia/:id')
-  updateByAsistencia(@Param('id') id: string, @Body() updateSeguimientoPpiDto: UpdateSeguimientoPpiDto) {
-    return this.seguimientoPpiService.updateByAsistencia(+id, updateSeguimientoPpiDto);
+  updateByAsistencia(
+    @Param('id') id: string,
+    @Body() updateSeguimientoPpiDto: UpdateSeguimientoPpiDto,
+  ) {
+    return this.seguimientoPpiService.updateByAsistencia(
+      +id,
+      updateSeguimientoPpiDto,
+    );
   }
   @Delete(':id')
   remove(@Param('id') id: string) {

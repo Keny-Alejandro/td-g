@@ -1,11 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ObservacionCitaService } from './observacion_cita.service';
 import { CreateObservacionCitaDto } from './dto/create-observacion_cita.dto';
 import { UpdateObservacionCitaDto } from './dto/update-observacion_cita.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('observacion-cita')
 @Controller('observacion-cita')
 export class ObservacionCitaController {
-  constructor(private readonly observacionCitaService: ObservacionCitaService) {}
+  constructor(
+    private readonly observacionCitaService: ObservacionCitaService,
+  ) { }
 
   @Post()
   create(@Body() createObservacionCitaDto: CreateObservacionCitaDto) {
@@ -23,7 +36,10 @@ export class ObservacionCitaController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateObservacionCitaDto: UpdateObservacionCitaDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateObservacionCitaDto: UpdateObservacionCitaDto,
+  ) {
     return this.observacionCitaService.update(+id, updateObservacionCitaDto);
   }
 

@@ -1,11 +1,13 @@
 /* eslint-disable prettier/prettier */
 import { Controller, Post, Body, Get, Param, Delete } from '@nestjs/common';
 import { EntregaEquipoPpiService } from './entrega_equipo_ppi.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('entrega-equipo-ppi')
 @Controller('entrega-equipo-ppi')
 export class EntregaEquipoPpiController {
   constructor(private readonly entregaService: EntregaEquipoPpiService) { }
-  
+
   @Post('UploadPPIEntregaFile')
   async uploadFile(
     @Body() data: { ubicacion: string; bitacoraPpiId: number; configuracionEntregaId: number },

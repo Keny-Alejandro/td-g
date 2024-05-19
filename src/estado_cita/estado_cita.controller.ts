@@ -1,8 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { EstadoCitaService } from './estado_cita.service';
 import { CreateEstadoCitaDto } from './dto/create-estado_cita.dto';
 import { UpdateEstadoCitaDto } from './dto/update-estado_cita.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('estado-cita')
 @Controller('estado-cita')
 export class EstadoCitaController {
   constructor(private readonly estadoCitaService: EstadoCitaService) {}
@@ -23,7 +34,10 @@ export class EstadoCitaController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEstadoCitaDto: UpdateEstadoCitaDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateEstadoCitaDto: UpdateEstadoCitaDto,
+  ) {
     return this.estadoCitaService.update(+id, updateEstadoCitaDto);
   }
 

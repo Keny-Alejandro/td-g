@@ -1,11 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ProgramaService } from './programa.service';
 import { CreateProgramaDto } from './dto/create-programa.dto';
 import { UpdateProgramaDto } from './dto/update-programa.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('programa')
 @Controller('programa')
 export class ProgramaController {
-  constructor(private readonly programaService: ProgramaService) {}
+  constructor(private readonly programaService: ProgramaService) { }
 
   @Post()
   create(@Body() createProgramaDto: CreateProgramaDto) {
@@ -23,7 +34,10 @@ export class ProgramaController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProgramaDto: UpdateProgramaDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateProgramaDto: UpdateProgramaDto,
+  ) {
     return this.programaService.update(+id, updateProgramaDto);
   }
 

@@ -1,8 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { HoraSemanalService } from './hora_semanal.service';
 import { CreateHoraSemanalDto } from './dto/create-hora_semanal.dto';
 import { UpdateHoraSemanalDto } from './dto/update-hora_semanal.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('hora-semanal')
 @Controller('hora-semanal')
 export class HoraSemanalController {
   constructor(private readonly horaSemanalService: HoraSemanalService) { }
@@ -11,7 +22,7 @@ export class HoraSemanalController {
   create(@Body() createHoraSemanalDto: CreateHoraSemanalDto) {
     return this.horaSemanalService.create(createHoraSemanalDto);
   }
-  
+
   @Get('/exportar')
   exportarCitasProfesor() {
     return this.horaSemanalService.exportarCitasProfesor();
@@ -32,10 +43,11 @@ export class HoraSemanalController {
     return this.horaSemanalService.findProfesor(+id);
   }
 
-
-
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateHoraSemanalDto: UpdateHoraSemanalDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateHoraSemanalDto: UpdateHoraSemanalDto,
+  ) {
     return this.horaSemanalService.update(+id, updateHoraSemanalDto);
   }
 

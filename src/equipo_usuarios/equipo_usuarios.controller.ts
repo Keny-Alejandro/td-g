@@ -2,7 +2,9 @@
 import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { EquipoUsuariosService } from './equipo_usuarios.service';
 import { EquipoUsuario } from './entities/equipo_usuario.entity';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('equipo-usuarios')
 @Controller('equipo-usuarios')
 export class EquipoUsuariosController {
   constructor(private readonly equipoUsuariosService: EquipoUsuariosService) { }

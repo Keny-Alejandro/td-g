@@ -1,8 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { NotificacionesService } from './notificaciones.service';
 import { CreateNotificacioneDto } from './dto/create-notificacione.dto';
 import { UpdateNotificacioneDto } from './dto/update-notificacione.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('notificaciones')
 @Controller('notificaciones')
 export class NotificacionesController {
   constructor(private readonly notificacionesService: NotificacionesService) { }
@@ -20,15 +31,16 @@ export class NotificacionesController {
     return this.notificacionesService.findAll();
   }
 
-
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.notificacionesService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNotificacioneDto: UpdateNotificacioneDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateNotificacioneDto: UpdateNotificacioneDto,
+  ) {
     return this.notificacionesService.update(+id, updateNotificacioneDto);
   }
 

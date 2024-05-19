@@ -1,8 +1,11 @@
+/* eslint-disable prettier/prettier */
 import { Controller, Get, Query, Post, Body } from '@nestjs/common';
 import { GoogleService } from './api.service';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('google')
 @Controller('google')
 export class GoogleController {
   constructor(private readonly googleService: GoogleService) { }
@@ -39,21 +42,32 @@ export class GoogleController {
     return message;
   }
 
-  //Crea el evento 
+  //Crea el evento
   //conferenceDataVersion meet-1 no meet-0
   @Post('create-event')
-  async createEvent(@Body() body: {
-    date: string, dateTime: string, attendees: string[], conferenceDataVersion: string
-  }) {
-    console.log('adsfasdfasdfasdfasdfasdfas')
-    console.log(body)
+  async createEvent(
+    @Body()
+    body: {
+      date: string;
+      dateTime: string;
+      attendees: string[];
+      conferenceDataVersion: string;
+    },
+  ) {
+    console.log('adsfasdfasdfasdfasdfasdfas');
+    console.log(body);
     const { date, dateTime, attendees, conferenceDataVersion } = body;
-    return this.googleService.createEvent(date, dateTime, attendees, conferenceDataVersion);
+    return this.googleService.createEvent(
+      date,
+      dateTime,
+      attendees,
+      conferenceDataVersion,
+    );
   }
 
   //elimnar evento
   @Post('delete-event')
-  async deleteEvent(@Body() body: { eventId: string, cause: string }) {
+  async deleteEvent(@Body() body: { eventId: string; cause: string }) {
     const { eventId, cause } = body;
     return this.googleService.deleteEvent(eventId, cause);
   }
@@ -77,9 +91,16 @@ export class GoogleController {
   }
 
   @Post('send-email')
-  async sendEmail(@Body() body: { recipient: string[], userName: string, dateDay: string, cause: string }) {
+  async sendEmail(
+    @Body()
+    body: {
+      recipient: string[];
+      userName: string;
+      dateDay: string;
+      cause: string;
+    },
+  ) {
     const { recipient, userName, dateDay, cause } = body;
     return await this.googleService.sendEmail(recipient, dateDay, cause);
   }
-
 }

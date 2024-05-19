@@ -9,7 +9,9 @@ import {
 } from '@nestjs/common';
 import { UsuarioAsignaturaService } from './usuario_asignatura.service';
 import { UpdateConsecutivoDto, UpdateGrupoDto } from './dto/usuario_asignatura.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('usuario-asignatura')
 @Controller('usuario-asignatura')
 export class UsuarioAsignaturaController {
   constructor(

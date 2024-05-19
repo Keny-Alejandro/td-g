@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCitasAsesoriaPpiDto } from './dto/create-citas_asesoria_ppi.dto';
 import { UpdateCitasAsesoriaPpiDto } from './dto/update-citas_asesoria_ppi.dto';
@@ -7,15 +8,14 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class CitasAsesoriaPpiService {
-
   constructor(
-    @InjectRepository(CitasAsesoriaPpi) private readonly repository: Repository<CitasAsesoriaPpi>,
-    @Inject('TIMEZONE') private readonly timezone: string) {
-  }
-
+    @InjectRepository(CitasAsesoriaPpi)
+    private readonly repository: Repository<CitasAsesoriaPpi>,
+    @Inject('TIMEZONE') private readonly timezone: string,
+  ) { }
 
   async create(createCitasAsesoriaPpiDto: CreateCitasAsesoriaPpiDto) {
-    const creacion=await this.repository.save(createCitasAsesoriaPpiDto) 
+    const creacion = await this.repository.save(createCitasAsesoriaPpiDto);
     return creacion.id;
   }
 
@@ -29,10 +29,11 @@ export class CitasAsesoriaPpiService {
     return citas;
   }
 
-
-
-
-  async findRangeAsesor(Fechainicio: string, FechaFin: string, Usuario: string) {
+  async findRangeAsesor(
+    Fechainicio: string,
+    FechaFin: string,
+    Usuario: string,
+  ) {
     const citas = await this.repository
       .createQueryBuilder('citas')
       .leftJoinAndSelect('citas.estadoCita', 'estadoCita')
@@ -41,7 +42,10 @@ export class CitasAsesoriaPpiService {
       .leftJoinAndSelect('citas.equipocita', 'equipocita')
       .leftJoinAndSelect('citas.usuariocitaequipo', 'usuariocitaequipo')
       .leftJoinAndSelect('citas.citas', 'citasRelacionadas')
-      .where("DATE(citas.fecha AT TIME ZONE 'America/Bogota')  BETWEEN :start AND :end", { start: Fechainicio, end: FechaFin })
+      .where(
+        "DATE(citas.fecha AT TIME ZONE 'America/Bogota')  BETWEEN :start AND :end",
+        { start: Fechainicio, end: FechaFin },
+      )
       .andWhere('usuariocitaequipo.id = :userId', { userId: Usuario })
       .orderBy('citas.hora', 'ASC')
       .getMany();
@@ -63,8 +67,12 @@ export class CitasAsesoriaPpiService {
     return citas;
   }
 
-
-  async findRangeEstado(Fechainicio: string, FechaFin: string, Usuario: string,Estado: string) {
+  async findRangeEstado(
+    Fechainicio: string,
+    FechaFin: string,
+    Usuario: string,
+    Estado: string,
+  ) {
     const citas = await this.repository
       .createQueryBuilder('citas')
       .leftJoinAndSelect('citas.estadoCita', 'estadoCita')
@@ -73,7 +81,10 @@ export class CitasAsesoriaPpiService {
       .leftJoinAndSelect('citas.equipocita', 'equipocita')
       .leftJoinAndSelect('citas.usuariocitaequipo', 'usuariocitaequipo')
       .leftJoinAndSelect('citas.citas', 'citasRelacionadas')
-      .where("DATE(citas.fecha AT TIME ZONE 'America/Bogota')  BETWEEN :start AND :end", { start: Fechainicio, end: FechaFin })
+      .where(
+        "DATE(citas.fecha AT TIME ZONE 'America/Bogota')  BETWEEN :start AND :end",
+        { start: Fechainicio, end: FechaFin },
+      )
       .andWhere('estadoCita.id = :id', { id: Estado })
       .andWhere('usuariocitaequipo.id = :id', { id: Usuario })
       .orderBy('citas.hora', 'ASC')
@@ -95,8 +106,11 @@ export class CitasAsesoriaPpiService {
       .getMany();
     return citas;
   }
-  async findRangeEquipoFecha(Fechainicio: string, FechaFin: string, Usuario: string) {
-
+  async findRangeEquipoFecha(
+    Fechainicio: string,
+    FechaFin: string,
+    Usuario: string,
+  ) {
     const citas = await this.repository
       .createQueryBuilder('citas')
       .leftJoinAndSelect('citas.estadoCita', 'estadoCita')
@@ -105,10 +119,13 @@ export class CitasAsesoriaPpiService {
       .leftJoinAndSelect('citas.equipocita', 'equipocita')
       .leftJoinAndSelect('citas.usuariocitaequipo', 'usuariocitaequipo')
       .leftJoinAndSelect('citas.citas', 'citasRelacionadas')
-      .where("DATE(citas.fecha AT TIME ZONE 'America/Bogota')  BETWEEN :start AND :end", { start: Fechainicio, end: FechaFin })
+      .where(
+        "DATE(citas.fecha AT TIME ZONE 'America/Bogota')  BETWEEN :start AND :end",
+        { start: Fechainicio, end: FechaFin },
+      )
       .andWhere('equipocita.id = :userId', { userId: Usuario })
       .orderBy('citas.id', 'ASC')
-      .getMany(); 
+      .getMany();
     return citas;
   }
 
@@ -116,7 +133,9 @@ export class CitasAsesoriaPpiService {
     const citas = await this.repository
       .createQueryBuilder('cita')
       .leftJoinAndSelect('cita.usuariocitaequipo', 'usuariocitaequipo')
-      .where(`DATE(cita.fecha AT TIME ZONE 'America/Bogota') = :fecha`, { fecha: Fecha })
+      .where(`DATE(cita.fecha AT TIME ZONE 'America/Bogota') = :fecha`, {
+        fecha: Fecha,
+      })
       .andWhere('usuariocitaequipo.id = :userId', { userId: Usuario })
       .andWhere('cita.hora = :hora', { hora: Hora })
       .getMany();
@@ -135,7 +154,6 @@ export class CitasAsesoriaPpiService {
       .leftJoinAndSelect('citas.citas', 'citasRelacionadas')
       .getOne();
     return cita;
-
   }
 
   async findCitaBySeguimiento(id: number) {
@@ -145,9 +163,11 @@ export class CitasAsesoriaPpiService {
       .where('SeguimientoPpi.id = :id', { id })
       .getOne();
     return cita;
-
   }
-  async update(id: number, updateCitasAsesoriaPpiDto: UpdateCitasAsesoriaPpiDto) {
+  async update(
+    id: number,
+    updateCitasAsesoriaPpiDto: UpdateCitasAsesoriaPpiDto,
+  ) {
     const existe = await this.repository.find({ where: { id } });
     if (!existe) {
       throw new NotFoundException('No encontrado');

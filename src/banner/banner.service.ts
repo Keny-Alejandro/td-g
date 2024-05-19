@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBannerDto } from './dto/create-banner.dto';
 import { UpdateBannerDto } from './dto/update-banner.dto';
@@ -11,18 +12,20 @@ export class BannerService {
   constructor(
     @InjectRepository(Banner)
     private bannerRepository: Repository<Banner>,
-
   ) { }
 
   async findAllVisiblesByType(tipoBanner: number) {
-    const CurrentDateaux = new Date(); 
-    CurrentDateaux.setUTCHours(CurrentDateaux.getUTCHours() - 5); 
-    const currentDate = format(CurrentDateaux, 'yyyy-MM-dd'); 
+    const CurrentDateaux = new Date();
+    CurrentDateaux.setUTCHours(CurrentDateaux.getUTCHours() - 5);
+    const currentDate = format(CurrentDateaux, 'yyyy-MM-dd');
     //const currentDate = DateTime.now().setZone('America/Bogota').toFormat('yyyy-MM-dd'); // Date format'YYYY-MM-DD'
     const banners = await this.bannerRepository
       .createQueryBuilder('banner')
       .where('banner.tipoBanner = :tipoBanner', { tipoBanner })
-      .andWhere(':currentDate BETWEEN banner.Banner_FechaInicio AND banner.Banner_FechaFin', { currentDate })
+      .andWhere(
+        ':currentDate BETWEEN banner.Banner_FechaInicio AND banner.Banner_FechaFin',
+        { currentDate },
+      )
       .andWhere('banner.Banner_Estado = :estado', { estado: 1 })
       .orderBy('banner.Banner_FechaFin', 'ASC')
       .getMany();
@@ -30,7 +33,8 @@ export class BannerService {
   }
 
   async findAll() {
-    const banners = await this.bannerRepository.createQueryBuilder('banner')
+    const banners = await this.bannerRepository
+      .createQueryBuilder('banner')
       .groupBy('banner.Banner_Estado')
       .addGroupBy('banner.Tipo_Banner')
       .addGroupBy('banner.Banner_ID')
@@ -50,8 +54,9 @@ export class BannerService {
 
       return await this.bannerRepository.save(banner);
     } catch (error) {
-      if (error.code === '23505') { // duplicated pk code error on PostgreSQL
-        await new Promise(resolve => setTimeout(resolve, 500)); // 1/2 seg to try a new req
+      if (error.code === '23505') {
+        // duplicated pk code error on PostgreSQL
+        await new Promise((resolve) => setTimeout(resolve, 500)); // 1/2 seg to try a new req
         return this.create(createBannerDto, urlImagen);
       } else {
         throw error;
@@ -59,11 +64,17 @@ export class BannerService {
     }
   }
 
-  async update(id: number, updateBannerDto: UpdateBannerDto, urlImagen: string) {
-    if (!await this.bannerRepository.findOne({ where: { id } })) {
+  async update(
+    id: number,
+    updateBannerDto: UpdateBannerDto,
+    urlImagen: string,
+  ) {
+    if (!(await this.bannerRepository.findOne({ where: { id } }))) {
       throw new NotFoundException('Banner no encontrado');
     }
-    const updatedBannerDto = urlImagen ? { ...updateBannerDto, urlImagen } : updateBannerDto;
+    const updatedBannerDto = urlImagen
+      ? { ...updateBannerDto, urlImagen }
+      : updateBannerDto;
     return this.bannerRepository.update(id, updatedBannerDto);
   }
 
@@ -91,5 +102,4 @@ export class BannerService {
     }
     return this.bannerRepository.remove(banner);
   }
-
 }

@@ -22,7 +22,9 @@ import { SeguimientoPpi } from 'src/seguimiento_ppi/entities/seguimiento_ppi.ent
 import { CitasAsesoriaPpi } from 'src/citas_asesoria_ppi/entities/citas_asesoria_ppi.entity';
 import { EquipoPpi } from 'src/equipo_ppi/entities/equipo_ppi.entity';
 import { Semana } from 'src/semanas/entities/semana.entity';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('backup')
 @Controller('backup')
 export class BackupController {
 

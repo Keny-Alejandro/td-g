@@ -4,7 +4,9 @@ import { ConfiguracionEntregaService } from './configuracion_entrega.service';
 import { ConfiguracionEntrega } from './entities/configuracion_entrega.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('configuracion-entrega')
 @Controller('configuracion-entrega')
 export class ConfiguracionEntregaController {
   constructor(
@@ -43,17 +45,17 @@ export class ConfiguracionEntregaController {
   }
 
   @Get('GetPPIEntregaSOL')
-  async getEntregasSOL(){
+  async getEntregasSOL() {
     return this.configuracionEntregaService.getEntregasSOL();
   }
 
   @Get('GetPPIEntregaCoordinador')
-  async getEntregasCoordinador(){
+  async getEntregasCoordinador() {
     return this.configuracionEntregaService.getEntregasCoordinador();
   }
 
   @Get('GetPPIEntregaAsesor')
-  async getEntregasAsesor(){
+  async getEntregasAsesor() {
     return this.configuracionEntregaService.getEntregasAsesor();
   }
 

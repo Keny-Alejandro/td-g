@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   Controller,
   Get,
@@ -10,7 +11,9 @@ import {
 import { AsignaturaService } from './asignatura.service';
 import { CreateAsignaturaDto } from './dto/create-asignatura.dto';
 import { UpdateAsignaturaDto } from './dto/update-asignatura.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('asignatura')
 @Controller('asignatura')
 export class AsignaturaController {
   constructor(private readonly asignaturaService: AsignaturaService) {}

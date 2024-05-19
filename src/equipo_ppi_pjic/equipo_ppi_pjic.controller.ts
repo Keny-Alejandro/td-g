@@ -1,7 +1,9 @@
 /* eslint-disable prettier/prettier */
 import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { EquipoPpiPjicService } from './equipo_ppi_pjic.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('equipo-ppi-pjic')
 @Controller('equipo-ppi-pjic')
 export class EquipoPpiPjicController {
   constructor(private readonly equipoPpiPjicService: EquipoPpiPjicService) { }

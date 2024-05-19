@@ -1,11 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { SemanasService } from './semanas.service';
 import { CreateSemanaDto } from './dto/create-semana.dto';
 import { UpdateSemanaDto } from './dto/update-semana.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('semanas')
 @Controller('semanas')
 export class SemanasController {
-  constructor(private readonly semanasService: SemanasService) {}
+  constructor(private readonly semanasService: SemanasService) { }
 
   @Post()
   create(@Body() createSemanaDto: CreateSemanaDto) {
@@ -35,5 +46,4 @@ export class SemanasController {
   remove(@Param('id') id: string) {
     return this.semanasService.remove(+id);
   }
-
 }

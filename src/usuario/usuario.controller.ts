@@ -13,7 +13,9 @@ import { UsuarioService } from './usuario.service';
 import { EmailDTO } from './dto/email.dto';
 import { CargaDatosDTO } from './dto/carga-datos.dto';
 import { Usuario } from './entities/usuario.entity';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('usuario')
 @Controller('usuario')
 export class UsuarioController {
   private readonly logger = new Logger(UsuarioController.name);
