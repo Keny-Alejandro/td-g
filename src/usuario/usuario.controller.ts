@@ -40,11 +40,6 @@ export class UsuarioController {
     }
   }
 
-  @Post('LoadSOL')
-  async procesarDatos(@Body() correos: any[]): Promise<void> {
-    await this.usuarioService.procesarDatos(correos);
-  }
-
   @Get('StudentSemester')
   async getStudents(): Promise<Usuario[]> {
     return this.usuarioService.getStudents();

@@ -221,86 +221,6 @@ export class UsuarioService {
     return asignatura ? asignatura.programaId : undefined;
   }
 
-  async procesarDatos(correos: any[]): Promise<void> {
-    const roles = {
-      Docente: 2,
-      Asesor: 3,
-      Mixto: 5,
-    };
-
-    const programas = {
-      Técnica: 1,
-      Tecnología: 2,
-      Múltiple: 3,
-    };
-
-    // Crear usuarios para todos los correos
-    const usuariosPromises = correos.map(async (correo) => {
-      const usuarioExistente = await this.usuarioRepository.findOne({
-        where: { correo: correo.correo },
-      });
-
-      if (usuarioExistente) {
-        usuarioExistente.rol = roles[correo.rol];
-        usuarioExistente.programa = programas[correo.programa];
-        await this.usuarioRepository.save(usuarioExistente);
-        return usuarioExistente;
-      } else {
-        const nuevoUsuario = this.usuarioRepository.create({
-          nombre: correo.nombre,
-          correo: correo.correo,
-          documento: correo.documento,
-          rol: { id: roles[correo.rol] },
-          programa: { id: programas[correo.programa] },
-        });
-        return this.usuarioRepository.save(nuevoUsuario);
-      }
-    });
-
-    const usuarios = await Promise.all(usuariosPromises);
-
-    // Procesar asignaturas para todos los usuarios
-    for (let i = 0; i < correos.length; i++) {
-      const correo = correos[i];
-      const usuario = usuarios[i];
-
-      if (correo.codigos && correo.codigos.length > 0) {
-        const codigos = correo.codigos;
-
-        // Para cada código en los códigos
-        for (const codigo of codigos) {
-          // Encontrar la asignatura correspondiente al código
-          const asignatura = await this.asignaturaRepository.findOne({
-            where: { codigoAsignatura: codigo }
-          });
-
-          if (!asignatura) {
-            throw new NotFoundException(`Asignatura no encontrada para el código ${codigo}`);
-          }
-
-          // Verificar si ya existe una entrada para este usuario y esta asignatura
-          const existeRegistro = await this.usuarioAsignaturaRepository.findOne({
-            where: {
-              usuarioasignatura: usuario,
-              semestre: asignatura.id // Asignatura_ID
-            }
-          });
-
-          // Si no existe, crear una nueva entrada en Usuario_Asignatura
-          if (!existeRegistro) {
-            const usuarioAsignatura = new UsuarioAsignatura();
-            usuarioAsignatura.usuarioasignatura = usuario;
-            usuarioAsignatura.semestre = asignatura.id; // Asignatura_ID
-            usuarioAsignatura.grupo = 0; // Establecer el valor del grupo
-
-            await this.usuarioAsignaturaRepository.save(usuarioAsignatura);
-          }
-        }
-      }
-    }
-
-  }
-
   async getStudents() {
     const query = `
     select
@@ -343,7 +263,7 @@ order by "Usuario_Asignatura"."Grupo_Codigo" asc, "Usuario"."Usuario_Nombre" asc
       .where('rol.id = 3')
       .getMany();
   }
- 
+
   async findAll() {
     return this.usuarioRepository.find();
   }
@@ -352,7 +272,7 @@ order by "Usuario_Asignatura"."Grupo_Codigo" asc, "Usuario"."Usuario_Nombre" asc
     return this.usuarioRepository.createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.hora', 'HoraSemanal')
       .leftJoinAndSelect('usuario.rol', 'rol')
-      .where('usuario.correo = :correo', { correo: Correo }) 
+      .where('usuario.correo = :correo', { correo: Correo })
       .getOne()
   }
   async findOne(id: number) {
@@ -366,7 +286,7 @@ order by "Usuario_Asignatura"."Grupo_Codigo" asc, "Usuario"."Usuario_Nombre" asc
     return this.usuarioRepository.createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.rol', 'Rol')
       .leftJoinAndSelect('usuario.hora', 'HoraSemanal')
-      .leftJoinAndSelect('usuario.usuario', 'EquipoUsuario')  
+      .leftJoinAndSelect('usuario.usuario', 'EquipoUsuario')
       .where('usuario.correo = :correo', { correo: correo })
       .getOne();
   }

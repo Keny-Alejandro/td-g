@@ -16,4 +16,7 @@ export class UsuarioAsignatura {
 
   @Column({ name: 'Grupo_Codigo', type: 'int' })
   grupo: number;
+
+  @Column({ name: 'Consecutivo', type: 'int', nullable: true })
+  consecutivo: number | null;
 }
