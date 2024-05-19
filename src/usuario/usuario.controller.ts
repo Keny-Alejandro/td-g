@@ -7,11 +7,13 @@ import {
   Get,
   Post,
   Param,
-  Logger
+  Logger,
+  Put
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { EmailDTO } from './dto/email.dto';
 import { CargaDatosDTO } from './dto/carga-datos.dto';
+import { UpdateUsuarioDTO } from './dto/update-usuario.dto';
 import { Usuario } from './entities/usuario.entity';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -70,6 +72,17 @@ export class UsuarioController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usuarioService.findOne(+id);
+  }
+
+  @Get('getUsuariosRol')
+  async getUsuariosRol() {
+    return this.usuarioService.getUsuariosRol();
+  }
+
+  @Put('updateUsers')
+  async updateUsers(@Body() payload: UpdateUsuarioDTO[]) {
+    await this.usuarioService.updateUsers(payload);
+    return { success: true, message: 'Usuarios actualizados correctamente' };
   }
 
 }

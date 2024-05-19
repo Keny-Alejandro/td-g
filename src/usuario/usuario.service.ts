@@ -9,6 +9,7 @@ import { EmailDTO } from './dto/email.dto';
 import { CargaDatosDTO } from './dto/carga-datos.dto';
 import { Rol } from 'src/rol/entities/rol.entity';
 import { UsuarioAsignatura } from 'src/usuario_asignatura/entities/usuario_asignatura.entity';
+import { UpdateUsuarioDTO } from './dto/update-usuario.dto';
 
 @Injectable()
 export class UsuarioService {
@@ -291,5 +292,38 @@ order by "Usuario_Asignatura"."Grupo_Codigo" asc, "Usuario"."Usuario_Nombre" asc
       .getOne();
   }
 
+  async getUsuariosRol(): Promise<any[]> {
+    return this.usuarioRepository
+      .createQueryBuilder('usuario')
+      .select(['usuario.Usuario_ID', 'usuario.Rol_ID', 'usuario.Usuario_Documento'])
+      .getRawMany();
+  }
+
+  async updateUsers(payloads: UpdateUsuarioDTO[]): Promise<void> {
+    await Promise.all(payloads.map(async payload => {
+      const usuario = await this.usuarioRepository.findOne({ where: { documento: payload.Usuario_Documento } });
+      if (usuario) {
+        const rol = await this.rolRepository.findOne({ where: { id: payload.Rol_ID } });
+        if (!rol) {
+          throw new NotFoundException(`Rol con ID ${payload.Rol_ID} no encontrado`);
+        }
+
+        const programa = await this.programaRepository.findOne({ where: { id: payload.Programa_ID } });
+        if (!programa) {
+          throw new NotFoundException(`Programa con ID ${payload.Programa_ID} no encontrado`);
+        }
+        
+        usuario.id = payload.Usuario_ID;
+        usuario.rol = rol;
+        usuario.nombre = payload.Usuario_Nombre;
+        usuario.documento = payload.Usuario_Documento;
+        usuario.correo = payload.Usuario_Correo;
+        usuario.programa = programa; 
+        usuario.semestre = payload.Usuario_Semestre;
+
+        await this.usuarioRepository.save(usuario);
+      }
+    }));
+  }
 
 }
