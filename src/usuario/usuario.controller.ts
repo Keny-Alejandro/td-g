@@ -36,8 +36,18 @@ export class UsuarioController {
 
   @Post('LoadStudents')
   async loadStudents(@Body() uploadStudentsDto: UploadStudentsDto): Promise<any> {
-    console.log('Data received:', uploadStudentsDto);
-    await this.usuarioService.processUploadedFiles(uploadStudentsDto);
+    for (const file of uploadStudentsDto.files) {
+      const asignatura = await this.usuarioService.findAsignaturaByCodigo(file.codigo);
+      if (!asignatura) {
+        // Maneja el caso donde la asignatura no se encuentra
+        return { message: `Asignatura con código ${file.codigo} no encontrada` };
+      }
+      // Continúa con la lógica si la asignatura se encuentra 
+      const id_asignatura = asignatura.id;
+      const id_programa = asignatura.programaId;
+      const semestre_asignatura = asignatura.semestre;
+      console.log('Asignatura encontrada:', asignatura);
+    }
     return { message: 'Data processed successfully' };
   }
 

@@ -42,6 +42,10 @@ export class UsuarioService {
     return usuarios;
   }
 
+  async findAsignaturaByCodigo(codigo: string): Promise<Asignatura> {
+    return await this.asignaturaRepository.findOne({ where: { codigoAsignatura: codigo } });
+  }
+
   async processUploadedFiles(uploadStudentsDto: UploadStudentsDto): Promise<void> {
     const { files } = uploadStudentsDto;
 
