@@ -42,11 +42,17 @@ export class UsuarioController {
         // Maneja el caso donde la asignatura no se encuentra
         return { message: `Asignatura con código ${file.codigo} no encontrada` };
       }
-      // Continúa con la lógica si la asignatura se encuentra 
+
       const id_asignatura = asignatura.id;
       const id_programa = asignatura.programaId;
       const semestre_asignatura = asignatura.semestre;
       console.log('Asignatura encontrada:', asignatura);
+
+      // Buscar o crear el profesor
+      const Usuario_ID_Profesor = await this.usuarioService.findOrCreateProfesor(file, id_programa);
+      console.log('Usuario ID del Profesor:', Usuario_ID_Profesor);
+
+      // Aquí puedes continuar con la lógica adicional, como asociar estudiantes, etc.
     }
     return { message: 'Data processed successfully' };
   }

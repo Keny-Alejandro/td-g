@@ -46,6 +46,31 @@ export class UsuarioService {
     return await this.asignaturaRepository.findOne({ where: { codigoAsignatura: codigo } });
   }
 
+  async findOrCreateProfesor(file: any, programaId: number): Promise<number> {
+    let profesor = await this.usuarioRepository.findOne({ where: { documento: file.documentoProfesor } });
+
+    if (!profesor) {
+
+      // Primero, necesitas obtener la instancia de Rol para el rol "profesor"
+      const profesorRol = await this.rolRepository.findOne({ where: { id: 2 } }); // Aquí asumo que el ID del rol de profesor es 2, asegúrate de que coincida con tu lógica de negocio
+
+      // Luego, necesitas obtener la instancia de Programa para el programa con el ID proporcionado
+      const programa = await this.programaRepository.findOne({ where: { id: programaId } }); // Aquí asumo que programaId es el ID del programa que recibes como parámetro
+
+      profesor = this.usuarioRepository.create({
+        rol: profesorRol,
+        nombre: file.nombreProfesor,
+        documento: file.documentoProfesor,
+        correo: file.correoProfesor,
+        programa: programa,
+        semestre: null,
+      });
+      await this.usuarioRepository.save(profesor);
+    }
+
+    return profesor.id;
+  }
+
   async processUploadedFiles(uploadStudentsDto: UploadStudentsDto): Promise<void> {
     const { files } = uploadStudentsDto;
 
@@ -170,6 +195,6 @@ order by "Usuario_Asignatura"."Grupo_Codigo" asc, "Usuario"."Usuario_Nombre" asc
         rol: rol
       });
     }));
-    
+
   }
 }
