@@ -10,12 +10,13 @@ import {
   Logger,
   Put,
   UploadedFile,
-  UseInterceptors
+  UseInterceptors,
+  BadRequestException
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { EmailDTO } from './dto/email.dto';
-import { UpdateUsuarioDTO } from './dto/update-usuario.dto';
+import { UpdateUsuarioDTO, CreateUsuariosByAsesorDTO } from './dto/update-usuario.dto';
 import { Usuario } from './entities/usuario.entity';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -39,11 +40,13 @@ export class UsuarioController {
   @Post('LoadStudents')
   @UseInterceptors(FileInterceptor('file'))
   async procesarArchivo(@UploadedFile() file: Express.Multer.File) {
-    // Aquí podrías agregar lógica adicional para validar el archivo o procesar sus datos antes de enviarlo al servicio
-    const fileData = JSON.parse(file.buffer.toString('utf-8'));
-    await this.usuarioService.procesarArchivo(fileData);
-    return { message: 'Archivo procesado correctamente' };
-  }
+      if (!file) {
+          throw new BadRequestException('File is not provided');
+      }
+      const fileData = JSON.parse(file.buffer.toString('utf-8'));
+      await this.usuarioService.procesarArchivo(fileData);
+      return { message: 'Archivo procesado correctamente' };
+  }  
 
   @Get('StudentSemester')
   async getStudents(): Promise<Usuario[]> {
@@ -87,6 +90,12 @@ export class UsuarioController {
   @Put('updateUsers')
   async updateUsers(@Body() payload: UpdateUsuarioDTO[]) {
     await this.usuarioService.updateUsers(payload);
+    return { message: 'Usuarios actualizados correctamente' };
+  }
+
+  @Post('add')
+  async createNewUsersByAsesor(@Body() payload: CreateUsuariosByAsesorDTO[]) {
+    await this.usuarioService.createNewUsersByAsesor(payload);
     return { message: 'Usuarios actualizados correctamente' };
   }
 

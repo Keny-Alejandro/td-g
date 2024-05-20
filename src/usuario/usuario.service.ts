@@ -202,30 +202,39 @@ order by "Usuario_Asignatura"."Grupo_Codigo" asc, "Usuario"."Usuario_Nombre" asc
   }
 
   async updateUsers(payloads: UpdateUsuarioDTO[]): Promise<void> {
-    await Promise.all(payloads.map(async payload => {
+    await Promise.all(payloads.map(async (payload) => {
       const usuario = await this.usuarioRepository.findOne({ where: { documento: payload.Usuario_Documento } });
+
       if (usuario) {
         const rol = await this.rolRepository.findOne({ where: { id: payload.Rol_ID } });
         if (!rol) {
           throw new NotFoundException(`Rol con ID ${payload.Rol_ID} no encontrado`);
         }
 
-        const programa = await this.programaRepository.findOne({ where: { id: payload.Programa_ID } });
-        if (!programa) {
-          throw new NotFoundException(`Programa con ID ${payload.Programa_ID} no encontrado`);
-        }
-
-        usuario.id = payload.Usuario_ID;
-        usuario.rol = rol;
-        usuario.nombre = payload.Usuario_Nombre;
-        usuario.documento = payload.Usuario_Documento;
-        usuario.correo = payload.Usuario_Correo;
-        usuario.programa = programa;
-        usuario.semestre = payload.Usuario_Semestre;
-
-        await this.usuarioRepository.save(usuario);
+        await this.usuarioRepository.update(payload.Usuario_ID, {
+          nombre: payload.Usuario_Nombre,
+          documento: payload.Usuario_Documento,
+          correo: payload.Usuario_Correo,
+          rol: rol
+        });
       }
     }));
   }
 
+  async createNewUsersByAsesor(payload: any): Promise<void> {
+    const rol = await this.rolRepository.findOne({ where: { id: payload.rol.id } });
+    if (!rol) {
+      throw new NotFoundException(`Rol con ID ${payload.rol.id} no encontrado`);
+    }
+
+    await Promise.all(payload.map(async (usuario) => {
+      await this.usuarioRepository.save({
+        nombre: usuario.Usuario_Nombre,
+        documento: usuario.Usuario_Documento,
+        correo: usuario.Usuario_Correo,
+        rol: rol
+      });
+    }));
+    
+  }
 }
