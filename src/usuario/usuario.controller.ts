@@ -35,9 +35,11 @@ export class UsuarioController {
   }
 
   @Post('LoadStudents')
-  async loadStudents(@Body() uploadStudentsDto: UploadStudentsDto): Promise<void> {
+  async loadStudents(@Body() uploadStudentsDto: UploadStudentsDto): Promise<any> {
+    console.log('Data received:', uploadStudentsDto);
     await this.usuarioService.processUploadedFiles(uploadStudentsDto);
-  }  
+    return { message: 'Data processed successfully' };
+  }
 
   @Get('StudentSemester')
   async getStudents(): Promise<Usuario[]> {
