@@ -8,16 +8,13 @@ import {
   Post,
   Param,
   Logger,
-  Put,
-  UploadedFile,
-  UseInterceptors,
-  BadRequestException
+  Put
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { EmailDTO } from './dto/email.dto';
 import { UpdateUsuarioDTO, CreateUsuariosByAsesorDTO } from './dto/update-usuario.dto';
 import { Usuario } from './entities/usuario.entity';
+import { UploadStudentsDto } from './dto/upload-students.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('usuario')
@@ -38,14 +35,8 @@ export class UsuarioController {
   }
 
   @Post('LoadStudents')
-  @UseInterceptors(FileInterceptor('file'))
-  async procesarArchivo(@UploadedFile() file: Express.Multer.File) {
-      if (!file) {
-          throw new BadRequestException('File is not provided');
-      }
-      const fileData = JSON.parse(file.buffer.toString('utf-8'));
-      await this.usuarioService.procesarArchivo(fileData);
-      return { message: 'Archivo procesado correctamente' };
+  async loadStudents(@Body() uploadStudentsDto: UploadStudentsDto): Promise<void> {
+    await this.usuarioService.processUploadedFiles(uploadStudentsDto);
   }  
 
   @Get('StudentSemester')

@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
+import { UploadStudentsDto } from './dto/upload-students.dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, getRepository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Usuario } from './entities/usuario.entity';
 import { Programa } from 'src/programa/entities/programa.entity';
 import { Asignatura } from 'src/asignatura/entities/asignatura.entity';
@@ -41,91 +42,21 @@ export class UsuarioService {
     return usuarios;
   }
 
-  async procesarArchivo(fileData: any) {
-    // Paso 1: Buscar información de la asignatura
-    const asignatura = await this.asignaturaRepository.findOne({ where: { codigoAsignatura: fileData.codigo } });
+  async processUploadedFiles(uploadStudentsDto: UploadStudentsDto): Promise<void> {
+    const { files } = uploadStudentsDto;
 
-    if (!asignatura) {
-      // Manejar caso donde no se encuentra la asignatura
-      throw new Error('La asignatura no existe');
-    }
+    // Aquí puedes procesar cada archivo y sus estudiantes
+    files.forEach(file => {
+      console.log('Processing file:', file.codigo);
+      console.log('Profesor:', file.nombreProfesor, file.documentoProfesor, file.correoProfesor);
 
-    // Paso 2: Buscar o crear y obtener información del profesor
-    let profesor = await this.usuarioRepository.findOne({ where: { documento: fileData.documentoProfesor } });
-    if (!profesor) {
-      profesor = await this.crearProfesor(fileData);
-    }
-
-    // Paso 3: Asignar al profesor a la asignatura
-    await this.asignarProfesorAsignatura(profesor, asignatura, fileData.grupoAsignatura);
-
-    // Paso 4: Procesar estudiantes
-    for (const estudiante of fileData.datos) {
-      await this.procesarEstudiante(estudiante, asignatura, fileData.grupoAsignatura);
-    }
-  }
-
-  async crearProfesor(fileData: any) {
-    const programa = await this.programaRepository.findOne({ where: { id: fileData.programaId } });
-    if (!programa) {
-      // Manejar caso donde no se encuentra el programa
-      throw new Error('El programa no existe');
-    }
-
-    const nuevoProfesor = this.usuarioRepository.create({
-      nombre: fileData.nombreProfesor,
-      documento: fileData.documentoProfesor,
-      correo: fileData.correoProfesor,
-      semestre: null, // Opcional: ajustar según la lógica de tu aplicación
-      programa: programa,
+      file.students.forEach(student => {
+        console.log('Student:', student.documento, student.nombre, student.correo);
+        // Aquí puedes guardar los datos del estudiante en la base de datos
+      });
     });
 
-    return await this.usuarioRepository.save(nuevoProfesor);
-  }
-
-  async asignarProfesorAsignatura(profesor: Usuario, asignatura: Asignatura, grupo: number) {
-    const usuarioAsignatura = new UsuarioAsignatura();
-    usuarioAsignatura.usuarioasignatura = profesor;
-    usuarioAsignatura.semestre = asignatura.semestre;
-    usuarioAsignatura.grupo = grupo;
-    usuarioAsignatura.consecutivo = null;
-
-    await this.usuarioAsignaturaRepository.save(usuarioAsignatura);
-
-  }
-
-  async procesarEstudiante(estudiante: any, asignatura: Asignatura, grupo: number) {
-    let usuario = await this.usuarioRepository.findOne({ where: { documento: estudiante.documento } });
-    if (!usuario) {
-      usuario = await this.crearEstudiante(estudiante, asignatura.programa, asignatura.semestre);
-    }
-
-    await this.asignarEstudianteAsignatura(usuario, asignatura, grupo);
-  }
-
-  async crearEstudiante(estudiante: any, programa: Programa, semestre: number) {
-    const nuevoEstudiante = this.usuarioRepository.create({
-      nombre: estudiante.nombre,
-      documento: estudiante.documento,
-      correo: estudiante.correo,
-      semestre: semestre,
-      programa: programa,
-    });
-
-    return await this.usuarioRepository.save(nuevoEstudiante);
-  }
-
-  async asignarEstudianteAsignatura(estudiante: Usuario, asignatura: Asignatura, grupo: number) {
-    const usuarioAsignaturaRepository = getRepository(UsuarioAsignatura);
-
-    // Creamos manualmente la instancia de UsuarioAsignatura
-    const usuarioAsignatura = new UsuarioAsignatura();
-    usuarioAsignatura.usuarioasignatura = estudiante;
-    usuarioAsignatura.semestre = asignatura.semestre;
-    usuarioAsignatura.grupo = grupo;
-
-    // Guardamos la instancia en la base de datos
-    await usuarioAsignaturaRepository.save(usuarioAsignatura);
+    // Lógica adicional para procesar los datos
   }
 
   async getStudents() {
