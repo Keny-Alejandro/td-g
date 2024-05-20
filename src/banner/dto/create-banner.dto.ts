@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsInt, IsDateString, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsDateString, IsOptional } from 'class-validator';
 
 export class CreateBannerDto {
     @IsNotEmpty()
@@ -6,7 +6,6 @@ export class CreateBannerDto {
     nombre: string;
 
     @IsNotEmpty()
-    @IsInt()
     estado: number;
 
     @IsNotEmpty()
@@ -18,7 +17,6 @@ export class CreateBannerDto {
     fechaFin: Date;
 
     @IsNotEmpty()
-    @IsInt()
     tipoBanner: number;
 
     @IsNotEmpty()
