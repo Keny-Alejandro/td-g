@@ -18,6 +18,11 @@ export class UsuarioAsignaturaController {
     private readonly usuarioAsignaturaService: UsuarioAsignaturaService,
   ) { }
 
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.usuarioAsignaturaService.findOne(+id);
+  }
+
   @Get('GroupsDocente/:Usuario_ID')
   async getGroupsDocente(@Param('Usuario_ID') usuarioId: number) {
     try {

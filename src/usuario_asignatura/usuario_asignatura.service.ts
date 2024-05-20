@@ -101,4 +101,8 @@ export class UsuarioAsignaturaService {
 
         return 'Grupo actualizado correctamente';
     }
+
+    findOne(id: number) {
+        return `This action returns a #${id} tipoCita`;
+    }
 }

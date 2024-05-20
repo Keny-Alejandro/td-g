@@ -16,12 +16,19 @@ import { UpdateUsuarioDTO, CreateUsuariosByAsesorDTO } from './dto/update-usuari
 import { Usuario } from './entities/usuario.entity';
 import { UploadStudentsDto } from './dto/upload-students.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UsuarioAsignatura } from '../usuario_asignatura/entities/usuario_asignatura.entity';
+import { Repository } from 'typeorm';
 
 @ApiTags('usuario')
 @Controller('usuario')
 export class UsuarioController {
   private readonly logger = new Logger(UsuarioController.name);
-  constructor(private readonly usuarioService: UsuarioService) { }
+  constructor(
+    private readonly usuarioService: UsuarioService,
+    @InjectRepository(UsuarioAsignatura)
+    private readonly usuarioAsignaturaRepository: Repository<UsuarioAsignatura>,
+  ) { }
 
   @Patch('Auth')
   async findEmail(@Body() payload: EmailDTO) {
@@ -32,7 +39,7 @@ export class UsuarioController {
     }
 
     return usuarios;
-  }
+  } 
 
   @Post('LoadStudents')
   async loadStudents(@Body() uploadStudentsDto: UploadStudentsDto): Promise<any> {
@@ -51,6 +58,18 @@ export class UsuarioController {
       // Buscar o crear el profesor
       const Usuario_ID_Profesor = await this.usuarioService.findOrCreateProfesor(file, id_programa);
       console.log('Usuario ID del Profesor:', Usuario_ID_Profesor);
+
+      const usuario = await this.usuarioService.findOne(Usuario_ID_Profesor); // Suponiendo que existe un repositorio de Usuario
+
+      const usuarioAsignatura = this.usuarioAsignaturaRepository.create({
+        //usuarioasignatura: usuario,
+        semestre: id_asignatura,
+        //grupo: file.grupoAsignatura,
+        consecutivo: null,
+      });
+            
+
+      await this.usuarioAsignaturaRepository.save(usuarioAsignatura);
 
       // Aquí puedes continuar con la lógica adicional, como asociar estudiantes, etc.
     }

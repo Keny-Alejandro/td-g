@@ -41,10 +41,9 @@ export class EquipoPpiPjicService {
   async findOne(id: number) {
     return this.equipoPpiPjicRepository
       .createQueryBuilder('equipoPpiPjic')
-      .leftJoinAndSelect('equipoPpiPjic.equipousuariopjic', 'equipoUsuario')
       .leftJoinAndSelect('equipoPpiPjic.usuariopjic', 'usuario')
-      .where('equipoUsuario.codigoEquipo = :id', { id: id })
+      .where('equipoPpiPjic.codigoEquipo = :id', { id: id })
       .getOne();
   }
-  
+
 }

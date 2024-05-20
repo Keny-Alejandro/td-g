@@ -11,9 +11,9 @@ export class EquipoUsuariosService {
   constructor(
     @InjectRepository(EquipoUsuario)
     private equipoUsuarioRepository: Repository<EquipoUsuario>,
-    @InjectRepository(EquipoPpi) 
+    @InjectRepository(EquipoPpi)
     private readonly repositoryBitacora: Repository<EquipoPpi>,
-    @InjectRepository(EquipoPpiPjic) 
+    @InjectRepository(EquipoPpiPjic)
     private readonly repositoryEquipoPJIC: Repository<EquipoPpiPjic>
   ) { }
 
@@ -126,7 +126,7 @@ export class EquipoUsuariosService {
     const EquipoUsuario = await this.equipoUsuarioRepository
       .createQueryBuilder("equipoUsuario")
       .leftJoinAndSelect("equipoUsuario.usuario", "usuario")
-      .where('usuario.correo = :correo', { correo: Correo }) 
+      .where('usuario.correo = :correo', { correo: Correo })
       .getOne();
 
     if (EquipoUsuario) {
@@ -162,7 +162,7 @@ export class EquipoUsuariosService {
       .createQueryBuilder('equipoUsuario')
       .leftJoinAndSelect('equipoUsuario.usuario', 'usuario')
       .getMany();
-    const resultadosAgrupados: Record<string, { usuarios: any[], bitacora: any[], moduloSol: any[] }> = {}; // Anotación de tipo explícita
+    const resultadosAgrupados: Record<string, { usuarios: any[], bitacora: any[], moduloSol: any[] }> = {};
     for (const resultado of resultados) {
       const key = resultado.codigoEquipo;
       if (!resultadosAgrupados[key]) {
@@ -175,11 +175,11 @@ export class EquipoUsuariosService {
         .createQueryBuilder('equipoPpi')
         .where('equipoPpi.codigoEquipo = :id', { id: key })
         .getOne();
+      console.log(key)
       const modSol = await this.repositoryEquipoPJIC
         .createQueryBuilder('EquipoPpiPjic')
         .leftJoinAndSelect('EquipoPpiPjic.usuariopjic', 'usuario')
-        .leftJoinAndSelect('EquipoPpiPjic.equipousuariopjic', 'EquipoUsuario')
-        .where('EquipoUsuario.codigoEquipo = :id', { id: key })
+        .where('EquipoPpiPjic.codigoEquipo = :id', { id: key })
         .getOne();
       value.moduloSol.push(modSol.usuariopjic);
       if (bitacora != null) {
@@ -191,8 +191,7 @@ export class EquipoUsuariosService {
 
   async findEstudianteBitacoraModSol(id: string) {
     const resultados = await this.repositoryEquipoPJIC
-      .createQueryBuilder('EquipoPpiPjic') 
-      .leftJoinAndSelect('EquipoPpiPjic.equipousuariopjic', 'EquipoUsuario')
+      .createQueryBuilder('EquipoPpiPjic')
       .where('EquipoPpiPjic.usuariopjic = :id', { id: id })
       .getMany();
     return resultados;
