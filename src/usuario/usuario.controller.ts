@@ -8,11 +8,15 @@ import {
   Post,
   Param,
   Logger,
-  Put
+  Put,
+  UploadedFile,
+  UseInterceptors,
+  BadRequestException
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { EmailDTO } from './dto/email.dto';
-import { CargaDatosDTO } from './dto/carga-datos.dto';
+import * as mimeTypes from 'mime-types';
 import { UpdateUsuarioDTO } from './dto/update-usuario.dto';
 import { Usuario } from './entities/usuario.entity';
 import { ApiTags } from '@nestjs/swagger';
@@ -35,13 +39,17 @@ export class UsuarioController {
   }
 
   @Post('LoadStudents')
-  async cargaDatos(@Body() payload: CargaDatosDTO) {
-    try {
-      const result = await this.usuarioService.procesarCargaDatos([payload]);
-      return { success: true, message: 'Datos cargados correctamente', data: result };
-    } catch (error) {
-      throw new NotFoundException('Error al procesar la carga de datos');
+  @UseInterceptors(FileInterceptor('file'))
+  async procesarArchivo(@UploadedFile() file: Express.Multer.File) {
+    const mimeType = mimeTypes.lookup(file.originalname);
+    if (!mimeType || !mimeType.includes('excel')) {
+      throw new BadRequestException('El archivo debe ser un Excel');
     }
+
+    // Procesar el archivo
+    const fileData = JSON.parse(file.buffer.toString('utf-8'));
+    await this.usuarioService.procesarArchivo(fileData);
+    return { message: 'Archivo procesado correctamente' };
   }
 
   @Get('StudentSemester')
@@ -86,7 +94,7 @@ export class UsuarioController {
   @Put('updateUsers')
   async updateUsers(@Body() payload: UpdateUsuarioDTO[]) {
     await this.usuarioService.updateUsers(payload);
-    return { success: true, message: 'Usuarios actualizados correctamente' };
+    return { message: 'Usuarios actualizados correctamente' };
   }
 
 }

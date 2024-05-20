@@ -7,5 +7,5 @@ export class UpdateUsuarioDTO {
     Usuario_Correo: string;
     Programa_ID: number;
     Usuario_Semestre: number;
-  }
+}
   
