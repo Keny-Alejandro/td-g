@@ -10,13 +10,11 @@ import {
   Logger,
   Put,
   UploadedFile,
-  UseInterceptors,
-  BadRequestException
+  UseInterceptors
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { EmailDTO } from './dto/email.dto';
-import * as mimeTypes from 'mime-types';
 import { UpdateUsuarioDTO } from './dto/update-usuario.dto';
 import { Usuario } from './entities/usuario.entity';
 import { ApiTags } from '@nestjs/swagger';
@@ -41,12 +39,7 @@ export class UsuarioController {
   @Post('LoadStudents')
   @UseInterceptors(FileInterceptor('file'))
   async procesarArchivo(@UploadedFile() file: Express.Multer.File) {
-    const mimeType = mimeTypes.lookup(file.originalname);
-    if (!mimeType || !mimeType.includes('excel')) {
-      throw new BadRequestException('El archivo debe ser un Excel');
-    }
-
-    // Procesar el archivo
+    // Aquí podrías agregar lógica adicional para validar el archivo o procesar sus datos antes de enviarlo al servicio
     const fileData = JSON.parse(file.buffer.toString('utf-8'));
     await this.usuarioService.procesarArchivo(fileData);
     return { message: 'Archivo procesado correctamente' };
