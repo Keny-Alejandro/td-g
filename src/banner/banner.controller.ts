@@ -19,7 +19,7 @@ import { fileFilter, fileNameCall } from './../helpers/images.helper';
 import { Banner } from './entities/banner.entity';
 import { ApiTags } from '@nestjs/swagger';
 
-const relativeImgPath = 'sources/media/banner';
+const relativeImgPath = '/foobar';
 
 @ApiTags('banner')
 @Controller('banner')
@@ -38,7 +38,7 @@ export class BannerController {
   )
   async uploadImgFile(@UploadedFile() file: Express.Multer.File) {
     // npm install multer @types/multer
-    const filePath = `/${relativeImgPath}/${file.originalname}`;
+    const filePath = `${relativeImgPath}/${file.originalname}`;
     return filePath;
   }
 
