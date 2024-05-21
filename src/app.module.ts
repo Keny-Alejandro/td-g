@@ -50,10 +50,16 @@ import { UsuarioCalificacionModule } from './usuario_calificacion/usuario_califi
       synchronize: true,
       ssl: { rejectUnauthorized: false }
     }),
-    ServeStaticModule.forRoot({
+    ServeStaticModule.forRoot(
+      {
       rootPath: join(__dirname, '..', 'public'), // Ruta al directorio público
       serveRoot: '/public', // Ruta base para servir los archivos
-    }),
+      },{
+        
+      rootPath: join(__dirname, '..', '/sources/media/banner'), // Ruta al directorio público
+      serveRoot: '/sources', // Ruta base para servir los archivos (img)
+      }
+    ),
     GoogleModule,
     TimezoneModule,
     BannerModule,
