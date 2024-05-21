@@ -56,8 +56,8 @@ import { UsuarioCalificacionModule } from './usuario_calificacion/usuario_califi
       serveRoot: '/public', // Base path to serve the files
       },{
         
-      rootPath: join(__dirname, '..', '/sources/media/banner'), // Path to the public directory
-      serveRoot: '/sources/media/banner', // Base path to serve the files (img)
+      rootPath: join(__dirname, '..', '/foobar'), // Path to the public directory
+      serveRoot: '/foobar', // Base path to serve the files (img)
       }
     ),
     GoogleModule,
