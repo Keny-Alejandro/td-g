@@ -30,8 +30,8 @@ export class HoraSemanalService {
     private readonly repositoryEquipoUsuario: Repository<EquipoUsuario>,
   ) {}
 
-  create(createHoraSemanalDto: CreateHoraSemanalDto) {
-    return 'This action adds a new horaSemanal';
+   async create(createHoraSemanalDto: CreateHoraSemanalDto) {
+    return this.repository.save(createHoraSemanalDto);
   }
 
   async findAll() {
