@@ -51,10 +51,8 @@ export class UsuarioService {
 
     if (!profesor) {
 
-      // Primero, necesitas obtener la instancia de Rol para el rol "profesor"
       const profesorRol = await this.rolRepository.findOne({ where: { id: 2 } }); // Aquí asumo que el ID del rol de profesor es 2, asegúrate de que coincida con tu lógica de negocio
 
-      // Luego, necesitas obtener la instancia de Programa para el programa con el ID proporcionado
       const programa = await this.programaRepository.findOne({ where: { id: programaId } }); // Aquí asumo que programaId es el ID del programa que recibes como parámetro
 
       profesor = this.usuarioRepository.create({

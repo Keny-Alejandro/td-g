@@ -59,19 +59,17 @@ export class UsuarioController {
       const Usuario_ID_Profesor = await this.usuarioService.findOrCreateProfesor(file, id_programa);
       console.log('Usuario ID del Profesor:', Usuario_ID_Profesor);
 
-      const usuario = await this.usuarioService.findOne(Usuario_ID_Profesor); // Suponiendo que existe un repositorio de Usuario
+      const usuario = await this.usuarioService.findOne(Usuario_ID_Profesor);
 
       const usuarioAsignatura = this.usuarioAsignaturaRepository.create({
-        //usuarioasignatura: usuario,
+        usuarioasignatura: usuario,
         semestre: id_asignatura,
-        //grupo: file.grupoAsignatura,
+        grupo: Number(file.grupoAsignatura),
         consecutivo: null,
       });
             
-
       await this.usuarioAsignaturaRepository.save(usuarioAsignatura);
 
-      // Aquí puedes continuar con la lógica adicional, como asociar estudiantes, etc.
     }
     return { message: 'Data processed successfully' };
   }
