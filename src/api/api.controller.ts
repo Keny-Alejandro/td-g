@@ -54,8 +54,6 @@ export class GoogleController {
       conferenceDataVersion: string;
     },
   ) {
-    console.log('adsfasdfasdfasdfasdfasdfas');
-    console.log(body);
     const { date, dateTime, attendees, conferenceDataVersion } = body;
     return this.googleService.createEvent(
       date,
@@ -82,11 +80,6 @@ export class GoogleController {
   @Get('check-session')
   async checkSession() {
     const isSessionActive = await this.googleService.isSessionActive();
-    if (isSessionActive) {
-      console.log('There is an active session.');
-    } else {
-      console.log('There is no active session.');
-    }
     return { isSessionActive };
   }
 
