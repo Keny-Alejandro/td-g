@@ -96,7 +96,7 @@ export class UsuarioController {
         // Buscar o crear el estudiante
         const estudianteRol = await this.rolRepository.findOne({ where: { id: 1 } });
         let estudiante = await this.usuarioService.findOneByDocumento(student.documento);
-        const programa = await this.programaRepository.findOne({ where: { id: id_programa } }); 
+        const programa = await this.programaRepository.findOne({ where: { id: id_programa } });
         if (!estudiante) {
           estudiante = this.usuarioRepository.create({
             rol: estudianteRol,
@@ -107,21 +107,36 @@ export class UsuarioController {
             programa: programa
           });
           await this.usuarioRepository.save(estudiante);
+          // Asociar el estudiante con la asignatura y el grupo
+          const estudianteAsignatura = this.usuarioAsignaturaRepository.create({
+            usuarioasignatura: estudiante,
+            semestre: id_asignatura,
+            grupo: Number(file.grupoAsignatura),
+            consecutivo: null,
+          });
+
+          await this.usuarioAsignaturaRepository.save(estudianteAsignatura);
           console.log('Nuevo estudiante creado:', estudiante);
         } else {
           console.log('El estudiante ya existe:', estudiante);
+
+          // Verificar si existe la asociación estudiante-asignatura-grupo
+          const existingEstudianteAsignatura = await this.usuarioAsignaturaRepository.findOne({
+            where: {
+              usuarioasignatura: estudiante,
+              semestre: id_asignatura,
+              grupo: Number(file.grupoAsignatura),
+            },
+          });
+
+          if (existingEstudianteAsignatura) {
+            // Actualizar el registro existente
+            existingEstudianteAsignatura.consecutivo = null; // O cualquier otra propiedad que necesites actualizar
+            await this.usuarioAsignaturaRepository.save(existingEstudianteAsignatura);
+            console.log('Registro existente de estudiante actualizado:', existingEstudianteAsignatura);
+          }
         }
-  
-        // Asociar el estudiante con la asignatura y el grupo
-        const estudianteAsignatura = this.usuarioAsignaturaRepository.create({
-          usuarioasignatura: estudiante,
-          semestre: id_asignatura,
-          grupo: Number(file.grupoAsignatura),
-          consecutivo: null,
-        });
-  
-        await this.usuarioAsignaturaRepository.save(estudianteAsignatura);
-        console.log('Estudiante asociado a la asignatura:', estudianteAsignatura);
+
       }
 
     }
