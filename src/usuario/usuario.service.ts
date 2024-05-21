@@ -150,6 +150,12 @@ order by "Usuario_Asignatura"."Grupo_Codigo" asc, "Usuario"."Usuario_Nombre" asc
       .getOne();
   }
 
+  async findOneByDocumento(documento: string) {
+    return this.usuarioRepository.createQueryBuilder('usuario')
+      .where('usuario.documento = :documento', { documento: documento })
+      .getOne();
+  }
+
   async findCorreo(correo: string) {
     return this.usuarioRepository.createQueryBuilder('usuario')
       .leftJoinAndSelect('usuario.rol', 'Rol')
