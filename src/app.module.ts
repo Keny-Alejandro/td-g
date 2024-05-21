@@ -31,6 +31,7 @@ import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { SemanasModule } from './semanas/semanas.module';
 import { NotificacionesModule } from './notificaciones/notificaciones.module';
+import { UsuarioCalificacionModule } from './usuario_calificacion/usuario_calificacion.module';
 
 @Module({
   imports: [
@@ -77,7 +78,8 @@ import { NotificacionesModule } from './notificaciones/notificaciones.module';
     UsuarioAsignaturaModule,
     BackupModule,
     SemanasModule,
-    NotificacionesModule
+    NotificacionesModule,
+    UsuarioCalificacionModule
   ],
   controllers: [AppController],
   providers: [AppService],
