@@ -39,7 +39,7 @@ export class UsuarioController {
     }
 
     return usuarios;
-  } 
+  }
 
   @Post('LoadStudents')
   async loadStudents(@Body() uploadStudentsDto: UploadStudentsDto): Promise<any> {
@@ -61,14 +61,29 @@ export class UsuarioController {
 
       const usuario = await this.usuarioService.findOne(Usuario_ID_Profesor);
 
+      const existingUsuarioAsignatura = await this.usuarioAsignaturaRepository.findOne({
+        where: {
+          usuarioasignatura: usuario,
+          semestre: id_asignatura,
+          grupo: Number(file.grupoAsignatura),
+        },
+      });
+
+      if (existingUsuarioAsignatura) {
+        // Si ya existe, no hacer nada
+        console.log('El registro ya existe, no se realizará ninguna acción');
+        continue;
+      }
+
       const usuarioAsignatura = this.usuarioAsignaturaRepository.create({
         usuarioasignatura: usuario,
         semestre: id_asignatura,
         grupo: Number(file.grupoAsignatura),
         consecutivo: null,
       });
-            
+
       await this.usuarioAsignaturaRepository.save(usuarioAsignatura);
+      console.log('Nuevo registro creado:', usuarioAsignatura);
 
     }
     return { message: 'Data processed successfully' };
