@@ -52,12 +52,12 @@ import { UsuarioCalificacionModule } from './usuario_calificacion/usuario_califi
     }),
     ServeStaticModule.forRoot(
       {
-      rootPath: join(__dirname, '..', 'public'), // Ruta al directorio público
-      serveRoot: '/public', // Ruta base para servir los archivos
+      rootPath: join(__dirname, '..', 'public'), // Path to the public directory
+      serveRoot: '/public', // Base path to serve the files
       },{
         
-      rootPath: join(__dirname, '..', '/sources/media/banner'), // Ruta al directorio público
-      serveRoot: '/sources/media/banner', // Ruta base para servir los archivos (img)
+      rootPath: join(__dirname, '..', '/sources/media/banner'), // Path to the public directory
+      serveRoot: '/sources/media/banner', // Base path to serve the files (img)
       }
     ),
     GoogleModule,
