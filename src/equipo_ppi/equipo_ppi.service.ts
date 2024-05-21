@@ -60,7 +60,6 @@ export class EquipoPpiService {
   }
 async exportData(id: number) {
     const XlsxPopulate = require('xlsx-populate');
-
     if (id != -1) {
       const libro = await XlsxPopulate.fromBlankAsync();
       const hoja = await libro.sheet(0);
@@ -70,16 +69,16 @@ async exportData(id: number) {
         .createQueryBuilder('equipoPpi')
         .where('equipoPpi.codigoEquipo = :id', { id: id })
         .getOne();
-
       const asignatura = await this.repositoryAsig
         .createQueryBuilder('Asignatura')
-        .leftJoinAndSelect('Asignatura.equipo', 'EquipoUsuario')
+        .leftJoinAndSelect('Asignatura.programa', 'Programa')
+        .leftJoinAndSelect('Programa.usuario', 'usuario')
+        .leftJoinAndSelect('usuario.usuario', 'EquipoUsuario')
         .where('EquipoUsuario.codigoEquipo = :id', { id: id })
         .getOne();
 
-
       const modSol = await this.repositoryPijc
-        .createQueryBuilder('equipoPpiPjic') 
+        .createQueryBuilder('equipoPpiPjic')
         .leftJoinAndSelect('equipoPpiPjic.usuariopjic', 'usuario')
         .where('equipoPpiPjic.codigoEquipo = :id', { id: id })
         .getOne();
@@ -96,6 +95,7 @@ async exportData(id: number) {
         .leftJoinAndSelect('cita.usuariocitaequipo', 'usuario')
         .where('EquipoPpi.codigoEquipo = :id', { id: id })
         .getMany();
+
       //Encabezado
       hoja.range("A1:D1").merged(true).value([["MÓDULO SOL: " + asignatura.nombre, null, null, null]]);
 
@@ -211,6 +211,7 @@ async exportData(id: number) {
 
       return filePath;
     } else if (id == -1) {
+      
       const libro = await XlsxPopulate.fromBlankAsync();
       const equipos = await this.repository
         .createQueryBuilder('equipoPpi')
@@ -219,7 +220,7 @@ async exportData(id: number) {
 
       for (let index = 0; index < equipos.length; index++) {
         const equipo = equipos[index];
-        if (equipo) { 
+        if (equipo) {
           libro.addSheet(equipo.codigoEquipo.toString());
         }
       }
@@ -237,13 +238,14 @@ async exportData(id: number) {
 
           const asignatura = await this.repositoryAsig
             .createQueryBuilder('Asignatura')
-            .leftJoinAndSelect('Asignatura.equipo', 'EquipoUsuario')
-            .where('EquipoUsuario.codigoEquipo = :idCod', { idCod: idCod })
+            .leftJoinAndSelect('Asignatura.programa', 'Programa')
+            .leftJoinAndSelect('Programa.usuario', 'usuario')
+            .leftJoinAndSelect('usuario.usuario', 'EquipoUsuario')
+            .where('EquipoUsuario.codigoEquipo = :id', { id: idCod })
             .getOne();
 
-
           const modSol = await this.repositoryPijc
-            .createQueryBuilder('equipoPpiPjic') 
+            .createQueryBuilder('equipoPpiPjic')
             .leftJoinAndSelect('equipoPpiPjic.usuariopjic', 'usuario')
             .where('equipoPpiPjic.codigoEquipo = :idCod', { idCod: idCod })
             .getOne();
@@ -261,6 +263,7 @@ async exportData(id: number) {
             .where('EquipoPpi.codigoEquipo = :idCod', { idCod: idCod })
             .getMany();
           //Encabezado
+          console.log(asignatura)
           hoja.range("A1:D1").merged(true).value([["MÓDULO SOL: " + asignatura.nombre, null, null, null]]);
 
           hoja.range("E1:F1").merged(true).value([["NOMBRE PROFESOR: " + modSol.usuariopjic.nombre, null]]);
@@ -345,7 +348,7 @@ async exportData(id: number) {
           }
           hoja.range(`A14:A${endRow}`).style({ verticalAlignment: "middle", border: true, horizontalAlignment: 'center', bold: true, fontFamily: 'Arial', fontSize: 16 })
           hoja.range(`B14:G${endRow}`).style({ verticalAlignment: "middle", border: true, horizontalAlignment: 'center', bold: false, fontFamily: 'Arial', fontSize: 12 })
-    
+
           hoja.usedRange().style({ horizontalAlignment: 'center' })
           hoja.column("A").width(10);
           hoja.column("B").width(20);
@@ -368,7 +371,7 @@ async exportData(id: number) {
           hoja.range("A11:G11").style({ border: true, horizontalAlignment: 'center', bold: false, fontFamily: 'Arial', fontSize: 10 })
           hoja.range("A12:G12").style({ fill: { color: 'e2efd9' }, border: true, horizontalAlignment: 'center', bold: true, fontFamily: 'Arial', fontSize: 12 })
           hoja.range("A13:G13").style({ fill: { color: 'e2efd9' }, verticalAlignment: "middle", border: true, horizontalAlignment: 'center', bold: true, fontFamily: 'Arial', fontSize: 11, wrapText: true })
-         
+
         }
       }
       const buffer = await libro.outputAsync();
