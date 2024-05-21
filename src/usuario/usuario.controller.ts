@@ -61,11 +61,9 @@ export class UsuarioController {
       const id_asignatura = asignatura.id;
       const id_programa = asignatura.programaId;
       const semestre_asignatura = asignatura.semestre;
-      console.log('Asignatura encontrada:', asignatura);
 
       // Buscar o crear el profesor
       const Usuario_ID_Profesor = await this.usuarioService.findOrCreateProfesor(file, id_programa);
-      console.log('Usuario ID del Profesor:', Usuario_ID_Profesor);
 
       const usuario = await this.usuarioService.findOne(Usuario_ID_Profesor);
 
@@ -87,7 +85,6 @@ export class UsuarioController {
         });
 
         await this.usuarioAsignaturaRepository.save(usuarioAsignatura);
-        console.log('Nuevo registro creado:', usuarioAsignatura);
       } else {
         console.log('El registro ya existe, no se realizará ninguna acción');
       }
@@ -116,24 +113,21 @@ export class UsuarioController {
           });
 
           await this.usuarioAsignaturaRepository.save(estudianteAsignatura);
-          console.log('Nuevo estudiante creado:', estudiante);
         } else {
-          console.log('El estudiante ya existe:', estudiante);
 
           // Verificar si existe la asociación estudiante-asignatura-grupo
           const existingEstudianteAsignatura = await this.usuarioAsignaturaRepository.findOne({
             where: {
               usuarioasignatura: estudiante,
               semestre: id_asignatura,
-              grupo: Number(file.grupoAsignatura),
             },
           });
 
           if (existingEstudianteAsignatura) {
             // Actualizar el registro existente
             existingEstudianteAsignatura.consecutivo = null; // O cualquier otra propiedad que necesites actualizar
+            existingEstudianteAsignatura.grupo = Number(file.grupoAsignatura);
             await this.usuarioAsignaturaRepository.save(existingEstudianteAsignatura);
-            console.log('Registro existente de estudiante actualizado:', existingEstudianteAsignatura);
           }
         }
 
