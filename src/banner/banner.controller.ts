@@ -19,7 +19,7 @@ import { fileFilter, fileNameCall } from './../helpers/images.helper';
 import { Banner } from './entities/banner.entity';
 import { ApiTags } from '@nestjs/swagger';
 
-const relativeImgPath = 'public/Media/contenido';
+const relativeImgPath = 'sources/media/banner';
 
 @ApiTags('banner')
 @Controller('banner')
