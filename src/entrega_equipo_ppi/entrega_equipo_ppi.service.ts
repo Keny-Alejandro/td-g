@@ -158,4 +158,58 @@ export class EntregaEquipoPpiService {
     return this.entregaRepository.query(query);
   }
 
+  async executeQueryDocentes() {
+    const query = `
+    SELECT
+    bp."Codigo_Equipo" AS "Código",
+    u."Usuario_Nombre" AS "Nombre Estudiante",
+    u."Usuario_Documento" AS "Documento Estudiante",
+    te."Tipo_Entrega_Descripcion" AS "Entrega",
+    CASE
+        WHEN ce."Plazo_Calificacion" < CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota' THEN 'Plazo Vencido'
+        ELSE 'A Tiempo, sin calificar todavía'
+    END AS "Estado",
+    u_docente."Usuario_Nombre" AS "Nombre Docente",
+    a."Asignatura_Nombre" as "Asignatura",
+    ua."Grupo_Codigo" as "Grupo"
+FROM
+    "Entrega_Equipo_PPI" eep
+INNER JOIN "Bitacora_PPI" bp ON
+    bp."Bitacora_PPI_ID" = eep."Bitacora_PPI_ID"
+INNER JOIN "Configuracion_Entrega" ce ON
+    ce."Configuracion_Entrega_ID" = eep."Configuracion_Entrega_ID"
+INNER JOIN "Tipo_Entrega" te ON
+    te."Tipo_Entrega_ID" = ce."Tipo_Entrega_ID"
+INNER JOIN "Equipo_Usuario" eu ON
+    eu."Codigo_Equipo" = bp."Codigo_Equipo"
+INNER JOIN "Usuario" u ON
+    u."Usuario_ID" = eu."Usuario_ID"
+INNER JOIN "Usuario_Asignatura" ua ON
+    ua."Usuario_ID" = u."Usuario_ID"
+INNER JOIN "Asignatura" a ON
+	a."Asignatura_ID" = ua."Asignatura_Codigo"
+LEFT JOIN (
+    SELECT
+        ua."Asignatura_Codigo",
+        ua."Grupo_Codigo",
+        u."Usuario_Nombre"
+    FROM
+        "Usuario_Asignatura" ua
+    INNER JOIN "Usuario" u ON
+        u."Usuario_ID" = ua."Usuario_ID"
+    WHERE
+        u."Rol_ID" = 2
+        OR u."Rol_ID" = 5
+) u_docente ON
+    u_docente."Asignatura_Codigo" = ua."Asignatura_Codigo"
+    AND u_docente."Grupo_Codigo" = ua."Grupo_Codigo"
+WHERE
+    eep."Calificacion_Entrega" IS NULL
+ORDER BY
+    bp."Codigo_Equipo";
+    `;
+
+    return this.entregaRepository.query(query);
+  }
+
 }

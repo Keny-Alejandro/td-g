@@ -36,10 +36,14 @@ export class EntregaEquipoPpiController {
     return this.entregaService.deleteEntrega(id);
   }
 
-
   @Get('equipos-mora')
   async getEquiposMora() {
     return this.entregaService.executeQuery();
+  }
+
+  @Get('docentes-mora')
+  async getDocentesMora() {
+    return this.entregaService.executeQueryDocentes();
   }
 
 }
