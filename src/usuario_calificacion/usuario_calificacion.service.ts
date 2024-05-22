@@ -1,26 +1,18 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
-import { CreateUsuarioCalificacionDto } from './dto/create-usuario_calificacion.dto';
-import { UpdateUsuarioCalificacionDto } from './dto/update-usuario_calificacion.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { UsuarioCalificacion } from './entities/usuario_calificacion.entity';
 
 @Injectable()
 export class UsuarioCalificacionService {
-  create(createUsuarioCalificacionDto: CreateUsuarioCalificacionDto) {
-    return 'This action adds a new usuarioCalificacion';
-  }
 
-  findAll() {
-    return `This action returns all usuarioCalificacion`;
-  }
+  constructor(
+    @InjectRepository(UsuarioCalificacion)
+    private readonly usuarioCalificacionRepository: Repository<UsuarioCalificacion>,
+  ) { }
 
-  findOne(id: number) {
-    return `This action returns a #${id} usuarioCalificacion`;
-  }
-
-  update(id: number, updateUsuarioCalificacionDto: UpdateUsuarioCalificacionDto) {
-    return `This action updates a #${id} usuarioCalificacion`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} usuarioCalificacion`;
+  async findByUser(user: number): Promise<UsuarioCalificacion[]> {
+    return await this.usuarioCalificacionRepository.find({ where: { user } });
   }
 }

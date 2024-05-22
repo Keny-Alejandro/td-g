@@ -1,34 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import {
+  Controller,
+  Get,
+  Param,
+} from '@nestjs/common';
 import { UsuarioCalificacionService } from './usuario_calificacion.service';
-import { CreateUsuarioCalificacionDto } from './dto/create-usuario_calificacion.dto';
-import { UpdateUsuarioCalificacionDto } from './dto/update-usuario_calificacion.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { UsuarioCalificacion } from './entities/usuario_calificacion.entity';
 
+@ApiTags('usuario-calificacion')
 @Controller('usuario-calificacion')
 export class UsuarioCalificacionController {
-  constructor(private readonly usuarioCalificacionService: UsuarioCalificacionService) {}
+  constructor(
+    private readonly usuarioCalificacionService: UsuarioCalificacionService,
+  ) { }
 
-  @Post()
-  create(@Body() createUsuarioCalificacionDto: CreateUsuarioCalificacionDto) {
-    return this.usuarioCalificacionService.create(createUsuarioCalificacionDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.usuarioCalificacionService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usuarioCalificacionService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUsuarioCalificacionDto: UpdateUsuarioCalificacionDto) {
-    return this.usuarioCalificacionService.update(+id, updateUsuarioCalificacionDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usuarioCalificacionService.remove(+id);
+  @Get(':user')
+  async getCalificacionesByUser(@Param('user') user: number): Promise<UsuarioCalificacion[]> {
+    return await this.usuarioCalificacionService.findByUser(user);
   }
 }
