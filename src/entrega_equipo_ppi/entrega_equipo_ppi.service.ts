@@ -99,4 +99,63 @@ export class EntregaEquipoPpiService {
     return 'Entrega eliminada correctamente';
   }
 
+  async executeQuery() {
+    const query = `
+      WITH TodasEntregas AS (
+          SELECT
+              eu."Codigo_Equipo",
+              u."Usuario_Nombre",
+              u."Usuario_Documento",
+              te."Tipo_Entrega_Descripcion",
+              te."Tipo_Entrega_ID"
+          FROM
+              "Equipo_Usuario" eu
+          CROSS JOIN "Tipo_Entrega" te
+          INNER JOIN "Usuario" u ON u."Usuario_ID" = eu."Usuario_ID"
+      ),
+      EntregasRegistradas AS (
+          SELECT
+              eu."Codigo_Equipo",
+              u."Usuario_Nombre",
+              u."Usuario_Documento",
+              te."Tipo_Entrega_Descripcion",
+              te."Tipo_Entrega_ID",
+              ce."Plazo_Entrega"
+          FROM
+              "Equipo_Usuario" eu
+          INNER JOIN "Usuario" u ON u."Usuario_ID" = eu."Usuario_ID"
+          INNER JOIN "Bitacora_PPI" bp ON bp."Codigo_Equipo" = eu."Codigo_Equipo"
+          INNER JOIN "Entrega_Equipo_PPI" eep ON eep."Bitacora_PPI_ID" = bp."Bitacora_PPI_ID"
+          INNER JOIN "Configuracion_Entrega" ce ON ce."Configuracion_Entrega_ID" = eep."Configuracion_Entrega_ID"
+          INNER JOIN "Tipo_Entrega" te ON te."Tipo_Entrega_ID" = ce."Tipo_Entrega_ID"
+          WHERE ce."Tipo_Entrega_ID" != 8
+      )
+      SELECT
+          te."Codigo_Equipo" AS "Equipo",
+          te."Usuario_Nombre" AS "Nombre",
+          te."Usuario_Documento" AS "Documento",
+          te."Tipo_Entrega_Descripcion" AS "Entrega",
+          CASE
+              WHEN ce."Plazo_Entrega" < CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota' THEN 'Plazo Vencido'
+              ELSE 'A Tiempo, sin cargar todavía'
+          END AS "Estado"
+      FROM
+          TodasEntregas te
+      LEFT JOIN EntregasRegistradas er ON
+          te."Codigo_Equipo" = er."Codigo_Equipo" AND
+          te."Usuario_Nombre" = er."Usuario_Nombre" AND
+          te."Usuario_Documento" = er."Usuario_Documento" AND
+          te."Tipo_Entrega_Descripcion" = er."Tipo_Entrega_Descripcion"
+      LEFT JOIN "Configuracion_Entrega" ce ON
+          ce."Tipo_Entrega_ID" = te."Tipo_Entrega_ID"
+      WHERE
+          er."Codigo_Equipo" IS NULL
+          AND te."Tipo_Entrega_ID" != 8
+      ORDER BY
+          te."Codigo_Equipo";
+    `;
+
+    return this.entregaRepository.query(query);
+  }
+
 }
