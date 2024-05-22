@@ -15,7 +15,7 @@ export class EntregaEquipoPpiService {
     private readonly bitacoraPpiRepository: Repository<EquipoPpi>,
     @InjectRepository(ConfiguracionEntrega)
     private readonly configuracionEntregaRepository: Repository<ConfiguracionEntrega>,
-  ) { }
+  ) {}
 
   async createEntrega(data: {
     ubicacion: string;
@@ -25,8 +25,13 @@ export class EntregaEquipoPpiService {
     const { ubicacion, bitacoraPpiId, configuracionEntregaId } = data;
 
     // Obtén el objeto BitacoraPpi y ConfiguracionEntrega a partir de sus IDs
-    const equipoentrega = await this.bitacoraPpiRepository.findOne({ where: { id: bitacoraPpiId } });
-    const configuracionentrega = await this.configuracionEntregaRepository.findOne({ where: { id: configuracionEntregaId } });
+    const equipoentrega = await this.bitacoraPpiRepository.findOne({
+      where: { id: bitacoraPpiId },
+    });
+    const configuracionentrega =
+      await this.configuracionEntregaRepository.findOne({
+        where: { id: configuracionEntregaId },
+      });
 
     // Crea la entrega utilizando los objetos relacionados
     const entrega = this.entregaRepository.create({
@@ -50,20 +55,34 @@ export class EntregaEquipoPpiService {
         'eep.Calificacion_Entrega',
         'ce.Porcentaje_Entrega',
         'eep.Entrega_Equipo_PPI_ID',
-        'ce.Plazo_Entrega'
+        'ce.Plazo_Entrega',
       ])
-      .innerJoin('Bitacora_PPI', 'bp', 'bp.Bitacora_PPI_ID = eep.Bitacora_PPI_ID')
-      .innerJoin('Configuracion_Entrega', 'ce', 'ce.Configuracion_Entrega_ID = eep.Configuracion_Entrega_ID')
-      .innerJoin('Tipo_Entrega', 'te', 'te.Tipo_Entrega_ID = ce.Tipo_Entrega_ID')
+      .innerJoin(
+        'Bitacora_PPI',
+        'bp',
+        'bp.Bitacora_PPI_ID = eep.Bitacora_PPI_ID',
+      )
+      .innerJoin(
+        'Configuracion_Entrega',
+        'ce',
+        'ce.Configuracion_Entrega_ID = eep.Configuracion_Entrega_ID',
+      )
+      .innerJoin(
+        'Tipo_Entrega',
+        'te',
+        'te.Tipo_Entrega_ID = ce.Tipo_Entrega_ID',
+      )
       .where('bp.Codigo_Equipo = :codigoEquipo', { codigoEquipo })
       .getRawMany();
   }
 
-  async postNotas(data: { Entrega_Equipo_PPI_ID: number, Calificacion: number }[]) {
+  async postNotas(
+    data: { Entrega_Equipo_PPI_ID: number; Calificacion: number }[],
+  ) {
     for (const { Entrega_Equipo_PPI_ID, Calificacion } of data) {
       await this.entregaRepository.update(
         { id: Entrega_Equipo_PPI_ID },
-        { calificacion: Calificacion }
+        { calificacion: Calificacion },
       );
     }
     return 'Calificaciones actualizadas correctamente';
@@ -80,11 +99,23 @@ export class EntregaEquipoPpiService {
         'eep.Calificacion_Entrega',
         'ce.Porcentaje_Entrega',
         'eep.Entrega_Equipo_PPI_ID',
-        'ce.Plazo_Entrega'
+        'ce.Plazo_Entrega',
       ])
-      .innerJoin('Bitacora_PPI', 'bp', 'bp.Bitacora_PPI_ID = eep.Bitacora_PPI_ID')
-      .innerJoin('Configuracion_Entrega', 'ce', 'ce.Configuracion_Entrega_ID = eep.Configuracion_Entrega_ID')
-      .innerJoin('Tipo_Entrega', 'te', 'te.Tipo_Entrega_ID = ce.Tipo_Entrega_ID')
+      .innerJoin(
+        'Bitacora_PPI',
+        'bp',
+        'bp.Bitacora_PPI_ID = eep.Bitacora_PPI_ID',
+      )
+      .innerJoin(
+        'Configuracion_Entrega',
+        'ce',
+        'ce.Configuracion_Entrega_ID = eep.Configuracion_Entrega_ID',
+      )
+      .innerJoin(
+        'Tipo_Entrega',
+        'te',
+        'te.Tipo_Entrega_ID = ce.Tipo_Entrega_ID',
+      )
       .getRawMany();
   }
 
@@ -172,44 +203,73 @@ export class EntregaEquipoPpiService {
     u_docente."Usuario_Nombre" AS "Nombre Docente",
     a."Asignatura_Nombre" as "Asignatura",
     ua."Grupo_Codigo" as "Grupo"
-FROM
-    "Entrega_Equipo_PPI" eep
-INNER JOIN "Bitacora_PPI" bp ON
-    bp."Bitacora_PPI_ID" = eep."Bitacora_PPI_ID"
-INNER JOIN "Configuracion_Entrega" ce ON
-    ce."Configuracion_Entrega_ID" = eep."Configuracion_Entrega_ID"
-INNER JOIN "Tipo_Entrega" te ON
-    te."Tipo_Entrega_ID" = ce."Tipo_Entrega_ID"
-INNER JOIN "Equipo_Usuario" eu ON
-    eu."Codigo_Equipo" = bp."Codigo_Equipo"
-INNER JOIN "Usuario" u ON
-    u."Usuario_ID" = eu."Usuario_ID"
-INNER JOIN "Usuario_Asignatura" ua ON
-    ua."Usuario_ID" = u."Usuario_ID"
-INNER JOIN "Asignatura" a ON
-	a."Asignatura_ID" = ua."Asignatura_Codigo"
-LEFT JOIN (
-    SELECT
+    FROM
+      "Entrega_Equipo_PPI" eep
+    INNER JOIN "Bitacora_PPI" bp ON
+      bp."Bitacora_PPI_ID" = eep."Bitacora_PPI_ID"
+    INNER JOIN "Configuracion_Entrega" ce ON
+      ce."Configuracion_Entrega_ID" = eep."Configuracion_Entrega_ID"
+    INNER JOIN "Tipo_Entrega" te ON
+      te."Tipo_Entrega_ID" = ce."Tipo_Entrega_ID"
+    INNER JOIN "Equipo_Usuario" eu ON
+      eu."Codigo_Equipo" = bp."Codigo_Equipo"
+    INNER JOIN "Usuario" u ON
+      u."Usuario_ID" = eu."Usuario_ID"
+    INNER JOIN "Usuario_Asignatura" ua ON
+      ua."Usuario_ID" = u."Usuario_ID"
+    INNER JOIN "Asignatura" a ON
+	    a."Asignatura_ID" = ua."Asignatura_Codigo"
+    LEFT JOIN (
+      SELECT
         ua."Asignatura_Codigo",
         ua."Grupo_Codigo",
         u."Usuario_Nombre"
-    FROM
+      FROM
         "Usuario_Asignatura" ua
-    INNER JOIN "Usuario" u ON
+      INNER JOIN "Usuario" u ON
         u."Usuario_ID" = ua."Usuario_ID"
-    WHERE
+      WHERE
         u."Rol_ID" = 2
         OR u."Rol_ID" = 5
-) u_docente ON
-    u_docente."Asignatura_Codigo" = ua."Asignatura_Codigo"
+    ) u_docente ON
+      u_docente."Asignatura_Codigo" = ua."Asignatura_Codigo"
     AND u_docente."Grupo_Codigo" = ua."Grupo_Codigo"
-WHERE
+  WHERE
     eep."Calificacion_Entrega" IS NULL
-ORDER BY
+  ORDER BY
     bp."Codigo_Equipo", u."Usuario_Documento", te."Tipo_Entrega_ID";
     `;
 
     return this.entregaRepository.query(query);
   }
 
+  async executeQueryAsesorias() {
+    const query = `
+    SELECT
+    eu."Codigo_Equipo" AS "Código",
+    u."Usuario_Nombre" AS "Nombre",
+    u."Usuario_Documento" AS "Documento",
+    (SELECT
+        CASE
+            WHEN ce."Plazo_Calificacion" < CURRENT_TIMESTAMP AT TIME ZONE 'America/Bogota' THEN 'Plazo Vencido'
+            ELSE 'A Tiempo, sin calificar todavía'
+        END AS "Estado"
+    FROM
+        "Configuracion_Entrega" ce
+    WHERE
+        ce."Configuracion_Entrega_ID" = 255) AS "Estado"
+FROM
+    "Equipo_Usuario" eu
+INNER JOIN "Usuario" u ON
+    u."Usuario_ID" = eu."Usuario_ID"
+WHERE
+    eu."Nota_Asesoria_Definitiva_Individual" IS NULL
+    AND u."Rol_ID" = 1
+ORDER BY
+    eu."Codigo_Equipo",
+    u."Usuario_Documento";
+    `;
+
+    return this.entregaRepository.query(query);
+  }
 }

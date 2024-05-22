@@ -46,4 +46,9 @@ export class EntregaEquipoPpiController {
     return this.entregaService.executeQueryDocentes();
   }
 
+  @Get('asesorias-mora')
+  async getAsesoriasMora() {
+    return this.entregaService.executeQueryAsesorias();
+  }
+
 }
