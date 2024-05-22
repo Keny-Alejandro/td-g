@@ -206,7 +206,7 @@ LEFT JOIN (
 WHERE
     eep."Calificacion_Entrega" IS NULL
 ORDER BY
-    bp."Codigo_Equipo";
+    bp."Codigo_Equipo", u."Usuario_Documento", te."Tipo_Entrega_ID";
     `;
 
     return this.entregaRepository.query(query);
