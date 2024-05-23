@@ -8,11 +8,10 @@ import {
   Post,
   Param,
   Logger,
-  Put
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { EmailDTO } from './dto/email.dto';
-import { UpdateUsuarioDTO, CreateUsuariosByAsesorDTO } from './dto/update-usuario.dto';
+import { UpdateUsuarioDTO } from './dto/update-usuario.dto';
 import { Usuario } from './entities/usuario.entity';
 import { UploadStudentsDto } from './dto/upload-students.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -176,16 +175,44 @@ export class UsuarioController {
     return this.usuarioService.findOne(+id);
   }
 
-  @Put('updateUsers')
+  @Post('updateUsers')
   async updateUsers(@Body() payload: UpdateUsuarioDTO[]) {
-    await this.usuarioService.updateUsers(payload);
+    await Promise.all(payload.map(async (item) => {
+      const usuarioExistente = await this.usuarioRepository.findOne({ where: { documento: item.Usuario_Documento } });
+  
+      if (usuarioExistente) {
+        await this.updateUsuario(item);
+      } else {
+        await this.createUsuario(item);
+      }
+    }));
+  
     return { message: 'Usuarios actualizados correctamente' };
   }
-
-  @Post('add')
-  async createNewUsersByAsesor(@Body() payload: CreateUsuariosByAsesorDTO[]) {
-    await this.usuarioService.createNewUsersByAsesor(payload);
-    return { message: 'Usuarios actualizados correctamente' };
+  
+  private async createUsuario(payload: UpdateUsuarioDTO) {
+    const rol = await this.rolRepository.findOne({ where: { id: payload.Rol_ID } });
+    if (!rol) {
+      throw new NotFoundException(`Rol con ID ${payload.Rol_ID} no encontrado`);
+    }
+    await this.usuarioRepository.create({
+      nombre: payload.Usuario_Nombre,
+      documento: payload.Usuario_Documento,
+      correo: payload.Usuario_Correo,
+      rol: rol
+    });
   }
+  
+  private async updateUsuario(payload: UpdateUsuarioDTO) {
+    const rol = await this.rolRepository.findOne({ where: { id: payload.Rol_ID } });
+    if (!rol) {
+      throw new NotFoundException(`Rol con ID ${payload.Rol_ID} no encontrado`);
+    }
+    await this.usuarioRepository.update({ documento: payload.Usuario_Documento }, {
+      nombre: payload.Usuario_Nombre,
+      correo: payload.Usuario_Correo,
+      rol: rol
+    });
+  }  
 
 }

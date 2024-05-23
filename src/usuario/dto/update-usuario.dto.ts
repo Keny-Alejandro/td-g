@@ -8,12 +8,3 @@ export class UpdateUsuarioDTO {
     Programa_ID: number;
     Usuario_Semestre: number;
 }
-
-export class CreateUsuariosByAsesorDTO {
-    Rol_ID: number;
-    Usuario_Nombre: string;
-    Usuario_Documento: string;
-    Usuario_Correo: string;
-    Usuario_Semestre: number;
-}
-  

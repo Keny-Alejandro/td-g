@@ -9,7 +9,6 @@ import { Asignatura } from 'src/asignatura/entities/asignatura.entity';
 import { EmailDTO } from './dto/email.dto';
 import { Rol } from 'src/rol/entities/rol.entity';
 import { UsuarioAsignatura } from 'src/usuario_asignatura/entities/usuario_asignatura.entity';
-import { UpdateUsuarioDTO } from './dto/update-usuario.dto';
 
 @Injectable()
 export class UsuarioService {
@@ -165,40 +164,4 @@ order by "Usuario_Asignatura"."Grupo_Codigo" asc, "Usuario"."Usuario_Nombre" asc
       .getOne();
   }
 
-  async updateUsers(payloads: UpdateUsuarioDTO[]): Promise<void> {
-    await Promise.all(payloads.map(async (payload) => {
-      const usuario = await this.usuarioRepository.findOne({ where: { documento: payload.Usuario_Documento } });
-
-      if (usuario) {
-        const rol = await this.rolRepository.findOne({ where: { id: payload.Rol_ID } });
-        if (!rol) {
-          throw new NotFoundException(`Rol con ID ${payload.Rol_ID} no encontrado`);
-        }
-
-        await this.usuarioRepository.update(payload.Usuario_ID, {
-          nombre: payload.Usuario_Nombre,
-          documento: payload.Usuario_Documento,
-          correo: payload.Usuario_Correo,
-          rol: rol
-        });
-      }
-    }));
-  }
-
-  async createNewUsersByAsesor(payload: any): Promise<void> {
-    const rol = await this.rolRepository.findOne({ where: { id: payload.rol.id } });
-    if (!rol) {
-      throw new NotFoundException(`Rol con ID ${payload.rol.id} no encontrado`);
-    }
-
-    await Promise.all(payload.map(async (usuario) => {
-      await this.usuarioRepository.save({
-        nombre: usuario.Usuario_Nombre,
-        documento: usuario.Usuario_Documento,
-        correo: usuario.Usuario_Correo,
-        rol: rol
-      });
-    }));
-
-  }
 }
