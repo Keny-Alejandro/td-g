@@ -62,7 +62,7 @@ export class UsuarioAsignaturaService {
         WHERE
             u."Rol_ID" = 1
         ORDER BY a."Asignatura_ID" ASC, ua."Grupo_Codigo" ASC
-    `;
+        `;
             const results = await this.usuarioAsignaturaRepository.query(query);
             return results;
         } catch (error) {
@@ -102,7 +102,7 @@ export class UsuarioAsignaturaService {
         return 'Grupo actualizado correctamente';
     }
 
-    findOne(id: number) {
-        return `This action returns a #${id} tipoCita`;
-    }
+    //findOne(id: number) {
+        //return `This action returns a #${id} tipoCita`;
+    //}
 }
