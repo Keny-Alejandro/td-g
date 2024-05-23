@@ -8,7 +8,6 @@ import {
   Post,
   Param,
   Logger,
-  BadRequestException,
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { EmailDTO } from './dto/email.dto';
@@ -178,10 +177,6 @@ export class UsuarioController {
 
   @Post('updateUsers')
   async updateUsers(@Body() payload: any) {
-    
-    if (!Array.isArray(payload)) {
-      throw new BadRequestException('Payload debe ser un array');
-    }
 
     await Promise.all(payload.map(async (item) => {
       const usuarioExistente = await this.usuarioRepository.findOne({ where: { documento: item.Usuario_Documento } });
