@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { EmailDTO } from './dto/email.dto';
-import { UpdateUsuarioDTO } from './dto/update-usuario.dto';
 import { Usuario } from './entities/usuario.entity';
 import { UploadStudentsDto } from './dto/upload-students.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -176,44 +175,8 @@ export class UsuarioController {
   }
 
   @Post('updateUsers')
-  async updateUsers(@Body() payload: any) {
-
-    await Promise.all(payload.map(async (item) => {
-      const usuarioExistente = await this.usuarioRepository.findOne({ where: { documento: item.Usuario_Documento } });
-  
-      if (usuarioExistente) {
-        await this.updateUsuario(item);
-      } else {
-        await this.createUsuario(item);
-      }
-    }));
-  
-    return { message: 'Usuarios actualizados correctamente' };
+  async updateUsers(@Body() data: any) {
+    return this.usuarioService.updateUsers(data);
   }
-  
-  private async createUsuario(payload: UpdateUsuarioDTO) {
-    const rol = await this.rolRepository.findOne({ where: { id: payload.Rol_ID } });
-    if (!rol) {
-      throw new NotFoundException(`Rol con ID ${payload.Rol_ID} no encontrado`);
-    }
-    await this.usuarioRepository.create({
-      nombre: payload.Usuario_Nombre,
-      documento: payload.Usuario_Documento,
-      correo: payload.Usuario_Correo,
-      rol: rol
-    });
-  }
-  
-  private async updateUsuario(payload: UpdateUsuarioDTO) {
-    const rol = await this.rolRepository.findOne({ where: { id: payload.Rol_ID } });
-    if (!rol) {
-      throw new NotFoundException(`Rol con ID ${payload.Rol_ID} no encontrado`);
-    }
-    await this.usuarioRepository.update({ documento: payload.Usuario_Documento }, {
-      nombre: payload.Usuario_Nombre,
-      correo: payload.Usuario_Correo,
-      rol: rol
-    });
-  }  
 
 }

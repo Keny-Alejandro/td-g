@@ -25,6 +25,47 @@ export class UsuarioService {
     private readonly usuarioAsignaturaRepository: Repository<UsuarioAsignatura>
   ) { }
 
+  async updateUsers(data: any): Promise<void> {
+    const { asesoresModificados, asesoresNuevos, asesoresEliminados } = data;
+
+    // Actualizar o crear registros modificados
+    for (const asesor of asesoresModificados) {
+      // Buscar si el registro existe
+      const existingAsesor = await this.usuarioRepository.findOne(asesor.id);
+      if (existingAsesor) {
+        // Si existe, actualizar
+        await this.usuarioRepository.save(asesor);
+      } else {
+        // Si no existe, crear
+        await this.usuarioRepository.save(asesor);
+      }
+    }
+
+    for (const asesor of asesoresNuevos) {
+      // Buscar si el registro existe
+      const existingAsesor = await this.usuarioRepository.findOne(asesor.id);
+      if (existingAsesor) {
+        // Si existe, actualizar
+        await this.usuarioRepository.save(asesor);
+      } else {
+        // Si no existe, crear
+        await this.usuarioRepository.save(asesor);
+      }
+    }
+
+    for (const asesor of asesoresEliminados) {
+      // Buscar si el registro existe
+      const existingAsesor = await this.usuarioRepository.findOne(asesor.id);
+      if (existingAsesor) {
+        // Si existe, actualizar
+        await this.usuarioRepository.save(asesor);
+      } else {
+        // Si no existe, crear
+        await this.usuarioRepository.save(asesor);
+      }
+    }
+  }
+
   async findEmail(EmailDTO: EmailDTO): Promise<Usuario[]> {
     const query =
       'select u."Usuario_ID", u."Usuario_Nombre",u."Usuario_Documento",u."Usuario_Correo",p."Programa_ID",p."Programa_Nombre",r."Rol_ID", r."Rol_Descripcion", eu."Codigo_Equipo" from "Usuario" u join "Rol" r on r."Rol_ID" = u."Rol_ID" join "Programa" p on p."Programa_ID" = u."Programa_ID" join "Equipo_Usuario" eu on eu."Usuario_ID" = u."Usuario_ID" where u."Usuario_Correo" = $1';
