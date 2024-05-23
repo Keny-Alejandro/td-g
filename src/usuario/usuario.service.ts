@@ -30,6 +30,9 @@ export class UsuarioService {
 
     // Actualizar o crear registros modificados
     for (const asesor of asesoresModificados) {
+      if (Object.values(asesor).some(value => !value)) {
+        continue; // Ignorar el objeto y continuar con el siguiente
+      }
       // Buscar si el registro existe
       const existingAsesor = await this.usuarioRepository.findOne(asesor.id);
       if (existingAsesor) {
@@ -42,6 +45,9 @@ export class UsuarioService {
     }
 
     for (const asesor of asesoresNuevos) {
+      if (Object.values(asesor).some(value => !value)) {
+        continue; // Ignorar el objeto y continuar con el siguiente
+      }
       // Buscar si el registro existe
       const existingAsesor = await this.usuarioRepository.findOne(asesor.id);
       if (existingAsesor) {
@@ -54,6 +60,9 @@ export class UsuarioService {
     }
 
     for (const asesor of asesoresEliminados) {
+      if (Object.values(asesor).some(value => !value)) {
+        continue; // Ignorar el objeto y continuar con el siguiente
+      }
       // Buscar si el registro existe
       const existingAsesor = await this.usuarioRepository.findOne(asesor.id);
       if (existingAsesor) {
