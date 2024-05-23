@@ -34,7 +34,7 @@ export class UsuarioService {
         continue; // Ignorar el objeto y continuar con el siguiente
       }
       // Buscar si el registro existe
-      const existingAsesor = await this.usuarioRepository.findOne(asesor.id);
+      const existingAsesor = await this.usuarioRepository.findOne(asesor.Usuario_ID);
       if (existingAsesor) {
         // Si existe, actualizar
         await this.usuarioRepository.save(asesor);
@@ -49,7 +49,7 @@ export class UsuarioService {
         continue; // Ignorar el objeto y continuar con el siguiente
       }
       // Buscar si el registro existe
-      const existingAsesor = await this.usuarioRepository.findOne(asesor.id);
+      const existingAsesor = await this.usuarioRepository.findOne(asesor.Usuario_ID);
       if (existingAsesor) {
         // Si existe, actualizar
         await this.usuarioRepository.save(asesor);
@@ -64,7 +64,7 @@ export class UsuarioService {
         continue; // Ignorar el objeto y continuar con el siguiente
       }
       // Buscar si el registro existe
-      const existingAsesor = await this.usuarioRepository.findOne(asesor.id);
+      const existingAsesor = await this.usuarioRepository.findOne(asesor.Usuario_ID);
       if (existingAsesor) {
         // Si existe, actualizar
         await this.usuarioRepository.save(asesor);
