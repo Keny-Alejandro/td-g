@@ -65,7 +65,11 @@ export class UsuarioService {
 }
 
 async guardarAsesor(asesor: any): Promise<void> {
-    const existingAsesor = await this.usuarioRepository.findOne(asesor.Usuario_ID);
+    if (!asesor || !asesor.Usuario_ID) {
+        throw new Error('El asesor proporcionado no es válido o no tiene un ID de usuario.');
+    }
+
+    const existingAsesor = await this.usuarioRepository.findOne({ where: asesor.Usuario_ID });
     if (existingAsesor) {
         // Si existe, actualizar
         await this.usuarioRepository.save(asesor);
