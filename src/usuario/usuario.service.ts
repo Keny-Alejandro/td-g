@@ -27,57 +27,63 @@ export class UsuarioService {
 
   async updateUsers(data: any): Promise<void> {
     if (!data || typeof data !== 'object') {
-        throw new Error('Los datos proporcionados no son válidos.');
+      throw new Error('Los datos proporcionados no son válidos.');
     }
 
     const { asesoresModificados, asesoresNuevos, asesoresEliminados } = data;
 
     if (!Array.isArray(asesoresModificados) || asesoresModificados.length === 0) {
-        throw new Error('La lista de asesores modificados no es válida o está vacía.');
+      throw new Error('La lista de asesores modificados no es válida o está vacía.');
     }
     if (!Array.isArray(asesoresNuevos) || asesoresNuevos.length === 0) {
-        throw new Error('La lista de asesores nuevos no es válida o está vacía.');
+      throw new Error('La lista de asesores nuevos no es válida o está vacía.');
     }
     if (!Array.isArray(asesoresEliminados) || asesoresEliminados.length === 0) {
-        throw new Error('La lista de asesores eliminados no es válida o está vacía.');
+      throw new Error('La lista de asesores eliminados no es válida o está vacía.');
     }
 
     for (const asesor of asesoresModificados) {
-        if (Object.values(asesor).some(value => !value)) {
-            continue; // Ignorar el objeto y continuar con el siguiente
-        }
-        await this.guardarAsesor(asesor);
+      if (Object.values(asesor).some(value => !value)) {
+        continue; // Ignorar el objeto y continuar con el siguiente
+      }
+      await this.guardarAsesor(asesor);
     }
 
     for (const asesor of asesoresNuevos) {
-        if (Object.values(asesor).some(value => !value)) {
-            continue; // Ignorar el objeto y continuar con el siguiente
-        }
-        await this.guardarAsesor(asesor);
+      if (Object.values(asesor).some(value => !value)) {
+        continue; // Ignorar el objeto y continuar con el siguiente
+      }
+      await this.guardarAsesor(asesor);
     }
 
     for (const asesor of asesoresEliminados) {
-        if (Object.values(asesor).some(value => !value)) {
-            continue; // Ignorar el objeto y continuar con el siguiente
-        }
-        await this.guardarAsesor(asesor);
+      if (Object.values(asesor).some(value => !value)) {
+        continue; // Ignorar el objeto y continuar con el siguiente
+      }
+      await this.guardarAsesor(asesor);
     }
-}
+  }
 
-async guardarAsesor(asesor: any): Promise<void> {
-    if (!asesor || !asesor.Usuario_ID) {
-        throw new Error('El asesor proporcionado no es válido o no tiene un ID de usuario.');
+  async guardarAsesor(asesor: any): Promise<void> {
+    if (!asesor /*|| !asesor.Usuario_ID*/) {
+      throw new Error('El asesor proporcionado no es válido o falta información requerida.');
+    }
+
+    // Verificar si Usuario_Nombre es nulo y continuar con la siguiente iteración si es así
+    if (!asesor.Usuario_Nombre) {
+      console.log('El campo Usuario_Nombre es nulo. Continuando con la siguiente iteración.');
+      return; // Continuar con la siguiente iteración
     }
 
     const existingAsesor = await this.usuarioRepository.findOne({ where: asesor.Usuario_ID });
     if (existingAsesor) {
-        // Si existe, actualizar
-        await this.usuarioRepository.save(asesor);
+      // Si existe, actualizar
+      await this.usuarioRepository.save(asesor);
     } else {
-        // Si no existe, crear
-        await this.usuarioRepository.save(asesor);
+      // Si no existe, crear
+      await this.usuarioRepository.save(asesor);
     }
-}
+  }
 
   async findEmail(EmailDTO: EmailDTO): Promise<Usuario[]> {
     const query =
