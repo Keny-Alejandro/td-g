@@ -25,64 +25,26 @@ export class UsuarioService {
     private readonly usuarioAsignaturaRepository: Repository<UsuarioAsignatura>
   ) { }
 
-  async updateUsers(data: any): Promise<void> {
-    if (!data || typeof data !== 'object') {
-      throw new Error('Los datos proporcionados no son válidos.');
-    }
+  async createOrUpdateAsesores(usuariosData: any[]): Promise<any[]> {
+    const promises = usuariosData.map(async (usuarioData) => {
+      const usuario = await this.usuarioRepository.findOne({
+        where: { documento: usuarioData.Usuario_Documento },
+      });
 
-    const { asesoresModificados, asesoresNuevos, asesoresEliminados } = data;
-
-    if (!Array.isArray(asesoresModificados) || asesoresModificados.length === 0) {
-      throw new Error('La lista de asesores modificados no es válida o está vacía.');
-    }
-    if (!Array.isArray(asesoresNuevos) || asesoresNuevos.length === 0) {
-      throw new Error('La lista de asesores nuevos no es válida o está vacía.');
-    }
-    if (!Array.isArray(asesoresEliminados) || asesoresEliminados.length === 0) {
-      throw new Error('La lista de asesores eliminados no es válida o está vacía.');
-    }
-
-    for (const asesor of asesoresModificados) {
-      if (Object.values(asesor).some(value => !value)) {
-        continue; // Ignorar el objeto y continuar con el siguiente
+      if (usuario) {
+        // Si el usuario ya existe, actualiza sus datos
+        usuario.nombre = usuarioData.Usuario_Nombre;
+        usuario.correo = usuarioData.Usuario_Correo;
+        usuario.rol = usuarioData.Rol_ID; // Aquí debes asignar correctamente el objeto Rol, no solo el ID
+        return this.usuarioRepository.save(usuario);
+      } else {
+        // Si el usuario no existe, crea uno nuevo
+        const nuevoUsuario = this.usuarioRepository.create(usuarioData);
+        return this.usuarioRepository.save(nuevoUsuario);
       }
-      await this.guardarAsesor(asesor);
-    }
+    });
 
-    for (const asesor of asesoresNuevos) {
-      if (Object.values(asesor).some(value => !value)) {
-        continue; // Ignorar el objeto y continuar con el siguiente
-      }
-      await this.guardarAsesor(asesor);
-    }
-
-    for (const asesor of asesoresEliminados) {
-      if (Object.values(asesor).some(value => !value)) {
-        continue; // Ignorar el objeto y continuar con el siguiente
-      }
-      await this.guardarAsesor(asesor);
-    }
-  }
-
-  async guardarAsesor(asesor: any): Promise<void> {
-    if (!asesor /*|| !asesor.Usuario_ID*/) {
-      throw new Error('El asesor proporcionado no es válido o falta información requerida.');
-    }
-
-    // Verificar si Usuario_Nombre es nulo y continuar con la siguiente iteración si es así
-    if (!asesor.Usuario_Nombre) {
-      console.log('El campo Usuario_Nombre es nulo. Continuando con la siguiente iteración.');
-      return; // Continuar con la siguiente iteración
-    }
-
-    const existingAsesor = await this.usuarioRepository.findOne({ where: asesor.Usuario_ID });
-    if (existingAsesor) {
-      // Si existe, actualizar
-      await this.usuarioRepository.save(asesor);
-    } else {
-      // Si no existe, crear
-      await this.usuarioRepository.save(asesor);
-    }
+    return Promise.all(promises);
   }
 
   async findEmail(EmailDTO: EmailDTO): Promise<Usuario[]> {

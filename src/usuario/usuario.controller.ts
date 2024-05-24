@@ -174,9 +174,9 @@ export class UsuarioController {
     return this.usuarioService.findOne(+id);
   }
 
-  @Post('updateUsers')
-  async updateUsers(@Body() data: any) {
-    return this.usuarioService.updateUsers(data);
+  @Post()
+  createOrUpdateUsuarios(@Body() usuariosData: any[]) {
+    return this.usuarioService.createOrUpdateAsesores(usuariosData);
   }
 
 }
