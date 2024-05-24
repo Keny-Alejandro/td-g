@@ -174,7 +174,7 @@ export class UsuarioController {
     return this.usuarioService.findOne(+id);
   }
 
-  @Post()
+  @Post('/crearAsesores')
   createOrUpdateUsuarios(@Body() usuariosData: any[]) {
     return this.usuarioService.createOrUpdateAsesores(usuariosData);
   }
