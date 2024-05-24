@@ -53,7 +53,7 @@ export class ConfiguracionEntregaService {
         return this.configuracionEntregaRepository
             .createQueryBuilder('ce')
             .select([
-                'ce.Configuracion_Entrega_ID',
+                'DISTINCT ce.Configuracion_Entrega_ID',
                 'ce.Tipo_Entrega_ID',
                 'ce.Plazo_Calificacion',
                 'ce.Plazo_Entrega',
@@ -65,7 +65,7 @@ export class ConfiguracionEntregaService {
             .where('ce.Rol_ID = 2 OR u.Rol_ID = 5')
             .orderBy('ce.Tipo_Entrega_ID')
             .getRawMany();
-    }
+    }    
     
     async getEntregasCoordinador() {
         return this.configuracionEntregaRepository
