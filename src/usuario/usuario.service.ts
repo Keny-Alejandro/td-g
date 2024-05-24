@@ -44,6 +44,7 @@ export class UsuarioService {
         const nuevoUsuario = this.usuarioRepository.create({
           nombre: usuarioData.Usuario_Nombre,
           correo: usuarioData.Usuario_Correo,
+          documento: usuarioData.Usuario_Documento,
           rol: profesorRol
         });
         return this.usuarioRepository.save(nuevoUsuario);
