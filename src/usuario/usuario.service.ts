@@ -31,11 +31,13 @@ export class UsuarioService {
         where: { documento: usuarioData.Usuario_Documento },
       });
 
+      const profesorRol = await this.rolRepository.findOne({ where: { id: usuarioData.Rol_ID } })
+
       if (usuario) {
         // Si el usuario ya existe, actualiza sus datos
         usuario.nombre = usuarioData.Usuario_Nombre;
         usuario.correo = usuarioData.Usuario_Correo;
-        usuario.rol = usuarioData.Rol_ID; // Aquí debes asignar correctamente el objeto Rol, no solo el ID
+        usuario.rol = profesorRol; // Aquí debes asignar correctamente el objeto Rol, no solo el ID
         return this.usuarioRepository.save(usuario);
       } else {
         // Si el usuario no existe, crea uno nuevo
