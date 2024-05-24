@@ -176,11 +176,7 @@ export class UsuarioController {
 
   @Post('updateUsers')
   async updateUsers(@Body() data: any) {
-    if (!data || typeof data !== 'object' || !Array.isArray(data.asesoresModificados) || !Array.isArray(data.asesoresNuevos) || !Array.isArray(data.asesoresEliminados)) {
-      throw new Error('Datos inválidos: se esperaban arrays en la estructura.');
-    }
     return this.usuarioService.updateUsers(data);
   }
-
 
 }
