@@ -41,7 +41,11 @@ export class UsuarioService {
         return this.usuarioRepository.save(usuario);
       } else {
         // Si el usuario no existe, crea uno nuevo
-        const nuevoUsuario = this.usuarioRepository.create(usuarioData);
+        const nuevoUsuario = this.usuarioRepository.create({
+          nombre: usuarioData.Usuario_Nombre,
+          correo: usuarioData.Usuario_Correo,
+          rol: profesorRol
+        });
         return this.usuarioRepository.save(nuevoUsuario);
       }
     });
