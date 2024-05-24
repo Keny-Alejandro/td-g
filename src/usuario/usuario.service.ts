@@ -28,33 +28,44 @@ export class UsuarioService {
   async updateUsers(data: any): Promise<void> {
     const { asesoresModificados, asesoresNuevos, asesoresEliminados } = data;
 
-    for (const asesor of asesoresModificados) {
-      if (this.hasInvalidValues(asesor)) continue;
-      const existingAsesor = await this.usuarioRepository.findOne(asesor.Usuario_ID);
-      if (existingAsesor) {
-        await this.usuarioRepository.save(asesor);
-      } else {
-        await this.usuarioRepository.save(asesor);
-      }
+    // Verificar que los datos sean arrays antes de iterar
+    if (!Array.isArray(asesoresModificados) || !Array.isArray(asesoresNuevos) || !Array.isArray(asesoresEliminados)) {
+      throw new Error('Datos inválidos: se esperaban arrays.');
     }
 
-    for (const asesor of asesoresNuevos) {
-      if (this.hasInvalidValues(asesor)) continue;
-      await this.usuarioRepository.save(asesor);
-    }
-
-    for (const asesor of asesoresEliminados) {
-      if (this.hasInvalidValues(asesor)) continue;
-      const existingAsesor = await this.usuarioRepository.findOne(asesor.Usuario_ID);
-      if (existingAsesor) {
-        await this.usuarioRepository.delete(asesor.Usuario_ID);
+    try {
+      for (const asesor of asesoresModificados) {
+        if (this.hasInvalidValues(asesor)) continue;
+        const existingAsesor = await this.usuarioRepository.findOne(asesor.Usuario_ID);
+        if (existingAsesor) {
+          await this.usuarioRepository.save(asesor);
+        } else {
+          await this.usuarioRepository.save(asesor);
+        }
       }
+
+      for (const asesor of asesoresNuevos) {
+        if (this.hasInvalidValues(asesor)) continue;
+        await this.usuarioRepository.save(asesor);
+      }
+
+      for (const asesor of asesoresEliminados) {
+        if (this.hasInvalidValues(asesor)) continue;
+        const existingAsesor = await this.usuarioRepository.findOne(asesor.Usuario_ID);
+        if (existingAsesor) {
+          await this.usuarioRepository.delete(asesor.Usuario_ID);
+        }
+      }
+    } catch (error) {
+      console.error('Error updating users:', error);
+      throw new Error('Internal server error');
     }
   }
 
   private hasInvalidValues(asesor: any): boolean {
     return Object.values(asesor).some(value => value === null || value === undefined || value === '' || Number.isNaN(value));
   }
+
 
   async findEmail(EmailDTO: EmailDTO): Promise<Usuario[]> {
     const query =
