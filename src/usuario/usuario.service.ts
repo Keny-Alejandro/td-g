@@ -28,51 +28,32 @@ export class UsuarioService {
   async updateUsers(data: any): Promise<void> {
     const { asesoresModificados, asesoresNuevos, asesoresEliminados } = data;
 
-    // Actualizar o crear registros modificados
     for (const asesor of asesoresModificados) {
-      if (Object.values(asesor).some(value => !value)) {
-        continue; // Ignorar el objeto y continuar con el siguiente
-      }
-      // Buscar si el registro existe
+      if (this.hasInvalidValues(asesor)) continue;
       const existingAsesor = await this.usuarioRepository.findOne(asesor.Usuario_ID);
       if (existingAsesor) {
-        // Si existe, actualizar
         await this.usuarioRepository.save(asesor);
       } else {
-        // Si no existe, crear
         await this.usuarioRepository.save(asesor);
       }
     }
 
     for (const asesor of asesoresNuevos) {
-      if (Object.values(asesor).some(value => !value)) {
-        continue; // Ignorar el objeto y continuar con el siguiente
-      }
-      // Buscar si el registro existe
-      const existingAsesor = await this.usuarioRepository.findOne(asesor.Usuario_ID);
-      if (existingAsesor) {
-        // Si existe, actualizar
-        await this.usuarioRepository.save(asesor);
-      } else {
-        // Si no existe, crear
-        await this.usuarioRepository.save(asesor);
-      }
+      if (this.hasInvalidValues(asesor)) continue;
+      await this.usuarioRepository.save(asesor);
     }
 
     for (const asesor of asesoresEliminados) {
-      if (Object.values(asesor).some(value => !value)) {
-        continue; // Ignorar el objeto y continuar con el siguiente
-      }
-      // Buscar si el registro existe
+      if (this.hasInvalidValues(asesor)) continue;
       const existingAsesor = await this.usuarioRepository.findOne(asesor.Usuario_ID);
       if (existingAsesor) {
-        // Si existe, actualizar
-        await this.usuarioRepository.save(asesor);
-      } else {
-        // Si no existe, crear
-        await this.usuarioRepository.save(asesor);
+        await this.usuarioRepository.delete(asesor.Usuario_ID);
       }
     }
+  }
+
+  private hasInvalidValues(asesor: any): boolean {
+    return Object.values(asesor).some(value => value === null || value === undefined || value === '' || Number.isNaN(value));
   }
 
   async findEmail(EmailDTO: EmailDTO): Promise<Usuario[]> {
