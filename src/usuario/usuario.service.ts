@@ -26,54 +26,54 @@ export class UsuarioService {
   ) { }
 
   async updateUsers(data: any): Promise<void> {
+    if (!data || typeof data !== 'object') {
+        throw new Error('Los datos proporcionados no son válidos.');
+    }
+
     const { asesoresModificados, asesoresNuevos, asesoresEliminados } = data;
 
-    // Actualizar o crear registros modificados
+    if (!Array.isArray(asesoresModificados) || asesoresModificados.length === 0) {
+        throw new Error('La lista de asesores modificados no es válida o está vacía.');
+    }
+    if (!Array.isArray(asesoresNuevos) || asesoresNuevos.length === 0) {
+        throw new Error('La lista de asesores nuevos no es válida o está vacía.');
+    }
+    if (!Array.isArray(asesoresEliminados) || asesoresEliminados.length === 0) {
+        throw new Error('La lista de asesores eliminados no es válida o está vacía.');
+    }
+
     for (const asesor of asesoresModificados) {
-      if (Object.values(asesor).some(value => !value)) {
-        continue; // Ignorar el objeto y continuar con el siguiente
-      }
-      // Buscar si el registro existe
-      const existingAsesor = await this.usuarioRepository.findOne(asesor.Usuario_ID);
-      if (existingAsesor) {
-        // Si existe, actualizar
-        await this.usuarioRepository.save(asesor);
-      } else {
-        // Si no existe, crear
-        await this.usuarioRepository.save(asesor);
-      }
+        if (Object.values(asesor).some(value => !value)) {
+            continue; // Ignorar el objeto y continuar con el siguiente
+        }
+        await this.guardarAsesor(asesor);
     }
 
     for (const asesor of asesoresNuevos) {
-      if (Object.values(asesor).some(value => !value)) {
-        continue; // Ignorar el objeto y continuar con el siguiente
-      }
-      // Buscar si el registro existe
-      const existingAsesor = await this.usuarioRepository.findOne(asesor.Usuario_ID);
-      if (existingAsesor) {
-        // Si existe, actualizar
-        await this.usuarioRepository.save(asesor);
-      } else {
-        // Si no existe, crear
-        await this.usuarioRepository.save(asesor);
-      }
+        if (Object.values(asesor).some(value => !value)) {
+            continue; // Ignorar el objeto y continuar con el siguiente
+        }
+        await this.guardarAsesor(asesor);
     }
 
     for (const asesor of asesoresEliminados) {
-      if (Object.values(asesor).some(value => !value)) {
-        continue; // Ignorar el objeto y continuar con el siguiente
-      }
-      // Buscar si el registro existe
-      const existingAsesor = await this.usuarioRepository.findOne(asesor.Usuario_ID);
-      if (existingAsesor) {
+        if (Object.values(asesor).some(value => !value)) {
+            continue; // Ignorar el objeto y continuar con el siguiente
+        }
+        await this.guardarAsesor(asesor);
+    }
+}
+
+async guardarAsesor(asesor: any): Promise<void> {
+    const existingAsesor = await this.usuarioRepository.findOne(asesor.Usuario_ID);
+    if (existingAsesor) {
         // Si existe, actualizar
         await this.usuarioRepository.save(asesor);
-      } else {
+    } else {
         // Si no existe, crear
         await this.usuarioRepository.save(asesor);
-      }
     }
-  }
+}
 
   async findEmail(EmailDTO: EmailDTO): Promise<Usuario[]> {
     const query =
