@@ -5,11 +5,14 @@ import {
   Param,
   Put,
   Body,
+  Post,
   NotFoundException,
 } from '@nestjs/common';
 import { UsuarioAsignaturaService } from './usuario_asignatura.service';
 import { UpdateConsecutivoDto, UpdateGrupoDto } from './dto/usuario_asignatura.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { CreateUsuarioAsignaturaDto } from './dto/usuario_asignatura.dto';
+import { UsuarioAsignatura } from './entities/usuario_asignatura.entity';
 
 @ApiTags('usuario-asignatura')
 @Controller('usuario-asignatura')
@@ -58,5 +61,10 @@ export class UsuarioAsignaturaController {
       }
       throw error;
     }
+  }
+
+  @Post('createUsuarioAsignatura')
+  async create(@Body() createUsuarioAsignaturaDto: CreateUsuarioAsignaturaDto[]): Promise<UsuarioAsignatura[]> {
+    return this.usuarioAsignaturaService.createUsuarioAsignaturas(createUsuarioAsignaturaDto);
   }
 }

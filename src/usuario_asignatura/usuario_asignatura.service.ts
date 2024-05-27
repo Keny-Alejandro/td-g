@@ -4,12 +4,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UsuarioAsignatura } from './entities/usuario_asignatura.entity';
 import { UpdateConsecutivoDto, UpdateGrupoDto } from './dto/usuario_asignatura.dto';
+import { Usuario } from '../usuario/entities/usuario.entity';
+import { CreateUsuarioAsignaturaDto } from './dto/usuario_asignatura.dto';
 
 @Injectable()
 export class UsuarioAsignaturaService {
     constructor(
         @InjectRepository(UsuarioAsignatura)
         private readonly usuarioAsignaturaRepository: Repository<UsuarioAsignatura>,
+        @InjectRepository(Usuario)
+        private readonly usuarioRepository: Repository<Usuario>,
     ) { }
 
     async getGroupsDocente(usuarioId: number) {
@@ -102,7 +106,28 @@ export class UsuarioAsignaturaService {
         return 'Grupo actualizado correctamente';
     }
 
+    async createUsuarioAsignaturas(createUsuarioAsignaturaDto: CreateUsuarioAsignaturaDto[]): Promise<UsuarioAsignatura[]> {
+        const usuarioAsignaturas: UsuarioAsignatura[] = [];
+
+        for (const dto of createUsuarioAsignaturaDto) {
+            const usuario = await this.usuarioRepository.findOne({ where: { id: dto.id } });
+            if (!usuario) {
+                throw new NotFoundException(`Usuario with ID ${dto.id} not found`);
+            }
+
+            const usuarioAsignatura = new UsuarioAsignatura();
+            usuarioAsignatura.usuarioasignatura = usuario;
+            usuarioAsignatura.semestre = dto.Asignatura_Semestre;
+            usuarioAsignatura.grupo = dto.Grupo_Codigo;
+            usuarioAsignatura.consecutivo = null; // Asumiendo que consecutivo es opcional
+
+            usuarioAsignaturas.push(usuarioAsignatura);
+        }
+
+        return this.usuarioAsignaturaRepository.save(usuarioAsignaturas);
+    }
+
     //findOne(id: number) {
-        //return `This action returns a #${id} tipoCita`;
+    //return `This action returns a #${id} tipoCita`;
     //}
 }
