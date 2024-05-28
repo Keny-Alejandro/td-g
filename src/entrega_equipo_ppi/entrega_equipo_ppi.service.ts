@@ -34,11 +34,27 @@ export class EntregaEquipoPpiService {
       });
 
     // Crea la entrega utilizando los objetos relacionados
-    const entrega = this.entregaRepository.create({
-      ubicacion,
-      equipoentrega,
-      configuracionentrega,
+    let entrega = await this.entregaRepository.findOne({
+      where: {
+        ubicacion,
+        equipoentrega: { id: bitacoraPpiId },
+        configuracionentrega: { id: configuracionEntregaId },
+      },
     });
+
+    if (entrega) {
+      // Si existe, actualiza los valores
+      entrega.ubicacion = ubicacion;
+      entrega.equipoentrega = equipoentrega;
+      entrega.configuracionentrega = configuracionentrega;
+    } else {
+      // Si no existe, crea un nuevo registro
+      entrega = this.entregaRepository.create({
+        ubicacion,
+        equipoentrega,
+        configuracionentrega,
+      });
+    }
 
     // Guarda la entrega en la base de datos
     return await this.entregaRepository.save(entrega);
