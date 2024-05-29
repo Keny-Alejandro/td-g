@@ -138,12 +138,12 @@ export class BackupController {
     const horasem = this.HoraSemanalRepository.clear(); // OK
     const equipoppipjic = this.EquipoPpiPjicRepository.clear(); // OK
     const equipus = this.EquipoUsuarioRepository.clear(); // OK
-    const citas = this.repositoryCitasAsesoriaPpi.clear();
-    const equipo = this.repositoryEquipoPpi.clear();
+    const estadoSeg = this.repositoryEstadoSeguimientoCambio.clear(); // OK
+    const seguim = this.repositorySeguimientoPpi.clear();//OK
+    const citas = this.repositoryCitasAsesoriaPpi.clear();//OK
+    const equipo = this.repositoryEquipoPpi.clear();//OK
     const entregaequ = this.EntregaEquipoPpiRepository.clear(); // OK
     const notif = this.repositoryNotificacion.clear(); // OK
-    const estadoSeg = this.repositoryEstadoSeguimientoCambio.clear(); // OK
-    const seguim = this.repositorySeguimientoPpi.clear();
     const semana = this.repositorySemana.clear(); // OK
     if (userasign && horasem && equipoppipjic && equipus && citas && equipo && entregaequ && notif && estadoSeg && seguim && semana)
       return true
