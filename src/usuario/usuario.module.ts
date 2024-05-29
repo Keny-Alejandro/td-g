@@ -15,24 +15,26 @@ import { Programa } from 'src/programa/entities/programa.entity';
 import { Rol } from 'src/rol/entities/rol.entity';
 import { Asignatura } from 'src/asignatura/entities/asignatura.entity';
 import { UsuarioAsignatura } from 'src/usuario_asignatura/entities/usuario_asignatura.entity';
+import { HoraSemanal } from 'src/hora_semanal/entities/hora_semanal.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Usuario, 
-      Programa, 
-      Rol, 
-      Asignatura, 
-      UsuarioAsignatura, 
-      ConfigModule, 
-      Notificacione, 
-      EstadoSeguimientoCambio, 
-      CitasAsesoriaPpi, 
-      EquipoPpi, 
-      Semana, 
-      SeguimientoPpi]),
+      Usuario,
+      Programa,
+      Rol,
+      Asignatura,
+      UsuarioAsignatura,
+      ConfigModule,
+      Notificacione,
+      EstadoSeguimientoCambio,
+      CitasAsesoriaPpi,
+      EquipoPpi,
+      Semana,
+      SeguimientoPpi,
+      HoraSemanal]),
   ],
   controllers: [UsuarioController],
   providers: [UsuarioService],
 })
-export class UsuarioModule {}
+export class UsuarioModule { }
