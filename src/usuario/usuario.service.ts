@@ -9,6 +9,7 @@ import { Asignatura } from 'src/asignatura/entities/asignatura.entity';
 import { EmailDTO } from './dto/email.dto';
 import { Rol } from 'src/rol/entities/rol.entity';
 import { UsuarioAsignatura } from 'src/usuario_asignatura/entities/usuario_asignatura.entity';
+import { HoraSemanal } from 'src/hora_semanal/entities/hora_semanal.entity';
 
 @Injectable()
 export class UsuarioService {
@@ -21,6 +22,8 @@ export class UsuarioService {
     private readonly programaRepository: Repository<Programa>,
     @InjectRepository(Rol)
     private readonly rolRepository: Repository<Rol>,
+    @InjectRepository(HoraSemanal)
+    private readonly horasemanalRepository: Repository<HoraSemanal>,
     @InjectRepository(UsuarioAsignatura)
     private readonly usuarioAsignaturaRepository: Repository<UsuarioAsignatura>
   ) { }
@@ -38,6 +41,13 @@ export class UsuarioService {
         usuario.nombre = usuarioData.Usuario_Nombre;
         usuario.correo = usuarioData.Usuario_Correo;
         usuario.rol = profesorRol; // Aquí debes asignar correctamente el objeto Rol, no solo el ID
+        const HorasSeman= await this.horasemanalRepository
+        .createQueryBuilder('horaSemanal') 
+        .where('horaSemanal.id = :id', { id:usuarioData.id_hora })
+        .getOne(); 
+        HorasSeman.horasAsignadas=usuarioData.Horas_Asesor
+        HorasSeman.salon=usuarioData.Oficina  
+        this.horasemanalRepository.save(HorasSeman)
         return this.usuarioRepository.save(usuario);
       } else {
         // Si el usuario no existe, crea uno nuevo
@@ -47,7 +57,17 @@ export class UsuarioService {
           documento: usuarioData.Usuario_Documento,
           rol: profesorRol
         });
-        return this.usuarioRepository.save(nuevoUsuario);
+        console.log(usuarioData)
+        const retorno= await this.usuarioRepository.save(nuevoUsuario); 
+        const nuevaHoraAsesoria= this.horasemanalRepository.create({
+          horasAsignadas:usuarioData.Horas_Asesor,
+          salon: usuarioData.Oficina,
+          hora:retorno,
+          horasPendientes:[]
+        })
+         console.log(nuevaHoraAsesoria)
+        this.horasemanalRepository.save(nuevaHoraAsesoria);
+        return retorno
       }
     });
 
@@ -138,19 +158,39 @@ order by "Usuario_Asignatura"."Grupo_Codigo" asc, "Usuario"."Usuario_Nombre" asc
   }
 
   async getAsesores(): Promise<any[]> {
-    return this.usuarioRepository
-      .createQueryBuilder('usuario')
-      .select([
-        'usuario.Usuario_ID',
-        'usuario.Usuario_Nombre',
-        'usuario.Rol_ID',
-        'usuario.Usuario_Documento',
-        'usuario.Usuario_Correo'
-      ])
-      .where('usuario.Rol_ID = :rolId1 OR usuario.Rol_ID = :rolId2', { rolId1: 3, rolId2: 5 })
-      .orderBy('usuario.Usuario_Nombre', 'ASC')
-      .getRawMany();
-  }
+    const asesores= await this.usuarioRepository
+    .createQueryBuilder('usuario')
+    .select([
+      'usuario.Usuario_ID',
+      'usuario.Usuario_Nombre',
+      'usuario.Rol_ID',
+      'usuario.Usuario_Documento',
+      'usuario.Usuario_Correo'
+    ])
+    .where('usuario.Rol_ID = :rolId1 OR usuario.Rol_ID = :rolId2', { rolId1: 3, rolId2: 5 })
+    .orderBy('usuario.Usuario_Nombre', 'ASC')
+    .getRawMany();
+ 
+     for (let index = 0; index < asesores.length; index++) {
+       const element = asesores[index];
+       const horaS= await this.horasemanalRepository
+       .createQueryBuilder('horaSemanal')
+       .innerJoinAndSelect('horaSemanal.hora', 'usuario')
+       .where('usuario.id = :id', { id:element.Usuario_ID })
+       .getOne();
+       if(horaS!=null){
+       element["Horas_Asesor"]=horaS.horasAsignadas
+       element["Oficina"]=horaS.salon
+       element["id_hora"]=horaS.id
+       }else{ 
+       element["Horas_Asesor"]=""
+       element["Oficina"]=""
+       }
+     }
+ 
+
+     return asesores;
+ }  
 
   async findAsesor() {
     return this.usuarioRepository.createQueryBuilder('usuario')
