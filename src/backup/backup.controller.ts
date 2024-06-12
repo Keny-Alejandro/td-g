@@ -76,10 +76,10 @@ export class BackupController {
         'PPI/Tecnologia/S5/',
         'PPI/Tecnologia/S6/',
       ];
-
+    
       const archive = archiver('zip');
       archive.pipe(res);
-
+    
       for (const folderToClean of foldersToClean) {
         let continuationToken;
         let data;
@@ -89,29 +89,32 @@ export class BackupController {
             ContinuationToken: continuationToken,
             Prefix: folderToClean, // Filter objects by prefix
           };
-
+    
           data = await this.s3.listObjectsV2(params).promise();
-
+    
           for (const file of data.Contents) {
             const params = { Bucket: bucketName, Key: file.Key };
             const fileData = await this.s3.getObject(params).promise();
             archive.append(fileData.Body as Readable, { name: file.Key });
           }
-
+    
           continuationToken = data.NextContinuationToken;
         } while (continuationToken);
-
+    
         // Limpiar la carpeta especificada en el bucket
         const objectsToDelete = data.Contents.map((obj) => ({ Key: obj.Key }));
         if (objectsToDelete.length > 0) {
-          await this.s3
-            .deleteObjects({
-              Bucket: bucketName,
-              Delete: { Objects: objectsToDelete },
-            })
-            .promise();
+          console.log(`Deleting ${objectsToDelete.length} objects from ${folderToClean}`);
+          const deleteParams = {
+            Bucket: bucketName,
+            Delete: { Objects: objectsToDelete },
+          };
+          const deleteResponse = await this.s3.deleteObjects(deleteParams).promise();
+          console.log('Delete response:', deleteResponse);
+        } else {
+          console.log(`No objects to delete in ${folderToClean}`);
         }
-
+    
         // Volver a crear la carpeta en el bucket
         await this.s3
           .upload({
@@ -121,9 +124,9 @@ export class BackupController {
           })
           .promise();
       }
-
+    
       archive.finalize();
-
+    
       await Promise.all([
         this.removeSystem(),
         this.deleteFromUsuarioTable(),
@@ -134,22 +137,23 @@ export class BackupController {
     } finally {
       res.end(); // Asegurar que se cierre adecuadamente el stream de respuesta
     }
+    
   }
 
   async removeSystem() {
+    const seguim = this.repositorySeguimientoPpi.clear();//OK
     const citas = this.repositoryCitasAsesoriaPpi.clear();//OK
     const userasign = this.UsuarioAsignaturaRepository.clear(); // OK
     const horasem = this.HoraSemanalRepository.clear(); // OK
     const equipoppipjic = this.EquipoPpiPjicRepository.clear(); // OK
     const equipus = this.EquipoUsuarioRepository.clear(); // OK
     const estadoSeg = this.repositoryEstadoSeguimientoCambio.clear(); // OK
-    const seguim = this.repositorySeguimientoPpi.clear();//OK
     const equipo = this.repositoryEquipoPpi.clear();//OK
     const entregaequ = this.EntregaEquipoPpiRepository.clear(); // OK
     const notif = this.repositoryNotificacion.clear(); // OK
     const semana = this.repositorySemana.clear(); // OK
     const usercalif = this.repositoryUsuarioCalificacion.clear();
-    if (citas && userasign && horasem && equipoppipjic && equipus && equipo && entregaequ && notif && estadoSeg && seguim && semana && usercalif)
+    if (seguim && citas && userasign && horasem && equipoppipjic && equipus && equipo && entregaequ && notif && estadoSeg && semana && usercalif)
       return true
     else
       return false
