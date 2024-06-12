@@ -15,6 +15,7 @@ import { SeguimientoPpi } from 'src/seguimiento_ppi/entities/seguimiento_ppi.ent
 import { CitasAsesoriaPpi } from 'src/citas_asesoria_ppi/entities/citas_asesoria_ppi.entity';
 import { EquipoPpi } from 'src/equipo_ppi/entities/equipo_ppi.entity';
 import { Semana } from 'src/semanas/entities/semana.entity';
+import { UsuarioCalificacion } from '../usuario_calificacion/entities/usuario_calificacion.entity';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
@@ -30,6 +31,7 @@ import { ConfigModule } from '@nestjs/config';
     SeguimientoPpi,
     EquipoPpi,
     Semana,
+    UsuarioCalificacion,
     HoraSemanal])],
   controllers: [BackupController],
   providers: [BackupService],
