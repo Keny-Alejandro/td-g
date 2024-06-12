@@ -137,19 +137,19 @@ export class BackupController {
   }
 
   async removeSystem() {
+    const citas = this.repositoryCitasAsesoriaPpi.clear();//OK
     const userasign = this.UsuarioAsignaturaRepository.clear(); // OK
     const horasem = this.HoraSemanalRepository.clear(); // OK
     const equipoppipjic = this.EquipoPpiPjicRepository.clear(); // OK
     const equipus = this.EquipoUsuarioRepository.clear(); // OK
     const estadoSeg = this.repositoryEstadoSeguimientoCambio.clear(); // OK
     const seguim = this.repositorySeguimientoPpi.clear();//OK
-    const citas = this.repositoryCitasAsesoriaPpi.clear();//OK
     const equipo = this.repositoryEquipoPpi.clear();//OK
     const entregaequ = this.EntregaEquipoPpiRepository.clear(); // OK
     const notif = this.repositoryNotificacion.clear(); // OK
     const semana = this.repositorySemana.clear(); // OK
     const usercalif = this.repositoryUsuarioCalificacion.clear();
-    if (userasign && horasem && equipoppipjic && equipus && citas && equipo && entregaequ && notif && estadoSeg && seguim && semana && usercalif)
+    if (citas && userasign && horasem && equipoppipjic && equipus && equipo && entregaequ && notif && estadoSeg && seguim && semana && usercalif)
       return true
     else
       return false
