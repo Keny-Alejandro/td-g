@@ -22,6 +22,7 @@ import { SeguimientoPpi } from 'src/seguimiento_ppi/entities/seguimiento_ppi.ent
 import { CitasAsesoriaPpi } from 'src/citas_asesoria_ppi/entities/citas_asesoria_ppi.entity';
 import { EquipoPpi } from 'src/equipo_ppi/entities/equipo_ppi.entity';
 import { Semana } from 'src/semanas/entities/semana.entity';
+import { UsuarioCalificacion } from '../usuario_calificacion/entities/usuario_calificacion.entity';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('backup')
@@ -29,6 +30,8 @@ import { ApiTags } from '@nestjs/swagger';
 export class BackupController {
 
   private s3: AWS.S3;
+  @InjectRepository(UsuarioCalificacion)
+  private readonly repositoryUsuarioCalificacion: Repository<UsuarioCalificacion>
   @InjectRepository(Notificacione)
   private readonly repositoryNotificacion: Repository<Notificacione>
   @InjectRepository(EstadoSeguimientoCambio)
@@ -145,7 +148,8 @@ export class BackupController {
     const entregaequ = this.EntregaEquipoPpiRepository.clear(); // OK
     const notif = this.repositoryNotificacion.clear(); // OK
     const semana = this.repositorySemana.clear(); // OK
-    if (userasign && horasem && equipoppipjic && equipus && citas && equipo && entregaequ && notif && estadoSeg && seguim && semana)
+    const usercalif = this.repositoryUsuarioCalificacion.clear();
+    if (userasign && horasem && equipoppipjic && equipus && citas && equipo && entregaequ && notif && estadoSeg && seguim && semana && usercalif)
       return true
     else
       return false
